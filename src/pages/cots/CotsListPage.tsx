@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { DataGrid, type GridColDef } from '@mui/x-data-grid';
 import { Button, TextField, Select, MenuItem, FormControl, InputLabel, Box } from '@mui/material';
 import { Add as AddIcon, Upload as UploadIcon, Download as DownloadIcon } from '@mui/icons-material';
-import { AppLayout } from '../../components/layout/AppLayout';
 import { ListLayout } from '../../components/layout/ListLayout';
 import type { RootState, AppDispatch } from '../../store';
 import { fetchCoTs, searchCoTs, setFilters } from '../../store/slices/cotsSlice';
@@ -12,8 +12,7 @@ import type { SearchFilters } from '../../services/query/queryService';
 const columns: GridColDef[] = [
   { field: 'productSource', headerName: '상품분류', width: 100 },
   { field: 'questionType', headerName: '질문유형', width: 200 },
-  { field: 'gender', headerName: '성별', width: 80 },
-  { field: 'ageGroup', headerName: '연령대', width: 100 },
+  // 성별/연령대는 질문자 조인 후 계산 컬럼으로 복원 예정
   { field: 'question', headerName: '질문', width: 300, flex: 1 },
   { field: 'author', headerName: '작성자', width: 120 },
   { field: 'createdAt', headerName: '등록일', width: 120 },
@@ -21,6 +20,7 @@ const columns: GridColDef[] = [
 ];
 
 export function CoTsListPage() {
+  const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const { items, loading, pagination, filters } = useSelector((state: RootState) => state.cots);
   
@@ -45,7 +45,11 @@ export function CoTsListPage() {
 
   const toolbar = (
     <>
-      <Button variant="contained" startIcon={<AddIcon />}>
+      <Button 
+        variant="contained" 
+        startIcon={<AddIcon />}
+        onClick={() => navigate('/cots/new')}
+      >
         새 CoT 생성
       </Button>
       <Button variant="outlined" startIcon={<UploadIcon />}>
@@ -104,24 +108,30 @@ export function CoTsListPage() {
   );
 
   return (
-    <AppLayout>
-      <ListLayout title="CoTs" toolbar={toolbar}>
-        {searchBar}
-        <DataGrid
-          rows={items}
-          columns={columns}
-          loading={loading}
-          pagination
-          paginationMode="server"
-          rowCount={pagination.total}
-          page={pagination.page - 1}
-          pageSize={pagination.pageSize}
-          pageSizeOptions={[25, 50, 100]}
-          disableRowSelectionOnClick
-          sx={{ border: 0 }}
-        />
-      </ListLayout>
-    </AppLayout>
+    <ListLayout title="CoTs" toolbar={toolbar}>
+      {searchBar}
+      <DataGrid
+        rows={items}
+        columns={columns}
+        loading={loading}
+        pagination
+        paginationMode="server"
+        rowCount={pagination.total}
+        paginationModel={{
+          page: pagination.page - 1,
+          pageSize: pagination.pageSize
+        }}
+        pageSizeOptions={[25, 50, 100]}
+        disableRowSelectionOnClick
+        onRowClick={(params) => navigate(`/cots/${params.id}`)}
+        sx={{ 
+          border: 0,
+          '& .MuiDataGrid-row:hover': {
+            cursor: 'pointer',
+          }
+        }}
+      />
+    </ListLayout>
   );
 }
 

@@ -34,6 +34,8 @@
 - **핵심 요구**: 로컬 PC에서 실행되는 관리자 웹앱으로 CoT 데이터셋을 생성/관리. 대용량(질문자 30만, 상품 1만, CoT 1만) 리스트에서 검색/정렬/페이징/Import/Export를 제공.
 - **기술 접근**: React 19 + TypeScript + Vite. 라우팅은 React Router, 상태관리는 Redux Toolkit, 폼/검증은 React Hook Form + Zod, UI는 MUI v6(+ cssVariables) + MUI X Data Grid(가상 스크롤). CSV/JSON은 Papa Parse(Web Worker + streaming), XLSX는 SheetJS(Web Worker + streaming), 날짜는 date-fns. 대용량 표는 반드시 가상 스크롤 사용, 전행 렌더 금지.
 
+- **네비게이션 레이아웃**: 좌측 고정 드로어를 기본으로 사용하며, 화면 공간 활용을 위해 접기/펼치기 가능한 미니 변형(collapsible mini-variant)을 적용한다. 접힘 상태에서는 아이콘만, 펼침 상태에서는 아이콘+라벨을 표시하고 토글 버튼으로 전환한다.
+
 - **스코프 정합성(사양 대비)**
   - 메뉴: CoTs, 설정, 질문자 리스트, 상품 리스트(각 상세 포함)
   - CoTs 리스트: 텍스트·상품분류·질문유형·성별·연령 필터, 텍스트 검색 범위=질문/CoT1~n/답변

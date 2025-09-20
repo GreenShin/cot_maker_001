@@ -47,8 +47,36 @@ const saveSettingsToStorage = (settings: Omit<SettingsState, 'isLoaded'>) => {
 // CSS 변수 적용
 const applyCSSVariables = (settings: SettingsState) => {
   if (typeof document !== 'undefined') {
+    // CSS 변수 설정
     document.documentElement.style.setProperty('--app-font-size', `${settings.fontSize}px`);
+    
+    // 테마 속성 설정
+    document.documentElement.setAttribute('data-theme', settings.theme);
     document.documentElement.setAttribute('data-mui-color-scheme', settings.theme);
+    
+    // 바디에 테마 클래스 적용
+    document.body.className = document.body.className.replace(/theme-\w+/g, '');
+    document.body.classList.add(`theme-${settings.theme}`);
+    
+    // 바디 배경색 직접 적용 (GitHub 다크모드 색상)
+    if (settings.theme === 'dark') {
+      document.body.style.backgroundColor = '#0d1117';
+      document.body.style.color = '#f0f6fc';
+    } else {
+      document.body.style.backgroundColor = '#ffffff';
+      document.body.style.color = '#000000';
+    }
+    
+    // 폰트 크기 클래스 적용
+    document.body.className = document.body.className.replace(/app-font-size-\d+/g, '');
+    document.body.classList.add(`app-font-size-${settings.fontSize}`);
+    
+    // 디버깅을 위한 로그
+    console.log('Settings applied:', {
+      fontSize: settings.fontSize,
+      theme: settings.theme,
+      bodyClasses: document.body.className
+    });
   }
 };
 

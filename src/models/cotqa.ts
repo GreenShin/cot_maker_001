@@ -55,11 +55,11 @@ export type SecuritiesCoTQA = Extract<CoTQA, { productSource: '증권' }>;
 export type InsuranceCoTQA = Extract<CoTQA, { productSource: '보험' }>;
 
 // 유틸리티 함수들
-export const createEmptyCoTQA = (productSource: '증권' | '보험'): Partial<CoTQA> => ({
+export const createEmptyCoTQA = (productSource: '증권' | '보험'): Omit<CoTQA, 'id' | 'createdAt' | 'updatedAt'> => ({
   productSource,
   questionType: productSource === '증권' ? '고객 특성 강조형' : '연령별 및 생애주기 저축성 상품 추천형',
   questioner: '',
-  products: [],
+  products: [] as string[],
   question: '',
   cot1: '',
   cot2: '',

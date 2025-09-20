@@ -6,7 +6,7 @@ const securitiesInvestmentTendency = z.enum([
 ]);
 
 const insuranceCrossRatio = z.enum([
-  '미정의', 'ㅗ장only', '변액only', '기타only', 
+  '미정의', '보장only', '변액only', '기타only', 
   '보장+변액', '보장+기타', '변액+기타', '보장+변액+기타'
 ]);
 

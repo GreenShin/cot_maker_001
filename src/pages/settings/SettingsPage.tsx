@@ -11,7 +11,6 @@ import {
   Box,
   Stack
 } from '@mui/material';
-import { AppLayout } from '../../components/layout/AppLayout';
 import type { RootState, AppDispatch } from '../../store';
 import {
   initializeSettings,
@@ -27,11 +26,7 @@ export function SettingsPage() {
   const dispatch = useDispatch<AppDispatch>();
   const settings = useSelector((state: RootState) => state.settings);
 
-  useEffect(() => {
-    if (!settings.isLoaded) {
-      dispatch(initializeSettings());
-    }
-  }, [dispatch, settings.isLoaded]);
+  // 설정 초기화는 App 컴포넌트에서 처리
 
   const handleAuthorChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     dispatch(setAuthor(event.target.value));
@@ -48,11 +43,10 @@ export function SettingsPage() {
   };
 
   return (
-    <AppLayout>
-      <Box sx={{ maxWidth: 600, mx: 'auto' }}>
-        <Typography variant="h4" component="h1" gutterBottom>
-          설정
-        </Typography>
+    <Box sx={{ maxWidth: 600, mx: 'auto' }}>
+      <Typography variant="h4" component="h1" gutterBottom>
+        설정
+      </Typography>
 
         <Paper sx={{ p: 3 }}>
           <Stack spacing={4}>
@@ -76,6 +70,7 @@ export function SettingsPage() {
                     <Switch
                       checked={settings.canEditUsers}
                       onChange={() => dispatch(toggleCanEditUsers())}
+                      inputProps={{ role: 'switch' }}
                     />
                   }
                   label="질문자 수정가능"
@@ -85,6 +80,7 @@ export function SettingsPage() {
                     <Switch
                       checked={settings.canEditProducts}
                       onChange={() => dispatch(toggleCanEditProducts())}
+                      inputProps={{ role: 'switch' }}
                     />
                   }
                   label="상품 수정가능"
@@ -119,6 +115,7 @@ export function SettingsPage() {
                 <Switch
                   checked={settings.theme === 'dark'}
                   onChange={() => dispatch(toggleTheme())}
+                  inputProps={{ role: 'switch' }}
                 />
               }
               label="다크 모드"
@@ -136,8 +133,7 @@ export function SettingsPage() {
             </Box>
           </Stack>
         </Paper>
-      </Box>
-    </AppLayout>
+    </Box>
   );
 }
 

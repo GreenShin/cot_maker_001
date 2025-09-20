@@ -46,7 +46,7 @@ export type SecuritiesProduct = Extract<Product, { productSource: '증권' }>;
 export type InsuranceProduct = Extract<Product, { productSource: '보험' }>;
 
 // 유틸리티 함수들
-export const createEmptyProduct = (productSource: '증권' | '보험'): Partial<Product> => ({
+export const createEmptyProduct = (productSource: '증권' | '보험'): Omit<Product, 'id' | 'createdAt' | 'updatedAt'> => ({
   productSource,
   productName: '',
   productCategory: productSource === '증권' ? '주식형' : '연금',

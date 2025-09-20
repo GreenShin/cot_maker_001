@@ -3,7 +3,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import { DataGrid, type GridColDef } from '@mui/x-data-grid';
 import { Button } from '@mui/material';
 import { Upload as UploadIcon, Download as DownloadIcon } from '@mui/icons-material';
-import { AppLayout } from '../../components/layout/AppLayout';
 import { ListLayout } from '../../components/layout/ListLayout';
 import type { RootState, AppDispatch } from '../../store';
 import { fetchProducts } from '../../store/slices/productsSlice';
@@ -37,23 +36,23 @@ export function ProductsListPage() {
   );
 
   return (
-    <AppLayout>
-      <ListLayout title="상품 리스트" toolbar={toolbar}>
-        <DataGrid
-          rows={items}
-          columns={columns}
-          loading={loading}
-          pagination
-          paginationMode="server"
-          rowCount={pagination.total}
-          page={pagination.page - 1}
-          pageSize={pagination.pageSize}
-          pageSizeOptions={[25, 50, 100]}
-          disableRowSelectionOnClick
-          sx={{ border: 0 }}
-        />
-      </ListLayout>
-    </AppLayout>
+    <ListLayout title="상품 리스트" toolbar={toolbar}>
+      <DataGrid
+        rows={items}
+        columns={columns}
+        loading={loading}
+        pagination
+        paginationMode="server"
+        rowCount={pagination.total}
+        paginationModel={{
+          page: pagination.page - 1,
+          pageSize: pagination.pageSize
+        }}
+        pageSizeOptions={[25, 50, 100]}
+        disableRowSelectionOnClick
+        sx={{ border: 0 }}
+      />
+    </ListLayout>
   );
 }
 

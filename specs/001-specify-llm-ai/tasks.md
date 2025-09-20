@@ -36,13 +36,13 @@
 - Tests: `tests/`
 
 ## Phase 3.1: Setup
-- [ ] T001 Initialize Vite React TS project and base structure in `src/`, `tests/`
-- [ ] T002 Install dependencies in `package.json`: React Router, Redux Toolkit, React-Redux, React Hook Form, Zod, @mui/material, @mui/icons-material, @mui/x-data-grid, date-fns, papaparse, xlsx, clsx, @types deps
-- [ ] T003 [P] Configure ESLint + Prettier + TypeScript strict settings in `/.eslintrc`, `/.prettierrc`, `tsconfig.json`
-- [ ] T004 [P] Configure Vitest + React Testing Library + Playwright in `vitest.config.ts`, `playwright.config.ts`
-- [ ] T005 Bootstrap app shell and routes in `src/app/App.tsx`, `src/app/router.tsx`, `src/main.tsx`
-- [ ] T006 Setup Redux store/slices scaffolding in `src/store/index.ts`, `src/store/slices/*`
-- [ ] T007 Create MUI theme and css variables in `src/styles/theme.ts`, `src/styles/cssVars.ts`
+- [x] T001 Initialize Vite React TS project and base structure in `src/`, `tests/`
+- [x] T002 Install dependencies in `package.json`: React Router, Redux Toolkit, React-Redux, React Hook Form, Zod, @mui/material, @mui/icons-material, @mui/x-data-grid, date-fns, papaparse, xlsx, clsx, @types deps
+- [x] T003 [P] Configure ESLint + Prettier + TypeScript strict settings in `/.eslintrc`, `/.prettierrc`, `tsconfig.json`
+- [x] T004 [P] Configure Vitest + React Testing Library + Playwright in `vitest.config.ts`, `playwright.config.ts`
+- [x] T005 Bootstrap app shell and routes in `src/app/App.tsx`, `src/app/router.tsx`, `src/main.tsx`
+- [x] T006 Setup Redux store/slices scaffolding in `src/store/index.ts`, `src/store/slices/*`
+- [x] T007 Create MUI theme and css variables in `src/styles/theme.ts`, `src/styles/cssVars.ts`
 
 ## Phase 3.2: Tests First (TDD)
 - [ ] T008 [P] Zod schemas contract tests for entities in `tests/contract/schemas/userAnon.schema.test.ts`
@@ -57,32 +57,32 @@
 - [ ] T017 Integration test: Delete confirmation modal behavior in `tests/integration/common/delete_confirm.test.tsx`
 
 ## Phase 3.3: Core Implementation
-- [ ] T018 [P] Define domain types and Zod schemas in `src/models/{userAnon,product,cotqa}.ts`
-- [ ] T019 [P] Storage abstraction interface and in-memory adapter in `src/services/storage/storage.ts`
-- [ ] T020 Implement import/export services with streaming + workers in `src/services/io/{importer.ts, exporter.ts}`
-- [ ] T021 Query service (search/sort/paginate) utilities in `src/services/query/queryService.ts`
-- [ ] T022 Redux slices: `settingsSlice`, `cotsSlice`, `usersSlice`, `productsSlice` in `src/store/slices/*`
-- [ ] T023 Routes and pages skeleton: `CoTs`, `Settings`, `Users`, `Products` under `src/pages/*`
-- [ ] T024 Layout components: AppLayout, ListLayout, Detail3Pane in `src/components/layout/*`
-- [ ] T025 CoTs list page with MUI X Data Grid virtualization in `src/pages/cots/CotsListPage.tsx`
-- [ ] T026 CoTs detail page with 3-panels and dynamic CoTn in `src/pages/cots/CotsDetailPage.tsx`
-- [ ] T027 Users list/detail pages in `src/pages/users/{UsersListPage.tsx, UserDetailPage.tsx}`
-- [ ] T028 Products list/detail pages in `src/pages/products/{ProductsListPage.tsx, ProductDetailPage.tsx}`
-- [ ] T029 Settings page (author, toggles, font slider, theme mode) in `src/pages/settings/SettingsPage.tsx`
-- [ ] T030 Common components: SearchBar, Filters, ConfirmDialog in `src/components/common/*`
-- [ ] T031 Form hooks with RHF + Zod for CoTs in `src/forms/useCotForm.ts`
+- [x] T018 [P] Define domain types and Zod schemas in `src/models/{userAnon,product,cotqa}.ts`
+- [x] T019 [P] Storage abstraction interface and in-memory adapter in `src/services/storage/storage.ts`
+- [x] T020 Implement import/export services with streaming + workers in `src/services/io/{importer.ts, exporter.ts}`
+- [x] T021 Query service (search/sort/paginate) utilities in `src/services/query/queryService.ts`
+- [x] T022 Redux slices: `settingsSlice`, `cotsSlice`, `usersSlice`, `productsSlice` in `src/store/slices/*`
+- [x] T023 Routes and pages skeleton: `CoTs`, `Settings`, `Users`, `Products` under `src/pages/*`
+- [x] T024 Layout components: AppLayout, ListLayout, Detail3Pane in `src/components/layout/*`
+- [x] T025 CoTs list page with MUI X Data Grid virtualization in `src/pages/cots/CotsListPage.tsx`
+- [x] T026 CoTs detail page with 3-panels and dynamic CoTn in `src/pages/cots/CotsDetailPage.tsx`
+- [x] T027 Users list/detail pages in `src/pages/users/{UsersListPage.tsx, UserDetailPage.tsx}`
+- [x] T028 Products list/detail pages in `src/pages/products/{ProductsListPage.tsx, ProductDetailPage.tsx}`
+- [x] T029 Settings page (author, toggles, font slider, theme mode) in `src/pages/settings/SettingsPage.tsx`
+- [x] T030 Common components: SearchBar, Filters, ConfirmDialog in `src/components/common/*`
+- [x] T031 Form hooks with RHF + Zod for CoTs in `src/forms/useCotForm.ts`
 
 ## Phase 3.4: Integration
-- [ ] T032 Wire import/export to lists (toolbar actions) in `src/pages/*/importExportActions.ts`
-- [ ] T033 Enforce required fields and error toasts/snackbars in `src/components/feedback/*`
-- [ ] T034 Implement text search across question/CoT1~n/answer in `src/services/query/search.ts`
-- [ ] T035 Persist settings to localStorage and hydrate on boot in `src/store/persistence/settingsPersistence.ts`
-- [ ] T036 Connect selection popups (users/products) with filters and accordion in `src/components/selectors/*`
-- [ ] T037 Accessibility pass: keyboard nav, focus ring, color contrast in `src/styles/a11y.css` and components
+- [x] T032 Wire import/export to lists (toolbar actions) in `src/pages/shared/importExportActions.ts`
+- [x] T033 Enforce required fields and error toasts/snackbars in `src/components/feedback/*`
+- [x] T034 Implement text search across question/CoT1~n/answer in `src/services/query/search.ts`
+- [x] T035 Persist settings to localStorage and hydrate on boot in `src/store/persistence/settingsPersistence.ts`
+- [x] T036 Connect selection popups (users/products) with filters and accordion in `src/components/selectors/*`
+- [x] T037 Accessibility pass: keyboard nav, focus ring, color contrast in `src/styles/a11y.css` and components
 
 ## Phase 3.5: Polish
 - [ ] T038 [P] Performance tuning: Data Grid rowBuffer/pageSize/overscan configs in `src/pages/*/*ListPage.tsx`
-- [ ] T039 [P] ErrorBoundary and fallback UIs in `src/components/common/ErrorBoundary.tsx`
+- [x] T039 [P] ErrorBoundary and fallback UIs in `src/components/feedback/ErrorBoundary.tsx`
 - [ ] T040 [P] Seed sample data and quick import scripts in `scripts/seed/` and docs
 - [ ] T041 Update `specs/001-specify-llm-ai/quickstart.md` with run/seed/import steps
 - [ ] T042 Update docs for schemas and import/export formats in `specs/001-specify-llm-ai/contracts/`

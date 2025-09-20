@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { ThemeProvider } from '@mui/material';
+import { BrowserRouter } from 'react-router-dom';
 import { configureStore } from '@reduxjs/toolkit';
 import { SettingsPage } from '../../../src/pages/settings/SettingsPage';
 import { theme } from '../../../src/styles/theme';
@@ -36,7 +37,9 @@ const renderWithProviders = (component: React.ReactElement) => {
   return render(
     <Provider store={store}>
       <ThemeProvider theme={theme}>
-        {component}
+        <BrowserRouter>
+          {component}
+        </BrowserRouter>
       </ThemeProvider>
     </Provider>
   );
