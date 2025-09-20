@@ -1,0 +1,295 @@
+import React from 'react';
+import { Control, FieldErrors, Controller } from 'react-hook-form';
+import {
+  Box,
+  Typography,
+  Button,
+  TextField,
+  MenuItem,
+  Select,
+  FormControl,
+  InputLabel,
+  Grid,
+  Divider,
+  IconButton,
+} from '@mui/material';
+import {
+  Add as AddIcon,
+  Delete as DeleteIcon,
+  Save as SaveIcon,
+  ArrowBack as ArrowBackIcon,
+  DeleteForever as DeleteForeverIcon,
+} from '@mui/icons-material';
+
+interface CotFormData {
+  productSource: 'securities' | 'insurance';
+  questionType: string;
+  question: string;
+  cot1: string;
+  cot2: string;
+  cot3: string;
+  answer: string;
+  datasetStatus: string;
+  author: string;
+}
+
+interface CotFormPanelProps {
+  isEditMode: boolean;
+  control: Control<CotFormData>;
+  errors: FieldErrors<CotFormData>;
+  isSubmitting: boolean;
+  watchedProductSource: string;
+  cotFields: string[];
+  cotNFields: Record<string, string>;
+  onSubmit: () => void;
+  onBack: () => void;
+  onDelete: () => void;
+  onAddCotField: () => void;
+  onRemoveCotField: (index: number) => void;
+  onCotNFieldChange: (fieldName: string, value: string) => void;
+}
+
+// 상품분류에 따른 질문유형 옵션
+const getQuestionTypes = (productSource: string): string[] => {
+  if (productSource === 'securities') {
+    return ['고객 특성 강조형', '투자성향 및 조건 기반형', '상품비교 추천형'];
+  } else {
+    return ['연령별 및 생애주기 저축성 상품 추천형', '투자성 상품 추천형', '건강 및 질병 보장 대비형'];
+  }
+};
+
+export function CotFormPanel({
+  isEditMode,
+  control,
+  errors,
+  isSubmitting,
+  watchedProductSource,
+  cotFields,
+  cotNFields,
+  onSubmit,
+  onBack,
+  onDelete,
+  onAddCotField,
+  onRemoveCotField,
+  onCotNFieldChange,
+}: CotFormPanelProps) {
+  return (
+    <Box sx={{ height: '100%', overflow: 'auto' }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+        <Typography variant="h6">
+          {isEditMode ? 'CoT 수정' : '새 CoT 생성'}
+        </Typography>
+        <Box>
+          <Button
+            variant="outlined"
+            startIcon={<ArrowBackIcon />}
+            onClick={onBack}
+            sx={{ mr: 1 }}
+          >
+            목록
+          </Button>
+          {isEditMode && (
+            <Button
+              variant="outlined"
+              color="error"
+              startIcon={<DeleteForeverIcon />}
+              onClick={onDelete}
+              sx={{ mr: 1 }}
+            >
+              삭제
+            </Button>
+          )}
+          <Button
+            variant="contained"
+            startIcon={<SaveIcon />}
+            onClick={onSubmit}
+            disabled={isSubmitting}
+          >
+            저장
+          </Button>
+        </Box>
+      </Box>
+
+      <Box component="form" sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+        {/* 첫 번째 줄: 상품분류, 질문유형 */}
+        <Grid container spacing={2}>
+          <Grid item xs={6}>
+            <Controller
+              name="productSource"
+              control={control}
+              render={({ field }) => (
+                <FormControl fullWidth error={!!errors.productSource}>
+                  <InputLabel>상품분류</InputLabel>
+                  <Select
+                    {...field}
+                    label="상품분류"
+                  >
+                    <MenuItem value="securities">증권</MenuItem>
+                    <MenuItem value="insurance">보험</MenuItem>
+                  </Select>
+                </FormControl>
+              )}
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <Controller
+              name="questionType"
+              control={control}
+              render={({ field }) => (
+                <FormControl fullWidth error={!!errors.questionType}>
+                  <InputLabel>질문유형</InputLabel>
+                  <Select
+                    {...field}
+                    label="질문유형"
+                  >
+                    {getQuestionTypes(watchedProductSource).map((type) => (
+                      <MenuItem key={type} value={type}>
+                        {type}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                  {errors.questionType && (
+                    <Typography variant="caption" color="error" sx={{ mt: 0.5 }}>
+                      {errors.questionType.message}
+                    </Typography>
+                  )}
+                </FormControl>
+              )}
+            />
+          </Grid>
+        </Grid>
+
+        {/* 두 번째 줄: 질문 */}
+        <Controller
+          name="question"
+          control={control}
+          render={({ field }) => (
+            <TextField
+              {...field}
+              label="질문"
+              multiline
+              rows={3}
+              fullWidth
+              placeholder="질문을 입력해 주세요"
+              error={!!errors.question}
+              helperText={errors.question?.message}
+            />
+          )}
+        />
+
+        {/* CoT 필드들 */}
+        {cotFields.map((fieldName, index) => (
+          <Box key={fieldName} sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
+            {index < 3 ? (
+              <Controller
+                name={`cot${index + 1}` as keyof CotFormData}
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    label={fieldName + ' (필수)'}
+                    multiline
+                    rows={2}
+                    fullWidth
+                    placeholder={`${fieldName} 내용을 입력해 주세요`}
+                    error={!!errors[`cot${index + 1}` as keyof typeof errors]}
+                    helperText={errors[`cot${index + 1}` as keyof typeof errors]?.message}
+                  />
+                )}
+              />
+            ) : (
+              <TextField
+                label={fieldName}
+                multiline
+                rows={2}
+                fullWidth
+                value={cotNFields[fieldName] || ''}
+                onChange={(e) => onCotNFieldChange(fieldName, e.target.value)}
+                placeholder={`${fieldName} 내용을 입력해 주세요`}
+              />
+            )}
+            {index >= 3 && (
+              <IconButton
+                color="error"
+                onClick={() => onRemoveCotField(index)}
+                sx={{ mt: 1 }}
+              >
+                <DeleteIcon />
+              </IconButton>
+            )}
+          </Box>
+        ))}
+
+        {/* CoT 추가 버튼 */}
+        <Button
+          variant="outlined"
+          startIcon={<AddIcon />}
+          onClick={onAddCotField}
+          sx={{ alignSelf: 'flex-start' }}
+        >
+          CoT 단계 추가
+        </Button>
+
+        <Divider />
+
+        {/* 답변 */}
+        <Controller
+          name="answer"
+          control={control}
+          render={({ field }) => (
+            <TextField
+              {...field}
+              label="답변"
+              multiline
+              rows={4}
+              fullWidth
+              placeholder="답변을 입력해 주세요"
+              error={!!errors.answer}
+              helperText={errors.answer?.message}
+            />
+          )}
+        />
+
+        {/* CoT 상태 및 작성자 */}
+        <Grid container spacing={2}>
+          <Grid item xs={6}>
+            <Controller
+              name="datasetStatus"
+              control={control}
+              render={({ field }) => (
+                <FormControl fullWidth>
+                  <InputLabel>CoT 상태</InputLabel>
+                  <Select
+                    {...field}
+                    label="CoT 상태"
+                  >
+                    <MenuItem value="draft">초안</MenuItem>
+                    <MenuItem value="review">검토중</MenuItem>
+                    <MenuItem value="approved">승인됨</MenuItem>
+                    <MenuItem value="rejected">반려됨</MenuItem>
+                  </Select>
+                </FormControl>
+              )}
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <Controller
+              name="author"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  label="작성자"
+                  fullWidth
+                  disabled={isEditMode}
+                  error={!!errors.author}
+                  helperText={errors.author?.message || (isEditMode ? '수정 모드에서는 작성자를 변경할 수 없습니다' : '설정에서 기본 작성자를 변경할 수 있습니다')}
+                />
+              )}
+            />
+          </Grid>
+        </Grid>
+      </Box>
+    </Box>
+  );
+}

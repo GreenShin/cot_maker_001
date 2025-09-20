@@ -9,7 +9,8 @@ import {
   Typography,
   Button,
   Box,
-  Stack
+  Stack,
+  Divider
 } from '@mui/material';
 import type { RootState, AppDispatch } from '../../store';
 import {
@@ -21,10 +22,12 @@ import {
   toggleTheme,
   resetToDefaults
 } from '../../store/slices/settingsSlice';
+import { useResizablePanels } from '../../hooks/useResizablePanels';
 
 export function SettingsPage() {
   const dispatch = useDispatch<AppDispatch>();
   const settings = useSelector((state: RootState) => state.settings);
+  const { resetPanelSizes } = useResizablePanels();
 
   // 설정 초기화는 App 컴포넌트에서 처리
 
@@ -39,6 +42,12 @@ export function SettingsPage() {
   const handleReset = () => {
     if (confirm('모든 설정을 기본값으로 초기화하시겠습니까?')) {
       dispatch(resetToDefaults());
+    }
+  };
+
+  const handlePanelReset = () => {
+    if (confirm('패널 크기를 기본값으로 초기화하시겠습니까?')) {
+      resetPanelSizes();
     }
   };
 
@@ -123,13 +132,24 @@ export function SettingsPage() {
 
             {/* 초기화 버튼 */}
             <Box sx={{ pt: 2, borderTop: 1, borderColor: 'divider' }}>
-              <Button
-                variant="outlined"
-                color="warning"
-                onClick={handleReset}
-              >
-                기본값으로 초기화
-              </Button>
+              <Stack spacing={2}>
+                <Button
+                  variant="outlined"
+                  color="secondary"
+                  onClick={handlePanelReset}
+                  fullWidth
+                >
+                  패널 크기 초기화
+                </Button>
+                <Button
+                  variant="outlined"
+                  color="warning"
+                  onClick={handleReset}
+                  fullWidth
+                >
+                  모든 설정 초기화
+                </Button>
+              </Stack>
             </Box>
           </Stack>
         </Paper>
