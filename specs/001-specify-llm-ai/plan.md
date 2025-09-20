@@ -47,7 +47,7 @@
 ## Technical Context
 **Language/Version**: TypeScript 5.x, React 19, Vite 5.x [NEEDS CLARIFICATION: 정확한 마이너 버전 고정]
 **Primary Dependencies**: React Router, Redux Toolkit(+ React-Redux), React Hook Form, Zod, MUI v6(@mui/material, @mui/icons), MUI X Data Grid(@mui/x-data-grid), Papa Parse, SheetJS (xlsx), date-fns
-**Storage**: 로컬 우선. [NEEDS CLARIFICATION: 저장소 선택 — IndexedDB(예: Dexie) vs SQLite WASM vs 파일 기반]
+**Storage**: OPFS (Origin Private File System) + SQLite-WASM. 대용량 데이터 효율적 처리와 SQL 기반 고급 쿼리 지원.
 **Testing**: Vitest + React Testing Library + Playwright [제안]
 **Target Platform**: 데스크톱 브라우저(Chromium/Edge/Chrome, Safari 최신), macOS/Windows 로컬 실행, 오프라인 가능
 **Project Type**: single/web
@@ -106,7 +106,8 @@ tests/
 
 ## Phase 0: Outline & Research
 1. **Extract unknowns from Technical Context**
-   - 저장소 선택: IndexedDB vs SQLite WASM vs 파일(성능/용량/트랜잭션) [NEEDS CLARIFICATION]
+   - OPFS + SQLite-WASM 구성: 데이터베이스 스키마 설계, 마이그레이션 전략 [NEEDS CLARIFICATION]
+   - SQLite-WASM 성능: 페이지 크기, 캐시 설정, 인덱스 전략 [NEEDS CLARIFICATION] 
    - 페이지 크기/버퍼: Data Grid pageSize, rowBuffer, overscan 권장치 [NEEDS CLARIFICATION]
    - Import/Export 한도: 파일 크기/행 수/스트리밍 청크 크기 [NEEDS CLARIFICATION]
    - 접근성 기준: WCAG 2.1 AA 세부 적용 범위 [NEEDS CLARIFICATION]
@@ -114,9 +115,10 @@ tests/
    - 날짜/로캘/타임존 표기 규칙 [NEEDS CLARIFICATION]
    - 정렬 기본값/다국어 여부/텍스트 최대 길이/CSV 구분자 [NEEDS CLARIFICATION]
 2. **Research tasks** (예)
-   - "로컬 대용량 CRUD를 위한 IndexedDB vs SQLite WASM 비교"
-   - "Papa Parse/SheetJS 스트리밍+Web Worker 성능 베스트 프랙티스"
-   - "MUI X Data Grid 가상 스크롤 튜닝(rowBuffer/columnBuffer/keepNonExistentRowsVisible)"
+   - "OPFS + SQLite-WASM 대용량 데이터 처리 아키텍처 및 성능 최적화"
+   - "SQLite-WASM과 OPFS 통합: 스키마 설계, 인덱스 전략, 트랜잭션 관리"
+   - "Papa Parse/SheetJS → SQLite-WASM 스트리밍 Import 파이프라인"
+   - "MUI X Data Grid + SQLite-WASM 가상 스크롤 연동 및 페이징 전략"
    - "WCAG 2.1 AA 체크리스트와 MUI 컴포넌트 적용"
 3. **Consolidate findings** in `research.md`
    - Decision / Rationale / Alternatives

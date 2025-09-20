@@ -23,11 +23,13 @@ import {
   resetToDefaults
 } from '../../store/slices/settingsSlice';
 import { useResizablePanels } from '../../hooks/useResizablePanels';
+import { useTextareaHeights } from '../../hooks/useTextareaHeights';
 
 export function SettingsPage() {
   const dispatch = useDispatch<AppDispatch>();
   const settings = useSelector((state: RootState) => state.settings);
   const { resetPanelSizes } = useResizablePanels();
+  const { resetHeights } = useTextareaHeights();
 
   // 설정 초기화는 App 컴포넌트에서 처리
 
@@ -48,6 +50,12 @@ export function SettingsPage() {
   const handlePanelReset = () => {
     if (confirm('패널 크기를 기본값으로 초기화하시겠습니까?')) {
       resetPanelSizes();
+    }
+  };
+
+  const handleTextareaReset = () => {
+    if (confirm('텍스트 영역 높이를 기본값으로 초기화하시겠습니까?')) {
+      resetHeights();
     }
   };
 
@@ -140,6 +148,14 @@ export function SettingsPage() {
                   fullWidth
                 >
                   패널 크기 초기화
+                </Button>
+                <Button
+                  variant="outlined"
+                  color="secondary"
+                  onClick={handleTextareaReset}
+                  fullWidth
+                >
+                  텍스트 영역 높이 초기화
                 </Button>
                 <Button
                   variant="outlined"

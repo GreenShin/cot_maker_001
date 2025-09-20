@@ -19,10 +19,22 @@ export function QuestionerPanel({
   onOpenUserSelector 
 }: QuestionerPanelProps) {
   return (
-    <Box sx={{ height: '100%' }}>
-      <Typography variant="h6" gutterBottom>
-        질문자 선택
-      </Typography>
+    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+      {/* 고정 헤더 */}
+      <Box sx={{ 
+        flexShrink: 0, 
+        borderBottom: 1, 
+        borderColor: 'divider', 
+        pb: 1, 
+        mb: 2 
+      }}>
+        <Typography variant="h6">
+          질문자 선택
+        </Typography>
+      </Box>
+      
+      {/* 스크롤 가능한 콘텐츠 */}
+      <Box sx={{ flex: 1, overflow: 'auto' }}>
       
       {!selectedUser ? (
         <Box sx={{ textAlign: 'center', py: 4 }}>
@@ -64,6 +76,7 @@ export function QuestionerPanel({
           </Button>
         </Box>
       )}
+      </Box>
     </Box>
   );
 }

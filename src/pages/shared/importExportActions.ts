@@ -1,6 +1,6 @@
 import { AppDispatch } from '../../store';
-import { ImportService } from '../../services/io/importer';
-import { ExportService } from '../../services/io/exporter';
+import { importCsvData, importJsonData, importXlsxData, type ImportResult } from '../../services/io/importer';
+import { exportToCsv, exportToJson, exportToXlsx } from '../../services/io/exporter';
 import { CoTQA } from '../../models/cotqa';
 import { Product } from '../../models/product';
 import { UserAnon } from '../../models/userAnon';
@@ -23,40 +23,42 @@ export const handleImport = async (
   onError?: (error: string) => void
 ) => {
   try {
-    const importService = new ImportService();
-    let result: any[] = [];
+    let result: ImportResult<any>;
 
     switch (options.format) {
       case 'csv':
-        result = await importService.importFromCSV(file);
+        result = await importCsvData(file, options.entity as any);
         break;
       case 'json':
-        result = await importService.importFromJSON(file);
+        result = await importJsonData(file, options.entity as any);
         break;
       case 'xlsx':
-        result = await importService.importFromXLSX(file);
+        result = await importXlsxData(file, options.entity as any);
         break;
       default:
         throw new Error('지원하지 않는 파일 형식입니다');
     }
 
     // 엔티티별로 스토어에 저장
-    switch (options.entity) {
-      case 'cots':
-        // CoTs 데이터 import 로직
-        // dispatch(importCoTs(result as CoTQA[]));
-        break;
-      case 'users':
-        // Users 데이터 import 로직
-        // dispatch(importUsers(result as UserAnon[]));
-        break;
-      case 'products':
-        // Products 데이터 import 로직
-        // dispatch(importProducts(result as Product[]));
-        break;
+    if (result.success) {
+      switch (options.entity) {
+        case 'cots':
+          // CoTs 데이터 import 로직
+          // dispatch(importCoTs(result.data as CoTQA[]));
+          break;
+        case 'users':
+          // Users 데이터 import 로직
+          // dispatch(importUsers(result.data as UserAnon[]));
+          break;
+        case 'products':
+          // Products 데이터 import 로직
+          // dispatch(importProducts(result.data as Product[]));
+          break;
+      }
+      onSuccess?.(result.data.length);
+    } else {
+      throw new Error(result.errors.join(', '));
     }
-
-    onSuccess?.(result.length);
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Import 중 오류가 발생했습니다';
     onError?.(errorMessage);
@@ -71,18 +73,17 @@ export const handleExport = async (
   onError?: (error: string) => void
 ) => {
   try {
-    const exportService = new ExportService();
     const filename = options.filename || `${options.entity}_${new Date().toISOString().split('T')[0]}`;
 
     switch (options.format) {
       case 'csv':
-        await exportService.exportToCSV(data, `${filename}.csv`);
+        await exportToCsv(data, `${filename}.csv`);
         break;
       case 'json':
-        await exportService.exportToJSON(data, `${filename}.json`);
+        await exportToJson(data, `${filename}.json`);
         break;
       case 'xlsx':
-        await exportService.exportToXLSX(data, `${filename}.xlsx`);
+        await exportToXlsx(data, `${filename}.xlsx`);
         break;
       default:
         throw new Error('지원하지 않는 파일 형식입니다');

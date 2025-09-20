@@ -20,7 +20,7 @@ export function UsersListPage() {
   const { items, loading, pagination } = useSelector((state: RootState) => state.users);
 
   useEffect(() => {
-    dispatch(fetchUsers());
+    dispatch(fetchUsers({}));
   }, [dispatch]);
 
   const toolbar = (
@@ -49,6 +49,13 @@ export function UsersListPage() {
         }}
         pageSizeOptions={[25, 50, 100]}
         disableRowSelectionOnClick
+        // 성능 최적화 옵션
+        rowBuffer={10}
+        columnBuffer={3}
+        rowHeight={52}
+        disableVirtualization={false}
+        keepNonExistentRowsSelected={false}
+        density="standard"
         sx={{ border: 0 }}
       />
     </ListLayout>

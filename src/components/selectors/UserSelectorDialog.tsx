@@ -52,7 +52,7 @@ export function UserSelectorDialog({
 
   React.useEffect(() => {
     if (open) {
-      dispatch(fetchUsers());
+      dispatch(fetchUsers({}));
     }
   }, [open, dispatch]);
 
@@ -159,6 +159,13 @@ export function UserSelectorDialog({
             disableRowSelectionOnClick
             rowSelectionModel={selectionModel}
             onRowSelectionModelChange={setSelectionModel}
+            // 성능 최적화 옵션
+            rowBuffer={5}
+            columnBuffer={3}
+            rowHeight={52}
+            disableVirtualization={false}
+            keepNonExistentRowsSelected={true}
+            density="compact"
             sx={{ border: 0 }}
           />
         </Box>

@@ -29,7 +29,7 @@ export function CoTsListPage() {
   const [questionType, setQuestionType] = useState(filters.questionType || '');
 
   useEffect(() => {
-    dispatch(fetchCoTs());
+    dispatch(fetchCoTs({}));
   }, [dispatch]);
 
   const handleSearch = () => {
@@ -124,6 +124,13 @@ export function CoTsListPage() {
         pageSizeOptions={[25, 50, 100]}
         disableRowSelectionOnClick
         onRowClick={(params) => navigate(`/cots/${params.id}`)}
+        // 성능 최적화 옵션
+        rowBuffer={10}
+        columnBuffer={5}
+        rowHeight={52}
+        disableVirtualization={false}
+        keepNonExistentRowsSelected={false}
+        density="standard"
         sx={{ 
           border: 0,
           '& .MuiDataGrid-row:hover': {

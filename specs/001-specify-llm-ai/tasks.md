@@ -36,8 +36,9 @@
 - Tests: `tests/`
 
 ## Phase 3.1: Setup
+- [ ] T001.1 Setup SQLite-WASM database schema and migration scripts in `src/services/storage/migrations/`
 - [x] T001 Initialize Vite React TS project and base structure in `src/`, `tests/`
-- [x] T002 Install dependencies in `package.json`: React Router, Redux Toolkit, React-Redux, React Hook Form, Zod, @mui/material, @mui/icons-material, @mui/x-data-grid, date-fns, papaparse, xlsx, clsx, @types deps
+- [x] T002 Install dependencies in `package.json`: React Router, Redux Toolkit, React-Redux, React Hook Form, Zod, @mui/material, @mui/icons-material, @mui/x-data-grid, date-fns, papaparse, xlsx, @sqlite.org/sqlite-wasm, clsx, @types deps
 - [x] T003 [P] Configure ESLint + Prettier + TypeScript strict settings in `/.eslintrc`, `/.prettierrc`, `tsconfig.json`
 - [x] T004 [P] Configure Vitest + React Testing Library + Playwright in `vitest.config.ts`, `playwright.config.ts`
 - [x] T005 Bootstrap app shell and routes in `src/app/App.tsx`, `src/app/router.tsx`, `src/main.tsx`
@@ -58,9 +59,9 @@
 
 ## Phase 3.3: Core Implementation
 - [x] T018 [P] Define domain types and Zod schemas in `src/models/{userAnon,product,cotqa}.ts`
-- [x] T019 [P] Storage abstraction interface and in-memory adapter in `src/services/storage/storage.ts`
-- [x] T020 Implement import/export services with streaming + workers in `src/services/io/{importer.ts, exporter.ts}`
-- [x] T021 Query service (search/sort/paginate) utilities in `src/services/query/queryService.ts`
+- [x] T019 [P] Storage abstraction interface and SQLite-WASM adapter in `src/services/storage/storage.ts`, `src/services/storage/sqliteAdapter.ts`
+- [x] T020 Implement import/export services with streaming + SQLite-WASM integration in `src/services/io/{importer.ts, exporter.ts}`
+- [x] T021 Query service with SQL-based search/sort/paginate utilities in `src/services/query/queryService.ts`
 - [x] T022 Redux slices: `settingsSlice`, `cotsSlice`, `usersSlice`, `productsSlice` in `src/store/slices/*`
 - [x] T023 Routes and pages skeleton: `CoTs`, `Settings`, `Users`, `Products` under `src/pages/*`
 - [x] T024 Layout components: AppLayout, ListLayout, Detail3Pane in `src/components/layout/*`
@@ -76,16 +77,17 @@
 - [x] T032 Wire import/export to lists (toolbar actions) in `src/pages/shared/importExportActions.ts`
 - [x] T033 Enforce required fields and error toasts/snackbars in `src/components/feedback/*`
 - [x] T034 Implement text search across question/CoT1~n/answer in `src/services/query/search.ts`
-- [x] T035 Persist settings to localStorage and hydrate on boot in `src/store/persistence/settingsPersistence.ts`
+- [x] T035 Persist settings to OPFS + SQLite and hydrate on boot in `src/store/persistence/settingsPersistence.ts`
 - [x] T036 Connect selection popups (users/products) with filters and accordion in `src/components/selectors/*`
 - [x] T037 Accessibility pass: keyboard nav, focus ring, color contrast in `src/styles/a11y.css` and components
+- [ ] T037.1 OPFS compatibility and fallback handling for unsupported browsers in `src/services/storage/opfsCompat.ts`
 
 ## Phase 3.5: Polish
-- [ ] T038 [P] Performance tuning: Data Grid rowBuffer/pageSize/overscan configs in `src/pages/*/*ListPage.tsx`
+- [x] T038 [P] Performance tuning: Data Grid rowBuffer/pageSize/overscan configs in `src/pages/*/*ListPage.tsx`
 - [x] T039 [P] ErrorBoundary and fallback UIs in `src/components/feedback/ErrorBoundary.tsx`
-- [ ] T040 [P] Seed sample data and quick import scripts in `scripts/seed/` and docs
-- [ ] T041 Update `specs/001-specify-llm-ai/quickstart.md` with run/seed/import steps
-- [ ] T042 Update docs for schemas and import/export formats in `specs/001-specify-llm-ai/contracts/`
+- [x] T040 [P] Seed sample data and quick import scripts in `scripts/seed/` and docs
+- [x] T041 Update `specs/001-specify-llm-ai/quickstart.md` with run/seed/import steps
+- [x] T042 Update docs for schemas and import/export formats in `specs/001-specify-llm-ai/contracts/`
 
 ## Dependencies
 - Tests (T008–T017) before implementation (T018–T031)

@@ -51,7 +51,7 @@ export function ProductSelectorDialog({
 
   React.useEffect(() => {
     if (open) {
-      dispatch(fetchProducts());
+      dispatch(fetchProducts({}));
     }
   }, [open, dispatch]);
 
@@ -167,6 +167,13 @@ export function ProductSelectorDialog({
             disableRowSelectionOnClick
             rowSelectionModel={selectionModel}
             onRowSelectionModelChange={setSelectionModel}
+            // 성능 최적화 옵션
+            rowBuffer={5}
+            columnBuffer={4}
+            rowHeight={52}
+            disableVirtualization={false}
+            keepNonExistentRowsSelected={true}
+            density="compact"
             sx={{ border: 0 }}
           />
         </Box>

@@ -59,14 +59,14 @@ export const createEmptyCoTQA = (productSource: '증권' | '보험'): Omit<CoTQA
   productSource,
   questionType: productSource === '증권' ? '고객 특성 강조형' : '연령별 및 생애주기 저축성 상품 추천형',
   questioner: '',
-  products: [] as string[],
+  products: [],
   question: '',
   cot1: '',
   cot2: '',
   cot3: '',
   answer: '',
   status: '초안'
-});
+} as Omit<CoTQA, 'id' | 'createdAt' | 'updatedAt'>);
 
 export const validateCoTQA = (data: unknown): CoTQA => {
   return cotQASchema.parse(data);

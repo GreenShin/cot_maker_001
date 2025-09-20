@@ -20,6 +20,8 @@ import {
   ArrowBack as ArrowBackIcon,
   DeleteForever as DeleteForeverIcon,
 } from '@mui/icons-material';
+import { ResizableTextField } from '../common/ResizableTextField';
+import { useTextareaHeights } from '../../hooks/useTextareaHeights';
 
 interface CotFormData {
   productSource: 'securities' | 'insurance';
@@ -73,9 +75,20 @@ export function CotFormPanel({
   onRemoveCotField,
   onCotNFieldChange,
 }: CotFormPanelProps) {
+  const { heights, adjustFieldHeight, getFieldHeight, getFieldRows } = useTextareaHeights();
   return (
-    <Box sx={{ height: '100%', overflow: 'auto' }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+      {/* 고정 헤더 */}
+      <Box sx={{ 
+        flexShrink: 0, 
+        borderBottom: 1, 
+        borderColor: 'divider', 
+        pb: 1, 
+        mb: 2,
+        display: 'flex', 
+        justifyContent: 'space-between', 
+        alignItems: 'center' 
+      }}>
         <Typography variant="h6">
           {isEditMode ? 'CoT 수정' : '새 CoT 생성'}
         </Typography>
@@ -109,6 +122,10 @@ export function CotFormPanel({
           </Button>
         </Box>
       </Box>
+
+      {/* 스크롤 가능한 폼 콘텐츠 */}
+      <Box sx={{ flex: 1, overflow: 'auto' }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
 
       <Box component="form" sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
         {/* 첫 번째 줄: 상품분류, 질문유형 */}
@@ -164,15 +181,17 @@ export function CotFormPanel({
           name="question"
           control={control}
           render={({ field }) => (
-            <TextField
+            <ResizableTextField
               {...field}
+              fieldName="question"
               label="질문"
-              multiline
-              rows={3}
+              rows={getFieldRows("question")}
+              heightPx={getFieldHeight("question")}
               fullWidth
               placeholder="질문을 입력해 주세요"
               error={!!errors.question}
               helperText={errors.question?.message}
+              onHeightChange={adjustFieldHeight}
             />
           )}
         />
@@ -180,34 +199,40 @@ export function CotFormPanel({
         {/* CoT 필드들 */}
         {cotFields.map((fieldName, index) => (
           <Box key={fieldName} sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
-            {index < 3 ? (
-              <Controller
-                name={`cot${index + 1}` as keyof CotFormData}
-                control={control}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    label={fieldName + ' (필수)'}
-                    multiline
-                    rows={2}
-                    fullWidth
-                    placeholder={`${fieldName} 내용을 입력해 주세요`}
-                    error={!!errors[`cot${index + 1}` as keyof typeof errors]}
-                    helperText={errors[`cot${index + 1}` as keyof typeof errors]?.message}
-                  />
-                )}
-              />
-            ) : (
-              <TextField
-                label={fieldName}
-                multiline
-                rows={2}
-                fullWidth
-                value={cotNFields[fieldName] || ''}
-                onChange={(e) => onCotNFieldChange(fieldName, e.target.value)}
-                placeholder={`${fieldName} 내용을 입력해 주세요`}
-              />
-            )}
+            <Box sx={{ flex: 1 }}>
+              {index < 3 ? (
+                <Controller
+                  name={`cot${index + 1}` as keyof CotFormData}
+                  control={control}
+                  render={({ field }) => (
+                    <ResizableTextField
+                      {...field}
+                      fieldName={`cot${index + 1}`}
+                      label={fieldName + ' (필수)'}
+                      rows={getFieldRows(`cot${index + 1}`)}
+                      heightPx={getFieldHeight(`cot${index + 1}`)}
+                      fullWidth
+                      placeholder={`${fieldName} 내용을 입력해 주세요`}
+                      error={!!errors[`cot${index + 1}` as keyof typeof errors]}
+                      helperText={errors[`cot${index + 1}` as keyof typeof errors]?.message}
+                      onHeightChange={adjustFieldHeight}
+                    />
+                  )}
+                />
+              ) : (
+                <ResizableTextField
+                  fieldName={fieldName}
+                  label={fieldName}
+                  rows={getFieldRows(fieldName)}
+                  heightPx={getFieldHeight(fieldName)}
+                  fullWidth
+                  value={cotNFields[fieldName] || ''}
+                  onChange={(e) => onCotNFieldChange(fieldName, e.target.value)}
+                  placeholder={`${fieldName} 내용을 입력해 주세요`}
+                  onHeightChange={adjustFieldHeight}
+                />
+              )}
+            </Box>
             {index >= 3 && (
               <IconButton
                 color="error"
@@ -237,15 +262,17 @@ export function CotFormPanel({
           name="answer"
           control={control}
           render={({ field }) => (
-            <TextField
+            <ResizableTextField
               {...field}
+              fieldName="answer"
               label="답변"
-              multiline
-              rows={4}
+              rows={getFieldRows("answer")}
+              heightPx={getFieldHeight("answer")}
               fullWidth
               placeholder="답변을 입력해 주세요"
               error={!!errors.answer}
               helperText={errors.answer?.message}
+              onHeightChange={adjustFieldHeight}
             />
           )}
         />
@@ -289,6 +316,8 @@ export function CotFormPanel({
             />
           </Grid>
         </Grid>
+      </Box>
+        </Box>
       </Box>
     </Box>
   );

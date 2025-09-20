@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk, type PayloadAction } from '@reduxjs/toolkit';
 import type { UserAnon } from '../../models/userAnon';
 import type { PaginatedResult, QueryOptions } from '../../services/storage/storage';
-import { InMemoryStorageAdapter } from '../../services/storage/storage';
+import { storageService } from '../../services/storage/storageService';
 import type { SearchFilters } from '../../services/query/queryService';
 
 export interface UsersState {
@@ -32,7 +32,8 @@ const initialState: UsersState = {
   filters: {}
 };
 
-const storage = new InMemoryStorageAdapter<UserAnon>('user');
+// 스토리지 서비스 사용
+const storage = storageService.users;
 
 export const fetchUsers = createAsyncThunk(
   'users/fetchUsers',

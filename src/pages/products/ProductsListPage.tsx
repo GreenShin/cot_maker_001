@@ -21,7 +21,7 @@ export function ProductsListPage() {
   const { items, loading, pagination } = useSelector((state: RootState) => state.products);
 
   useEffect(() => {
-    dispatch(fetchProducts());
+    dispatch(fetchProducts({}));
   }, [dispatch]);
 
   const toolbar = (
@@ -50,6 +50,13 @@ export function ProductsListPage() {
         }}
         pageSizeOptions={[25, 50, 100]}
         disableRowSelectionOnClick
+        // 성능 최적화 옵션
+        rowBuffer={10}
+        columnBuffer={4}
+        rowHeight={52}
+        disableVirtualization={false}
+        keepNonExistentRowsSelected={false}
+        density="standard"
         sx={{ border: 0 }}
       />
     </ListLayout>
