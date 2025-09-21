@@ -50,7 +50,6 @@ npm run seed
 - **React Hook Form** + **Zod** (폼 처리/검증)
 
 ### 데이터 처리
-- **OPFS + SQLite-WASM** (대용량 로컬 데이터베이스)
 - **MUI X Data Grid** (가상 스크롤)
 - **Papa Parse** (CSV 스트리밍)
 - **SheetJS** (XLSX 처리)
@@ -99,12 +98,6 @@ src/
 - **청크 분할**: 코드 스플리팅으로 초기 로드 최적화
 
 ## 📊 데이터 모델
-
-### 저장소 아키텍처
-- **OPFS (Origin Private File System)**: 브라우저 내 안전한 파일 시스템
-- **SQLite-WASM**: 고성능 SQL 데이터베이스 엔진
-- **대용량 데이터 지원**: 30만+ 질문자, 1만+ 상품, 1만+ CoT 효율적 처리
-- **고급 쿼리**: SQL 기반 인덱싱, 조인, 집계 지원
 
 ### 질문자 (UserAnon)
 ```typescript
@@ -264,7 +257,7 @@ npm run seed
 ### 로컬 우선
 - **오프라인 동작**: 네트워크 불필요
 - **데이터 보호**: 외부 전송 금지
-- **OPFS + SQLite**: 브라우저 내 안전한 파일 시스템 기반 데이터베이스
+- **로컬 스토리지**: 브라우저 내 저장
 
 ### 브라우저 지원
 - **Chromium**: Chrome, Edge (권장)

@@ -9,8 +9,8 @@ interface CoTQA {
   id: string;                    // 고유 식별자
   productSource: '증권' | '보험'; // 상품 분류
   questionType: string;          // 질문 유형
-  questioner?: string;           // 질문자 ID (UserAnon.id 참조) - 선택사항
-  products?: string[];           // 관련 상품 ID 목록 (Product.id 참조) - 선택사항
+  questioner: string;            // 질문자 ID (UserAnon.id 참조)
+  products: string[];            // 관련 상품 ID 목록 (Product.id 참조)
   question: string;              // 질문 내용
   cot1: string;                 // CoT 1단계 (필수)
   cot2: string;                 // CoT 2단계 (필수)
@@ -57,15 +57,14 @@ type InsuranceQuestionType =
 
 ## 🔗 참조 관계
 
-### 질문자 참조 (선택사항)
-- `questioner` 필드는 `UserAnon.id`를 참조 (선택사항)
+### 질문자 참조
+- `questioner` 필드는 `UserAnon.id`를 참조
 - 질문자 정보를 통해 개인화된 추천 가능
-- 미선택 시 일반적인 CoT 생성 가능
 
-### 상품 참조 (선택사항)
-- `products` 배열의 각 요소는 `Product.id`를 참조 (선택사항)
+### 상품 참조
+- `products` 배열의 각 요소는 `Product.id`를 참조
 - 다중 상품 추천 시나리오 지원
-- 빈 배열 허용: 특정 상품과 무관한 일반적인 분석 가능
+- 최소 1개 이상의 상품 필요
 
 ## ✅ Zod 검증 스키마
 
@@ -100,8 +99,8 @@ const dynamicCoTSchema = z.object({
 const baseCotQASchema = z.object({
   id: z.string().min(1, 'ID는 필수입니다'),
   productSource: productSourceSchema,
-  questioner: z.string().optional(), // 질문자 선택사항으로 변경
-  products: z.array(z.string()).optional().default([]), // 상품 선택사항으로 변경
+  questioner: z.string().min(1, '질문자를 선택해주세요'),
+  products: z.array(z.string()).min(1, '상품을 최소 1개 선택해주세요'),
   question: z.string().min(1, '질문을 입력해주세요'),
   answer: z.string().min(1, '답변을 입력해주세요'),
   status: cotStatusSchema,
@@ -144,25 +143,24 @@ export type InsuranceCoTQA = z.infer<typeof insuranceCotQASchema>;
 - `id`: 빈 문자열 불가
 - `productSource`: '증권' 또는 '보험'만 허용
 - `questionType`: 상품 분류에 따른 유효한 질문 유형만 허용
+- `questioner`: 빈 문자열 불가, 유효한 UserAnon.id여야 함
+- `products`: 최소 1개 이상, 유효한 Product.id들이어야 함
 - `question`: 빈 문자열 불가
 - `cot1`, `cot2`, `cot3`: 빈 문자열 불가 (필수 CoT 단계)
 - `answer`: 빈 문자열 불가
 - `status`: 정의된 상태값만 허용
 
 ### 선택적 필드
-- `questioner`: 유효한 UserAnon.id여야 함 (선택사항)
-- `products`: 빈 배열 허용, 유효한 Product.id들이어야 함 (선택사항)
 - `cot4`, `cot5`, `cot6`, ...: 동적으로 추가 가능한 CoT 단계
 - `author`: 작성자 정보
 - `createdAt`, `updatedAt`: ISO 8601 형식 권장
 
 ### 비즈니스 규칙
-1. **참조 무결성**: questioner와 products가 제공된 경우 실제 존재하는 ID여야 함 (선택사항)
-2. **상품 분류 일치**: 선택된 상품들의 productSource와 CoT의 productSource가 일치해야 함 (상품이 선택된 경우)
+1. **참조 무결성**: questioner와 products는 실제 존재하는 ID여야 함
+2. **상품 분류 일치**: 선택된 상품들의 productSource와 CoT의 productSource가 일치해야 함
 3. **질문 유형 제한**: 상품 분류에 따라 허용되는 질문 유형이 다름
 4. **CoT 단계 순서**: cot1~cot3는 필수, cot4 이상은 순차적으로 추가
 5. **ID 유일성**: 시스템 내에서 고유해야 함
-6. **독립 실행**: questioner나 products가 없어도 일반적인 분석 CoT 생성 가능
 
 ## 📄 JSON 예제
 
@@ -276,13 +274,13 @@ const invalidQuestionType = {
   status: '완료'
 };
 
-// 잘못된 상품 ID
-const invalidProductId = {
+// 빈 상품 배열
+const emptyProducts = {
   id: 'cot-004',
   productSource: '보험',
   questionType: '연령별 및 생애주기 저축성 상품 추천형',
   questioner: 'user-002',
-  products: ['invalid-product-id'], // ❌ 존재하지 않는 상품 ID
+  products: [], // ❌ 최소 1개 상품 필요
   question: '질문',
   cot1: 'CoT1', cot2: 'CoT2', cot3: 'CoT3',
   answer: '답변',
@@ -312,8 +310,8 @@ const missingRequiredCoT = {
 export const createEmptyCoTQA = (productSource: '증권' | '보험'): Partial<CoTQA> => ({
   productSource,
   questionType: productSource === '증권' ? '고객 특성 강조형' : '연령별 및 생애주기 저축성 상품 추천형',
-  questioner: undefined, // 선택사항으로 변경
-  products: [], // 빈 배열로 기본값 설정
+  questioner: '',
+  products: [],
   question: '',
   cot1: '',
   cot2: '',

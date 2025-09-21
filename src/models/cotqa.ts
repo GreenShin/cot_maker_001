@@ -23,8 +23,8 @@ const dynamicCoTSchema = z.object({
 const baseCotQASchema = z.object({
   id: z.string(),
   productSource: z.enum(['증권', '보험']),
-  questioner: z.string().optional(), // 질문자 선택 사항으로 변경
-  products: z.array(z.string()).optional().default([]), // 상품 선택 사항으로 변경
+  questioner: z.string().optional(), // 선택사항으로 변경
+  products: z.array(z.string()).optional().default([]), // 선택사항으로 변경
   question: z.string().min(1, '질문을 입력해주세요'),
   answer: z.string().min(1, '답변을 입력해주세요'),
   status: cotStatus,
@@ -58,8 +58,8 @@ export type InsuranceCoTQA = Extract<CoTQA, { productSource: '보험' }>;
 export const createEmptyCoTQA = (productSource: '증권' | '보험'): any => ({
   productSource,
   questionType: productSource === '증권' ? '고객 특성 강조형' : '연령별 및 생애주기 저축성 상품 추천형',
-  questioner: undefined, // 선택 사항으로 변경
-  products: [], // 빈 배열로 기본값 설정
+  questioner: undefined,
+  products: [],
   question: '',
   cot1: '',
   cot2: '',

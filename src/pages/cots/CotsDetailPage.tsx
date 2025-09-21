@@ -1,7 +1,6 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { AppDispatch } from '../../store';
 import { Detail3Pane } from '../../components/layout/Detail3Pane';
 import { UserSelectorDialog } from '../../components/selectors/UserSelectorDialog';
 import { ProductSelectorDialog } from '../../components/selectors/ProductSelectorDialog';
@@ -11,14 +10,13 @@ import { CotFormPanel } from '../../components/cots/CotFormPanel';
 import { ProductPanel } from '../../components/cots/ProductPanel';
 import { useCotForm } from '../../hooks/useCotForm';
 import { initializeSettings } from '../../store/slices/settingsSlice';
-import { fetchCoTById } from '../../store/slices/cotsSlice';
 
 interface CotsDetailPageProps {}
 
 export function CotsDetailPage({}: CotsDetailPageProps) {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useDispatch();
   
   const isEditMode = id !== 'new';
   
@@ -52,19 +50,12 @@ export function CotsDetailPage({}: CotsDetailPageProps) {
     handleRemoveCotField,
     handleCotNFieldChange,
     handleDeleteConfirm,
-  } = useCotForm({ isEditMode, cotId: id });
+  } = useCotForm({ isEditMode });
 
   // 설정 초기화
   React.useEffect(() => {
     dispatch(initializeSettings());
   }, [dispatch]);
-
-  // 수정 모드일 때 CoT 데이터 로드
-  React.useEffect(() => {
-    if (isEditMode && id) {
-      dispatch(fetchCoTById(id));
-    }
-  }, [dispatch, isEditMode, id]);
 
   // 네비게이션 핸들러
   const handleBack = () => {

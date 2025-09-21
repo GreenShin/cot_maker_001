@@ -3,12 +3,12 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useSelector, useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { RootState, AppDispatch } from '../store';
+import { createCoT, updateCoT, deleteCoT, fetchCoTById } from '../store/slices/cotsSlice';
 import { UserAnon } from '../models/userAnon';
 import { Product } from '../models/product';
-import { CoTQA, cotQASchema } from '../models/cotqa';
-import { createCoT, updateCoT, deleteCoT } from '../store/slices/cotsSlice';
+import type { CoTQA } from '../models/cotqa';
 
 // 폼 검증 스키마
 const cotFormSchema = z.object({
@@ -19,22 +19,22 @@ const cotFormSchema = z.object({
   cot2: z.string().min(1, 'CoT2를 입력해 주세요'),
   cot3: z.string().min(1, 'CoT3을 입력해 주세요'),
   answer: z.string().min(1, '답변을 입력해 주세요'),
-  status: z.enum(['초안', '검토중', '완료', '보류']),
-  author: z.string().optional(),
-}).catchall(z.string().optional()); // 동적 CoT 필드들 허용
+  datasetStatus: z.string(),
+  author: z.string().min(1, '작성자를 입력해 주세요'),
+});
 
 export type CotFormData = z.infer<typeof cotFormSchema>;
 
 interface UseCotFormProps {
   isEditMode: boolean;
-  cotId?: string; // 수정 모드일 때 CoT ID
 }
 
-export function useCotForm({ isEditMode, cotId }: UseCotFormProps) {
+export function useCotForm({ isEditMode }: UseCotFormProps) {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
   const settings = useSelector((state: RootState) => state.settings);
-  const currentCoT = useSelector((state: RootState) => state.cots.currentCoT);
+  const { currentCoT, loading, error } = useSelector((state: RootState) => state.cots);
   
   // 상태 관리
   const [selectedUser, setSelectedUser] = React.useState<UserAnon | null>(null);
@@ -58,13 +58,61 @@ export function useCotForm({ isEditMode, cotId }: UseCotFormProps) {
       cot2: '',
       cot3: '',
       answer: '',
-      status: '초안',
-      author: settings.author || '',
+      datasetStatus: '초안',
+      author: '',
     },
   });
 
-  const { control, handleSubmit, watch, setValue, formState: { errors, isSubmitting } } = form;
+  const { control, handleSubmit, watch, setValue, reset, formState: { errors, isSubmitting } } = form;
   const watchedProductSource = watch('productSource');
+
+  // 수정 모드일 때 기존 데이터 로드
+  React.useEffect(() => {
+    if (isEditMode && id && id !== 'new') {
+      dispatch(fetchCoTById(id));
+    }
+  }, [dispatch, id, isEditMode]);
+
+  // 기존 CoT 데이터로 폼 초기화
+  React.useEffect(() => {
+    if (currentCoT && isEditMode) {
+      const cotSteps = Object.keys(currentCoT)
+        .filter(key => key.startsWith('cot') && key !== 'cot1' && key !== 'cot2' && key !== 'cot3')
+        .sort((a, b) => {
+          const aNum = parseInt(a.replace('cot', ''));
+          const bNum = parseInt(b.replace('cot', ''));
+          return aNum - bNum;
+        });
+
+      // CoT 필드 설정
+      const allCotFields = ['CoT1', 'CoT2', 'CoT3', ...cotSteps.map(step => `CoT${step.replace('cot', '')}`)];
+      setCotFields(allCotFields);
+
+      // 동적 CoT 필드 설정
+      const cotNData: Record<string, string> = {};
+      cotSteps.forEach(step => {
+        cotNData[`CoT${step.replace('cot', '')}`] = (currentCoT as any)[step] || '';
+      });
+      setCotNFields(cotNData);
+
+      // 폼 데이터 설정
+      reset({
+        productSource: currentCoT.productSource,
+        questionType: currentCoT.questionType,
+        question: currentCoT.question,
+        cot1: currentCoT.cot1,
+        cot2: currentCoT.cot2,
+        cot3: currentCoT.cot3,
+        answer: currentCoT.answer,
+        datasetStatus: currentCoT.status,
+        author: currentCoT.author || '',
+      });
+
+      // TODO: 기존 선택된 질문자/상품 정보 설정
+      // setSelectedUser() - questioner ID로부터 사용자 정보 가져오기
+      // setSelectedProducts() - products ID 배열로부터 상품 정보 가져오기
+    }
+  }, [currentCoT, isEditMode, reset]);
 
   // 상품분류 변경시 질문유형 초기화
   React.useEffect(() => {
@@ -77,45 +125,6 @@ export function useCotForm({ isEditMode, cotId }: UseCotFormProps) {
       setValue('author', settings.author);
     }
   }, [settings.author, isEditMode, setValue]);
-
-  // 수정 모드일 때 기존 CoT 데이터 로드
-  React.useEffect(() => {
-    if (isEditMode && currentCoT) {
-      setValue('productSource', currentCoT.productSource);
-      setValue('questionType', currentCoT.questionType);
-      setValue('question', currentCoT.question);
-      setValue('cot1', currentCoT.cot1);
-      setValue('cot2', currentCoT.cot2);
-      setValue('cot3', currentCoT.cot3);
-      setValue('answer', currentCoT.answer);
-      setValue('status', currentCoT.status);
-      setValue('author', currentCoT.author || '');
-
-      // 동적 CoT 필드들 로드
-      const dynamicFields: Record<string, string> = {};
-      const allCotFields = ['CoT1', 'CoT2', 'CoT3'];
-      
-      Object.keys(currentCoT).forEach(key => {
-        if (key.match(/^cot[4-9]$/) || key.match(/^cot\d{2,}$/)) {
-          const value = (currentCoT as any)[key];
-          if (value) {
-            setValue(key as keyof CotFormData, value);
-            dynamicFields[key] = value;
-            allCotFields.push(key.replace('cot', 'CoT'));
-          }
-        }
-      });
-      
-      setCotFields(allCotFields);
-      setCotNFields(dynamicFields);
-
-      // 선택된 사용자 설정 (questioner ID로 찾아야 함)
-      // TODO: 사용자 조회 로직 구현 필요
-      
-      // 선택된 상품들 설정 (product IDs로 찾아야 함)
-      // TODO: 상품 조회 로직 구현 필요
-    }
-  }, [isEditMode, currentCoT, setValue]);
 
   // CoT 필드 관리
   const handleAddCotField = () => {
@@ -141,49 +150,52 @@ export function useCotForm({ isEditMode, cotId }: UseCotFormProps) {
     });
   };
 
-  // 폼 제출
+  // 폼 제출 - 실제 저장 로직 구현
   const onSubmit = async (data: CotFormData) => {
     try {
-      // CoTQA 데이터 구성 (질문자와 상품은 선택사항)
-      const cotData: Omit<CoTQA, 'id' | 'createdAt' | 'updatedAt'> = {
+      // CoTQA 형식으로 데이터 변환  
+      const cotData: any = {
         productSource: data.productSource,
         questionType: data.questionType,
-        questioner: selectedUser?.id, // 선택사항: undefined 가능
-        products: selectedProducts.map(p => p.id), // 빈 배열 허용
+        questioner: selectedUser?.id || undefined, // 선택사항으로 변경
+        products: selectedProducts.length > 0 ? selectedProducts.map(p => p.id) : [], // 선택사항으로 변경
         question: data.question,
         cot1: data.cot1,
         cot2: data.cot2,
         cot3: data.cot3,
         answer: data.answer,
-        status: data.status,
+        status: data.datasetStatus,
         author: data.author,
-        // 동적 CoT 필드들 추가
-        ...cotNFields
+        // 동적 CoT 필드 추가
+        ...Object.entries(cotNFields).reduce((acc, [key, value]) => {
+          if (value.trim()) {
+            const cotNum = key.replace('CoT', '');
+            acc[`cot${cotNum}`] = value;
+          }
+          return acc;
+        }, {} as Record<string, any>)
       };
 
       let result;
-      if (isEditMode && cotId) {
+      if (isEditMode && id && id !== 'new') {
         // 수정 모드
-        result = await dispatch(updateCoT({ 
-          id: cotId, 
-          data: { 
-            ...cotData,
-            id: cotId,
-            createdAt: currentCoT?.createdAt || new Date().toISOString(),
-            updatedAt: new Date().toISOString()
-          } 
-        })).unwrap();
+        result = await dispatch(updateCoT({ id, data: cotData }));
       } else {
         // 생성 모드
-        result = await dispatch(createCoT(cotData)).unwrap();
+        result = await dispatch(createCoT(cotData));
       }
 
-      // 성공시 목록으로 이동
-      navigate('/');
-    } catch (error: any) {
-      console.error('CoT 저장 실패:', error);
-      // TODO: 에러 토스트 메시지 표시
-      alert(error.message || 'CoT 저장에 실패했습니다');
+      if (createCoT.fulfilled.match(result) || updateCoT.fulfilled.match(result)) {
+        // 성공시 목록 페이지로 이동
+        navigate('/');
+      } else {
+        // 실패시 오류 메시지 표시
+        const errorMessage = result.payload || '저장 중 오류가 발생했습니다.';
+        alert(`저장 실패: ${errorMessage}`);
+      }
+    } catch (error) {
+      console.error('Save error:', error);
+      alert('저장 중 오류가 발생했습니다.');
     }
   };
 
@@ -201,31 +213,27 @@ export function useCotForm({ isEditMode, cotId }: UseCotFormProps) {
 
   // 삭제 핸들러
   const handleDeleteConfirm = async () => {
-    try {
-      if (!isEditMode || !cotId) {
-        throw new Error('삭제할 CoT가 없습니다');
+    if (isEditMode && id && id !== 'new') {
+      try {
+        const result = await dispatch(deleteCoT(id));
+        if (deleteCoT.fulfilled.match(result)) {
+          navigate('/');
+        } else {
+          alert('삭제 중 오류가 발생했습니다.');
+        }
+      } catch (error) {
+        console.error('Delete error:', error);
+        alert('삭제 중 오류가 발생했습니다.');
       }
-
-      // Redux action dispatch
-      await dispatch(deleteCoT(cotId)).unwrap();
-
-      // 삭제 성공시 목록으로 이동
-      navigate('/');
-    } catch (error: any) {
-      console.error('CoT 삭제 실패:', error);
-      // TODO: 에러 토스트 메시지 표시
-      alert(error.message || 'CoT 삭제에 실패했습니다');
-    } finally {
-      // 팝업 닫기 (성공/실패 관계없이)
-      setDeleteConfirmOpen(false);
     }
+    setDeleteConfirmOpen(false);
   };
 
   return {
     // 폼 관련
     control,
     errors,
-    isSubmitting,
+    isSubmitting: isSubmitting || loading,
     watchedProductSource,
     onSubmit: handleSubmit(onSubmit),
     

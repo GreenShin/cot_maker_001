@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk, type PayloadAction } from '@reduxjs/toolkit';
 import type { CoTQA } from '../../models/cotqa';
 import type { PaginatedResult, QueryOptions } from '../../services/storage/storage';
-import { InMemoryStorageAdapter } from '../../services/storage/storage';
+import { storageService } from '../../services/storage/storageService';
 import { QueryService, type SearchFilters } from '../../services/query/queryService';
 
 export interface CoTsState {
@@ -38,8 +38,8 @@ const initialState: CoTsState = {
   sortOrder: 'desc'
 };
 
-// 스토리지 어댑터 (실제 구현에서는 의존성 주입)
-const storage = new InMemoryStorageAdapter<CoTQA>('cot');
+// IndexedDB 스토리지 서비스 사용
+const storage = storageService.cots;
 
 // 비동기 액션들
 export const fetchCoTs = createAsyncThunk(

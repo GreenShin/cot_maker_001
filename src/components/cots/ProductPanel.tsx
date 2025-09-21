@@ -35,7 +35,7 @@ export function ProductPanel({
         mb: 2 
       }}>
         <Typography variant="h6">
-          상품 선택
+          상품 선택 (선택사항)
         </Typography>
       </Box>
       
@@ -54,7 +54,7 @@ export function ProductPanel({
 
       {selectedProducts.length === 0 ? (
         <Alert severity="info">
-          상품을 선택해 주세요. 여러 개의 상품을 선택할 수 있습니다.
+          상품 선택은 선택사항입니다. 필요시 여러 개의 상품을 선택할 수 있습니다.
         </Alert>
       ) : (
         <Box sx={{ flex: 1, overflow: 'hidden' }}>

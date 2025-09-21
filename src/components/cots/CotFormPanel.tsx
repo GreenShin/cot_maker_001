@@ -31,9 +31,8 @@ interface CotFormData {
   cot2: string;
   cot3: string;
   answer: string;
-  status: '초안' | '검토중' | '완료' | '보류';
-  author?: string;
-  [key: string]: any; // 동적 CoT 필드들 허용
+  datasetStatus: string;
+  author: string;
 }
 
 interface CotFormPanelProps {
@@ -203,7 +202,7 @@ export function CotFormPanel({
             <Box sx={{ flex: 1 }}>
               {index < 3 ? (
                 <Controller
-                  name={index === 0 ? 'cot1' : index === 1 ? 'cot2' : 'cot3'}
+                  name={`cot${index + 1}` as keyof CotFormData}
                   control={control}
                   render={({ field }) => (
                     <ResizableTextField
@@ -214,8 +213,8 @@ export function CotFormPanel({
                       heightPx={getFieldHeight(`cot${index + 1}`)}
                       fullWidth
                       placeholder={`${fieldName} 내용을 입력해 주세요`}
-                      error={!!(index === 0 ? errors.cot1 : index === 1 ? errors.cot2 : errors.cot3)}
-                      helperText={(index === 0 ? errors.cot1 : index === 1 ? errors.cot2 : errors.cot3)?.message}
+                      error={!!errors[`cot${index + 1}` as keyof typeof errors]}
+                      helperText={errors[`cot${index + 1}` as keyof typeof errors]?.message}
                       onHeightChange={adjustFieldHeight}
                     />
                   )}
@@ -282,7 +281,7 @@ export function CotFormPanel({
         <Grid container spacing={2}>
           <Grid item xs={6}>
             <Controller
-              name="status"
+              name="datasetStatus"
               control={control}
               render={({ field }) => (
                 <FormControl fullWidth>
@@ -291,10 +290,10 @@ export function CotFormPanel({
                     {...field}
                     label="CoT 상태"
                   >
-                    <MenuItem value="draft">초안</MenuItem>
-                    <MenuItem value="review">검토중</MenuItem>
-                    <MenuItem value="approved">승인됨</MenuItem>
-                    <MenuItem value="rejected">반려됨</MenuItem>
+                    <MenuItem value="초안">초안</MenuItem>
+                    <MenuItem value="검토중">검토중</MenuItem>
+                    <MenuItem value="완료">완료</MenuItem>
+                    <MenuItem value="보류">보류</MenuItem>
                   </Select>
                 </FormControl>
               )}

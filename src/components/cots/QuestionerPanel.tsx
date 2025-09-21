@@ -29,7 +29,7 @@ export function QuestionerPanel({
         mb: 2 
       }}>
         <Typography variant="h6">
-          질문자 선택
+          질문자 선택 (선택사항)
         </Typography>
       </Box>
       
@@ -39,7 +39,7 @@ export function QuestionerPanel({
       {!selectedUser ? (
         <Box sx={{ textAlign: 'center', py: 4 }}>
           <Typography variant="body2" color="text.secondary" gutterBottom>
-            질문자를 선택해 주세요
+            질문자 선택은 선택사항입니다. 필요시 선택해 주세요.
           </Typography>
           <Button
             variant="outlined"
