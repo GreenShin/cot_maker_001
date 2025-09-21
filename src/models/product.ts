@@ -63,3 +63,14 @@ export const getProductCategoriesBySource = (productSource: '증권' | '보험')
     ? securitiesCategories.options 
     : insuranceCategories.options;
 };
+
+// UI에서 사용할 옵션 배열들
+export const productSourceOptions = ['증권', '보험'] as const;
+export const securitiesCategoryOptions = [
+  '주식형', '채권형', '재간접', '단기금융', '파생형', '신탁/퇴직연금'
+] as const;
+export const insuranceCategoryOptions = [
+  '연금', '종신', '정기', '질병', '건강', '암', '변액'
+] as const;
+export const taxTypeOptions = ['과세', '비과세'] as const;
+export const riskLevelOptions = ['1', '2', '3'] as const;

@@ -10,7 +10,7 @@ export class IndexedDBStorageAdapter<T extends { id: string; createdAt?: string;
   private db: IDBDatabase | null = null;
   private dbName: string;
   private storeName: string;
-  private version = 1;
+  private version = 2; // 스키마 업데이트로 인한 버전 증가
 
   constructor(private entityName: string) {
     this.dbName = 'cotDatasetDB';
@@ -24,41 +24,73 @@ export class IndexedDBStorageAdapter<T extends { id: string; createdAt?: string;
     if (this.db) return this.db;
 
     return new Promise((resolve, reject) => {
+      console.log(`Opening IndexedDB: ${this.dbName} version ${this.version}`);
       const request = indexedDB.open(this.dbName, this.version);
 
-      request.onerror = () => reject(request.error);
+      request.onerror = () => {
+        console.error('IndexedDB open error:', request.error);
+        reject(request.error);
+      };
+      
       request.onsuccess = () => {
         this.db = request.result;
+        console.log(`IndexedDB opened successfully. Available stores:`, Array.from(this.db.objectStoreNames));
         resolve(this.db);
       };
 
       request.onupgradeneeded = (event) => {
         const db = (event.target as IDBOpenDBRequest).result;
+        console.log(`IndexedDB upgrade needed from version ${(event as any).oldVersion} to ${this.version}`);
+        console.log('Existing stores:', Array.from(db.objectStoreNames));
         
-        // 스토어가 없으면 생성
-        if (!db.objectStoreNames.contains(this.storeName)) {
-          const store = db.createObjectStore(this.storeName, { keyPath: 'id' });
-          
-          // 인덱스 생성 (검색 성능 향상)
-          store.createIndex('createdAt', 'createdAt', { unique: false });
-          store.createIndex('updatedAt', 'updatedAt', { unique: false });
-          
-          // 엔티티별 특화 인덱스
-          if (this.entityName === 'users') {
-            store.createIndex('customerSource', 'customerSource', { unique: false });
-            store.createIndex('ageGroup', 'ageGroup', { unique: false });
-            store.createIndex('gender', 'gender', { unique: false });
-          } else if (this.entityName === 'products') {
-            store.createIndex('productSource', 'productSource', { unique: false });
-            store.createIndex('productCategory', 'productCategory', { unique: false });
-            store.createIndex('riskLevel', 'riskLevel', { unique: false });
-          } else if (this.entityName === 'cots') {
-            store.createIndex('productSource', 'productSource', { unique: false });
-            store.createIndex('questionType', 'questionType', { unique: false });
-            store.createIndex('status', 'status', { unique: false });
-            store.createIndex('questioner', 'questioner', { unique: false });
+        // 모든 필요한 object store를 한 번에 생성
+        const entityConfigs = [
+          {
+            name: 'users',
+            indexes: [
+              ['customerSource', 'customerSource', { unique: false }],
+              ['ageGroup', 'ageGroup', { unique: false }],
+              ['gender', 'gender', { unique: false }]
+            ]
+          },
+          {
+            name: 'products', 
+            indexes: [
+              ['productSource', 'productSource', { unique: false }],
+              ['productCategory', 'productCategory', { unique: false }],
+              ['riskLevel', 'riskLevel', { unique: false }]
+            ]
+          },
+          {
+            name: 'cots',
+            indexes: [
+              ['productSource', 'productSource', { unique: false }],
+              ['questionType', 'questionType', { unique: false }],
+              ['status', 'status', { unique: false }],
+              ['questioner', 'questioner', { unique: false }]
+            ]
           }
-        }
+        ];
+
+        entityConfigs.forEach(config => {
+          if (!db.objectStoreNames.contains(config.name)) {
+            console.log(`Creating object store: ${config.name}`);
+            const store = db.createObjectStore(config.name, { keyPath: 'id' });
+            
+            // 공통 인덱스
+            store.createIndex('createdAt', 'createdAt', { unique: false });
+            store.createIndex('updatedAt', 'updatedAt', { unique: false });
+            
+            // 엔티티별 특화 인덱스
+            config.indexes.forEach(([indexName, keyPath, options]) => {
+              store.createIndex(indexName as string, keyPath as string, options as IDBIndexParameters);
+            });
+          } else {
+            console.log(`Object store already exists: ${config.name}`);
+          }
+        });
+        
+        console.log('IndexedDB upgrade completed. New stores:', Array.from(db.objectStoreNames));
       };
     });
   }
@@ -68,6 +100,21 @@ export class IndexedDBStorageAdapter<T extends { id: string; createdAt?: string;
    */
   private async getStore(mode: IDBTransactionMode = 'readonly'): Promise<IDBObjectStore> {
     const db = await this.initDB();
+    
+    // Object store 존재 확인
+    if (!db.objectStoreNames.contains(this.storeName)) {
+      console.error(`Object store '${this.storeName}' not found. Available stores:`, Array.from(db.objectStoreNames));
+      
+      // 캐시를 지우고 다시 초기화 시도
+      this.db = null;
+      const freshDb = await this.initDB();
+      
+      if (!freshDb.objectStoreNames.contains(this.storeName)) {
+        throw new Error(`Object store '${this.storeName}' does not exist. Please refresh the browser.`);
+      }
+    }
+    
+    console.log(`Creating transaction for store '${this.storeName}' in mode '${mode}'`);
     const transaction = db.transaction([this.storeName], mode);
     return transaction.objectStore(this.storeName);
   }
@@ -289,6 +336,41 @@ export class IndexedDBStorageAdapter<T extends { id: string; createdAt?: string;
         fields.push(cotItem[`cot${index}`]);
         index++;
       }
+    } else if (this.entityName === 'users') {
+      // 질문자의 경우 보유상품 리스트의 상품명을 검색 대상에 포함
+      const userItem = item as any;
+      
+      // 기본 사용자 정보 추가
+      Object.values(userItem).forEach(value => {
+        if (typeof value === 'string') {
+          fields.push(value);
+        }
+      });
+      
+      // 보유상품의 productName 추가
+      if (userItem.ownedProducts && Array.isArray(userItem.ownedProducts)) {
+        userItem.ownedProducts.forEach((product: any) => {
+          if (product.productName) {
+            fields.push(product.productName);
+          }
+        });
+      }
+    } else if (this.entityName === 'products') {
+      // 상품의 경우 상품명, 설명, 운용사 등을 주요 검색 대상으로 설정
+      const productItem = item as any;
+      
+      // 우선순위 높은 필드들 먼저 추가 (검색 성능 최적화)
+      if (productItem.productName) fields.push(productItem.productName);
+      if (productItem.description) fields.push(productItem.description);
+      if (productItem.managementCompany) fields.push(productItem.managementCompany);
+      
+      // 나머지 문자열 필드들
+      Object.entries(productItem).forEach(([key, value]) => {
+        if (typeof value === 'string' && 
+            !['productName', 'description', 'managementCompany', 'id', 'createdAt', 'updatedAt'].includes(key)) {
+          fields.push(value);
+        }
+      });
     } else {
       // 다른 엔티티는 모든 문자열 필드 검색
       Object.values(item).forEach(value => {
@@ -345,6 +427,35 @@ export class IndexedDBStorageAdapter<T extends { id: string; createdAt?: string;
     const estimatedSize = count * 1024; // 항목당 평균 1KB 가정
     
     return { count, estimatedSize };
+  }
+
+  /**
+   * 데이터베이스 스키마 강제 업그레이드 (개발/디버깅용)
+   */
+  static async forceSchemaUpgrade(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      console.log('Forcing IndexedDB schema upgrade by deleting existing database...');
+      const deleteReq = indexedDB.deleteDatabase('cotDatasetDB');
+      
+      deleteReq.onsuccess = () => {
+        console.log('Database deleted successfully. New schema will be created on next access.');
+        resolve();
+      };
+      
+      deleteReq.onerror = () => {
+        console.error('Failed to delete database:', deleteReq.error);
+        reject(deleteReq.error);
+      };
+      
+      deleteReq.onblocked = () => {
+        console.warn('Database deletion blocked. Please close all tabs and try again.');
+        // 약간 기다린 후 다시 시도
+        setTimeout(() => {
+          console.log('Retrying database deletion...');
+          this.forceSchemaUpgrade().then(resolve).catch(reject);
+        }, 1000);
+      };
+    });
   }
 }
 

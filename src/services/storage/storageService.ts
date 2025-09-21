@@ -259,3 +259,54 @@ export class StorageService {
 
 // 싱글톤 인스턴스 export
 export const storageService = StorageService.getInstance();
+
+// 개발/디버깅용 전역 유틸리티 함수
+if (typeof window !== 'undefined') {
+  (window as any).debugStorage = {
+    // IndexedDB 스키마 강제 업그레이드
+    async resetDatabase() {
+      const { IndexedDBStorageAdapter } = await import('./indexedDbAdapter');
+      await IndexedDBStorageAdapter.forceSchemaUpgrade();
+      console.log('Database reset completed. Please refresh the browser.');
+      return 'Database reset completed. Please refresh the browser.';
+    },
+    
+    // 스토리지 상태 확인
+    async checkStatus() {
+      const status = await storageService.getDatabaseStatus();
+      console.table(status);
+      return status;
+    },
+    
+    // 질문자 생성 테스트
+    async testCreateUser() {
+      try {
+        const testUser = {
+          customerSource: '증권' as const,
+          ageGroup: '30대' as const,
+          gender: '남' as const,
+          investmentAmount: '1000만원 이하' as const,
+          investmentTendency: '안정추구형' as const,
+          ownedProducts: [
+            {
+              productName: '테스트상품',
+              purchaseDate: '2024-01'
+            }
+          ]
+        };
+        
+        const created = await storageService.users.create(testUser as any);
+        console.log('Test user created successfully:', created);
+        return created;
+      } catch (error) {
+        console.error('Test user creation failed:', error);
+        throw error;
+      }
+    }
+  };
+  
+  console.log('💡 Debug tools available: window.debugStorage');
+  console.log('   - resetDatabase(): Force database schema upgrade');  
+  console.log('   - checkStatus(): Show storage status');
+  console.log('   - testCreateUser(): Test user creation');
+}

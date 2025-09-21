@@ -58,3 +58,18 @@ export const createEmptyUserAnon = (customerSource: '증권' | '보험'): Partia
 export const validateUserAnon = (data: unknown): UserAnon => {
   return userAnonSchema.parse(data);
 };
+
+// UI에서 사용할 옵션 배열들
+export const customerSourceOptions = ['증권', '보험'] as const;
+export const ageGroupOptions = ['10대', '20대', '30대', '40대', '50대', '60대', '70대', '80대 이상'] as const;
+export const genderOptions = ['남', '여'] as const;
+export const investmentAmountOptions = [
+  '1000만원 이하', '3000만원 이하', '5000만원 이하', '1억원 이하', '1억원 초과'
+] as const;
+export const securitiesInvestmentTendencyOptions = [
+  '미정의', '공격투자형', '적극투자형', '위험중립형', '안정추구형', '전문투자가형'
+] as const;
+export const insuranceCrossRatioOptions = [
+  '미정의', '보장only', '변액only', '기타only', 
+  '보장+변액', '보장+기타', '변액+기타', '보장+변액+기타'
+] as const;
