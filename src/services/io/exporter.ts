@@ -1,7 +1,9 @@
 import Papa from 'papaparse';
 import * as XLSX from 'xlsx';
 import { format } from 'date-fns';
-import type { ImportableEntity } from './importer';
+import type { ImportableEntity } from './importer.js';
+import { SQLiteAdapter } from '../storage/sqliteAdapter.js';
+import { QueryService } from '../query/queryService.js';
 
 export interface ExportResult {
   success: boolean;
@@ -14,6 +16,11 @@ export interface ExportOptions {
   onProgress?: (progress: number) => void;
   filename?: string;
   worksheetName?: string;
+  sqliteAdapter?: SQLiteAdapter; // SQLite 스트리밍 export용
+  batchSize?: number; // 배치 크기
+  filters?: Record<string, any>; // 필터 조건
+  sortBy?: string; // 정렬 필드
+  sortOrder?: 'asc' | 'desc'; // 정렬 순서
 }
 
 // 파일명 생성 유틸리티
@@ -251,4 +258,262 @@ export function downloadFile(result: ExportResult): void {
   link.click();
   document.body.removeChild(link);
   URL.revokeObjectURL(url);
+}
+
+// SQLite 스트리밍 CSV Export
+export async function exportFromSQLiteToCSV<T extends Record<string, any>>(
+  entityType: ImportableEntity,
+  sqliteAdapter: SQLiteAdapter,
+  options: ExportOptions = {}
+): Promise<ExportResult> {
+  const { onProgress, filename, batchSize = 5000, filters = {}, sortBy, sortOrder = 'desc' } = options;
+  
+  try {
+    if (onProgress) onProgress(0);
+
+    // 테이블명 매핑
+    const tableName = getTableNameForEntity(entityType);
+    
+    // 총 데이터 개수 조회
+    const countResult = await sqliteAdapter.selectOne<{ count: number }>(
+      `SELECT COUNT(*) as count FROM ${tableName}${buildWhereClause(filters)}`
+    );
+    const totalRows = countResult?.count || 0;
+
+    if (totalRows === 0) {
+      return {
+        success: true,
+        data: getHeaderOnlyCSV(entityType),
+        filename: generateFilename(entityType, 'csv', filename)
+      };
+    }
+
+    if (onProgress) onProgress(10);
+
+    // 스트리밍 방식으로 데이터 조회 및 CSV 생성
+    const csvRows: string[] = [];
+    let headerAdded = false;
+    let processedRows = 0;
+    
+    const query = buildExportQuery(tableName, filters, sortBy, sortOrder);
+    
+    // 배치 단위로 데이터 조회
+    for (let offset = 0; offset < totalRows; offset += batchSize) {
+      const batchQuery = `${query} LIMIT ${batchSize} OFFSET ${offset}`;
+      const batchData = await sqliteAdapter.selectAll<T>(batchQuery);
+      
+      // 첫 번째 배치에서 헤더 추가
+      if (!headerAdded && batchData.length > 0) {
+        const headers = Object.keys(batchData[0]);
+        csvRows.push(Papa.unparse([headers]));
+        headerAdded = true;
+      }
+      
+      // 데이터 행들 추가
+      if (batchData.length > 0) {
+        const batchCsv = Papa.unparse(batchData, { header: false });
+        csvRows.push(batchCsv);
+      }
+      
+      processedRows += batchData.length;
+      
+      // 진행률 업데이트
+      if (onProgress) {
+        const progress = 10 + Math.round((processedRows / totalRows) * 80);
+        onProgress(progress);
+      }
+    }
+
+    const finalCsv = csvRows.join('\n');
+    
+    if (onProgress) onProgress(100);
+
+    return {
+      success: true,
+      data: finalCsv,
+      filename: generateFilename(entityType, 'csv', filename)
+    };
+
+  } catch (error: any) {
+    return {
+      success: false,
+      data: '',
+      filename: generateFilename(entityType, 'csv', filename),
+      error: `SQLite CSV export 실패: ${error.message}`
+    };
+  }
+}
+
+// SQLite 스트리밍 JSON Export
+export async function exportFromSQLiteToJSON<T extends Record<string, any>>(
+  entityType: ImportableEntity,
+  sqliteAdapter: SQLiteAdapter,
+  options: ExportOptions = {}
+): Promise<ExportResult> {
+  const { onProgress, filename, batchSize = 5000, filters = {}, sortBy, sortOrder = 'desc' } = options;
+  
+  try {
+    if (onProgress) onProgress(0);
+
+    const tableName = getTableNameForEntity(entityType);
+    
+    // 총 개수 조회
+    const countResult = await sqliteAdapter.selectOne<{ count: number }>(
+      `SELECT COUNT(*) as count FROM ${tableName}${buildWhereClause(filters)}`
+    );
+    const totalRows = countResult?.count || 0;
+
+    if (totalRows === 0) {
+      return {
+        success: true,
+        data: JSON.stringify([]),
+        filename: generateFilename(entityType, 'json', filename)
+      };
+    }
+
+    if (onProgress) onProgress(10);
+
+    // 스트리밍 방식으로 JSON 구성
+    const allData: T[] = [];
+    let processedRows = 0;
+    
+    const query = buildExportQuery(tableName, filters, sortBy, sortOrder);
+    
+    for (let offset = 0; offset < totalRows; offset += batchSize) {
+      const batchQuery = `${query} LIMIT ${batchSize} OFFSET ${offset}`;
+      const batchData = await sqliteAdapter.selectAll<T>(batchQuery);
+      
+      allData.push(...batchData);
+      processedRows += batchData.length;
+      
+      if (onProgress) {
+        const progress = 10 + Math.round((processedRows / totalRows) * 80);
+        onProgress(progress);
+      }
+    }
+
+    const jsonData = JSON.stringify(allData, null, 2);
+    
+    if (onProgress) onProgress(100);
+
+    return {
+      success: true,
+      data: jsonData,
+      filename: generateFilename(entityType, 'json', filename)
+    };
+
+  } catch (error: any) {
+    return {
+      success: false,
+      data: '',
+      filename: generateFilename(entityType, 'json', filename),
+      error: `SQLite JSON export 실패: ${error.message}`
+    };
+  }
+}
+
+// SQLite 스트리밍 XLSX Export
+export async function exportFromSQLiteToXLSX<T extends Record<string, any>>(
+  entityType: ImportableEntity,
+  sqliteAdapter: SQLiteAdapter,
+  options: ExportOptions = {}
+): Promise<ExportResult> {
+  const { onProgress, filename, worksheetName, batchSize = 5000, filters = {}, sortBy, sortOrder = 'desc' } = options;
+  
+  try {
+    if (onProgress) onProgress(0);
+
+    const tableName = getTableNameForEntity(entityType);
+    
+    // 데이터 조회
+    const query = buildExportQuery(tableName, filters, sortBy, sortOrder);
+    const allData = await sqliteAdapter.selectAll<T>(query);
+
+    if (onProgress) onProgress(50);
+
+    if (allData.length === 0) {
+      const emptyWorkbook = XLSX.utils.book_new();
+      const emptyWorksheet = XLSX.utils.json_to_sheet([]);
+      XLSX.utils.book_append_sheet(emptyWorkbook, emptyWorksheet, worksheetName || entityType);
+      
+      const buffer = XLSX.write(emptyWorkbook, { bookType: 'xlsx', type: 'array' });
+      
+      return {
+        success: true,
+        data: buffer,
+        filename: generateFilename(entityType, 'xlsx', filename)
+      };
+    }
+
+    // XLSX 생성
+    const workbook = XLSX.utils.book_new();
+    const worksheet = XLSX.utils.json_to_sheet(allData);
+    
+    // 워크시트 추가
+    XLSX.utils.book_append_sheet(workbook, worksheet, worksheetName || entityType);
+    
+    if (onProgress) onProgress(90);
+
+    // ArrayBuffer로 변환
+    const buffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+    
+    if (onProgress) onProgress(100);
+
+    return {
+      success: true,
+      data: buffer,
+      filename: generateFilename(entityType, 'xlsx', filename)
+    };
+
+  } catch (error: any) {
+    return {
+      success: false,
+      data: new ArrayBuffer(0),
+      filename: generateFilename(entityType, 'xlsx', filename),
+      error: `SQLite XLSX export 실패: ${error.message}`
+    };
+  }
+}
+
+// Helper functions
+function getTableNameForEntity(entityType: ImportableEntity): string {
+  switch (entityType) {
+    case 'userAnon': return 'user_anon';
+    case 'product': return 'product';
+    case 'cotqa': return 'cotqa';
+    default: throw new Error(`Unknown entity type: ${entityType}`);
+  }
+}
+
+function buildWhereClause(filters: Record<string, any>): string {
+  const conditions: string[] = [];
+  
+  Object.entries(filters).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== '') {
+      if (Array.isArray(value)) {
+        const placeholders = value.map(() => '?').join(', ');
+        conditions.push(`${key} IN (${placeholders})`);
+      } else {
+        conditions.push(`${key} = '${value}'`);
+      }
+    }
+  });
+
+  return conditions.length > 0 ? ` WHERE ${conditions.join(' AND ')}` : '';
+}
+
+function buildExportQuery(tableName: string, filters: Record<string, any>, sortBy?: string, sortOrder: 'asc' | 'desc' = 'desc'): string {
+  let query = `SELECT * FROM ${tableName}`;
+  
+  // WHERE 절 추가
+  query += buildWhereClause(filters);
+  
+  // ORDER BY 절 추가
+  if (sortBy) {
+    query += ` ORDER BY ${sortBy} ${sortOrder.toUpperCase()}`;
+  } else {
+    query += ` ORDER BY updated_at DESC`; // 기본 정렬
+  }
+  
+  return query;
 }

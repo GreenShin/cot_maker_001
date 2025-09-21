@@ -36,7 +36,7 @@
 - Tests: `tests/`
 
 ## Phase 3.1: Setup
-- [ ] T001.1 Setup SQLite-WASM database schema and migration scripts in `src/services/storage/migrations/`
+- [x] T001.1 Setup SQLite-WASM database schema and migration scripts in `src/services/storage/migrations/`
 - [x] T001 Initialize Vite React TS project and base structure in `src/`, `tests/`
 - [x] T002 Install dependencies in `package.json`: React Router, Redux Toolkit, React-Redux, React Hook Form, Zod, @mui/material, @mui/icons-material, @mui/x-data-grid, date-fns, papaparse, xlsx, @sqlite.org/sqlite-wasm, clsx, @types deps
 - [x] T003 [P] Configure ESLint + Prettier + TypeScript strict settings in `/.eslintrc`, `/.prettierrc`, `tsconfig.json`
@@ -46,16 +46,16 @@
 - [x] T007 Create MUI theme and css variables in `src/styles/theme.ts`, `src/styles/cssVars.ts`
 
 ## Phase 3.2: Tests First (TDD)
-- [ ] T008 [P] Zod schemas contract tests for entities in `tests/contract/schemas/userAnon.schema.test.ts`
-- [ ] T009 [P] Zod schemas contract tests for products in `tests/contract/schemas/product.schema.test.ts`
-- [ ] T010 [P] Zod schemas contract tests for CoTQA in `tests/contract/schemas/cotqa.schema.test.ts`
-- [ ] T011 [P] Import pipeline contract test (CSV/JSON) with Papa Parse streaming in `tests/contract/import/import_csv_json.test.ts`
-- [ ] T012 [P] Import pipeline contract test (XLSX) with SheetJS streaming in `tests/contract/import/import_xlsx.test.ts`
-- [ ] T013 [P] Export pipeline contract test (CSV/JSON/XLSX) in `tests/contract/export/export_all.test.ts`
-- [ ] T014 Integration test: Data Grid filtering/sorting/pagination responsiveness in `tests/integration/datagrid/search_sort_paginate.test.tsx`
-- [ ] T015 Integration test: CoTs detail form validation (RHF+Zod) including dynamic CoTn in `tests/integration/cots/form_validation.test.tsx`
-- [ ] T016 Integration test: Settings persistence to localStorage (theme, font size, toggles) in `tests/integration/settings/persistence.test.tsx`
-- [ ] T017 Integration test: Delete confirmation modal behavior in `tests/integration/common/delete_confirm.test.tsx`
+- [x] T008 [P] Zod schemas contract tests for entities in `tests/contract/schemas/userAnon.schema.test.ts`
+- [x] T009 [P] Zod schemas contract tests for products in `tests/contract/schemas/product.schema.test.ts`
+- [x] T010 [P] Zod schemas contract tests for CoTQA in `tests/contract/schemas/cotqa.schema.test.ts`
+- [x] T011 [P] Import pipeline contract test (CSV/JSON) with Papa Parse streaming in `tests/contract/import/import_csv_json.test.ts`
+- [x] T012 [P] Import pipeline contract test (XLSX) with SheetJS streaming in `tests/contract/import/import_xlsx.test.ts`
+- [x] T013 [P] Export pipeline contract test (CSV/JSON/XLSX) in `tests/contract/export/export_all.test.ts`
+- [x] T014 Integration test: Data Grid filtering/sorting/pagination responsiveness in `tests/integration/datagrid/search_sort_paginate.test.tsx`
+- [x] T015 Integration test: CoTs detail form validation (RHF+Zod) including dynamic CoTn in `tests/integration/cots/form_validation.test.tsx`
+- [x] T016 Integration test: Settings persistence to localStorage (theme, font size, toggles) in `tests/integration/settings/persistence.test.tsx`
+- [x] T017 Integration test: Delete confirmation modal behavior in `tests/integration/common/delete_confirm.test.tsx`
 
 ## Phase 3.3: Core Implementation
 - [x] T018 [P] Define domain types and Zod schemas in `src/models/{userAnon,product,cotqa}.ts`
@@ -80,7 +80,7 @@
 - [x] T035 Persist settings to OPFS + SQLite and hydrate on boot in `src/store/persistence/settingsPersistence.ts`
 - [x] T036 Connect selection popups (users/products) with filters and accordion in `src/components/selectors/*`
 - [x] T037 Accessibility pass: keyboard nav, focus ring, color contrast in `src/styles/a11y.css` and components
-- [ ] T037.1 OPFS compatibility and fallback handling for unsupported browsers in `src/services/storage/opfsCompat.ts`
+- [x] T037.1 OPFS compatibility and fallback handling for unsupported browsers in `src/services/storage/opfsCompat.ts`
 
 ## Phase 3.5: Polish
 - [x] T038 [P] Performance tuning: Data Grid rowBuffer/pageSize/overscan configs in `src/pages/*/*ListPage.tsx`

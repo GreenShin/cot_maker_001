@@ -24,15 +24,16 @@ import { ResizableTextField } from '../common/ResizableTextField';
 import { useTextareaHeights } from '../../hooks/useTextareaHeights';
 
 interface CotFormData {
-  productSource: 'securities' | 'insurance';
+  productSource: '증권' | '보험';
   questionType: string;
   question: string;
   cot1: string;
   cot2: string;
   cot3: string;
   answer: string;
-  datasetStatus: string;
-  author: string;
+  status: '초안' | '검토중' | '완료' | '보류';
+  author?: string;
+  [key: string]: any; // 동적 CoT 필드들 허용
 }
 
 interface CotFormPanelProps {
@@ -53,7 +54,7 @@ interface CotFormPanelProps {
 
 // 상품분류에 따른 질문유형 옵션
 const getQuestionTypes = (productSource: string): string[] => {
-  if (productSource === 'securities') {
+  if (productSource === '증권') {
     return ['고객 특성 강조형', '투자성향 및 조건 기반형', '상품비교 추천형'];
   } else {
     return ['연령별 및 생애주기 저축성 상품 추천형', '투자성 상품 추천형', '건강 및 질병 보장 대비형'];
@@ -141,8 +142,8 @@ export function CotFormPanel({
                     {...field}
                     label="상품분류"
                   >
-                    <MenuItem value="securities">증권</MenuItem>
-                    <MenuItem value="insurance">보험</MenuItem>
+                    <MenuItem value="증권">증권</MenuItem>
+                    <MenuItem value="보험">보험</MenuItem>
                   </Select>
                 </FormControl>
               )}
@@ -202,7 +203,7 @@ export function CotFormPanel({
             <Box sx={{ flex: 1 }}>
               {index < 3 ? (
                 <Controller
-                  name={`cot${index + 1}` as keyof CotFormData}
+                  name={index === 0 ? 'cot1' : index === 1 ? 'cot2' : 'cot3'}
                   control={control}
                   render={({ field }) => (
                     <ResizableTextField
@@ -213,8 +214,8 @@ export function CotFormPanel({
                       heightPx={getFieldHeight(`cot${index + 1}`)}
                       fullWidth
                       placeholder={`${fieldName} 내용을 입력해 주세요`}
-                      error={!!errors[`cot${index + 1}` as keyof typeof errors]}
-                      helperText={errors[`cot${index + 1}` as keyof typeof errors]?.message}
+                      error={!!(index === 0 ? errors.cot1 : index === 1 ? errors.cot2 : errors.cot3)}
+                      helperText={(index === 0 ? errors.cot1 : index === 1 ? errors.cot2 : errors.cot3)?.message}
                       onHeightChange={adjustFieldHeight}
                     />
                   )}
@@ -281,7 +282,7 @@ export function CotFormPanel({
         <Grid container spacing={2}>
           <Grid item xs={6}>
             <Controller
-              name="datasetStatus"
+              name="status"
               control={control}
               render={({ field }) => (
                 <FormControl fullWidth>
