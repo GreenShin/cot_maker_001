@@ -2,16 +2,18 @@ import React, { useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { DataGrid, type GridColDef } from '@mui/x-data-grid';
-import { Button, Box } from '@mui/material';
-import { Upload as UploadIcon, Download as DownloadIcon, Add as AddIcon } from '@mui/icons-material';
+import { Button, Box, ButtonGroup, ClickAwayListener, Grow, Paper, Popper, MenuList, MenuItem } from '@mui/material';
+import { Upload as UploadIcon, Download as DownloadIcon, Add as AddIcon, ArrowDropDown } from '@mui/icons-material';
 import { ListLayout } from '../../components/layout/ListLayout';
 import { ProductSearchFiltersComponent, type ProductSearchFiltersProps } from '../../components/products/ProductSearchFilters';
+import { BulkImportDialog } from '../../components/common/BulkImportDialog';
+import { handleExport } from '../shared/importExportActions';
 import type { RootState, AppDispatch } from '../../store';
 import { 
   fetchProductsWithFilters, 
-  setFilters, 
-  clearFilters, 
-  type ProductSearchFilters 
+  setFilters,
+  clearFilters,
+  type ProductSearchFilters
 } from '../../store/slices/productsSlice';
 
 const columns: GridColDef[] = [
@@ -27,6 +29,9 @@ export function ProductsListPage() {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const { items, loading, pagination, filters } = useSelector((state: RootState) => state.products);
+  const [importDialogOpen, setImportDialogOpen] = React.useState(false);
+  const [exportMenuOpen, setExportMenuOpen] = React.useState(false);
+  const exportAnchorRef = React.useRef<HTMLDivElement>(null);
 
   // 초기 데이터 로드 (컴포넌트 마운트 시 한 번만)
   useEffect(() => {
@@ -61,6 +66,36 @@ export function ProductsListPage() {
     dispatch(clearFilters());
   }, [dispatch]);
 
+  const handleImport = () => {
+    setImportDialogOpen(true);
+  };
+
+  const handleExportFormat = async (format: 'csv' | 'json' | 'xlsx') => {
+    try {
+      await handleExport(items, { format, entity: 'products' }, 
+        () => {
+          const formatNames = { csv: 'CSV', json: 'JSON', xlsx: 'Excel' };
+          alert(`${formatNames[format]} 파일이 다운로드되었습니다!`);
+        },
+        (error) => alert(`Export 실패: ${error}`)
+      );
+    } catch (error) {
+      alert(`Export 중 오류: ${error}`);
+    }
+    setExportMenuOpen(false);
+  };
+
+  const handleExportMenuToggle = () => {
+    setExportMenuOpen((prevOpen) => !prevOpen);
+  };
+
+  const handleExportMenuClose = (event: Event | React.SyntheticEvent) => {
+    if (exportAnchorRef.current && exportAnchorRef.current.contains(event.target as HTMLElement)) {
+      return;
+    }
+    setExportMenuOpen(false);
+  };
+
   const toolbar = (
     <>
       <Button 
@@ -71,18 +106,26 @@ export function ProductsListPage() {
       >
         새로 만들기
       </Button>
-      <Button variant="outlined" startIcon={<UploadIcon />}>
+      <Button variant="outlined" startIcon={<UploadIcon />} onClick={handleImport}>
         Import
       </Button>
-      <Button variant="outlined" startIcon={<DownloadIcon />}>
-        Export
-      </Button>
+      <ButtonGroup variant="outlined" ref={exportAnchorRef}>
+        <Button startIcon={<DownloadIcon />} onClick={() => handleExportFormat('csv')}>
+          Export
+        </Button>
+        <Button
+          size="small"
+          onClick={handleExportMenuToggle}
+        >
+          <ArrowDropDown />
+        </Button>
+      </ButtonGroup>
     </>
   );
 
   return (
     <ListLayout title="상품 리스트" toolbar={toolbar}>
-      <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+      <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', p: 2 }}>
         {/* 검색 필터 */}
         <ProductSearchFiltersComponent
           filters={filters}
@@ -92,8 +135,15 @@ export function ProductsListPage() {
         />
         
         {/* 데이터 그리드 */}
-        <Box sx={{ flex: 1 }}>
+        <Box sx={{ flex: 1, minHeight: 0 }}>
           <DataGrid
+            sx={{ 
+              border: 0,
+              height: '100%',
+              '& .MuiDataGrid-row:hover': {
+                cursor: 'pointer',
+              }
+            }}
             rows={items}
             columns={columns}
             loading={loading}
@@ -108,20 +158,62 @@ export function ProductsListPage() {
             disableRowSelectionOnClick
             onRowClick={(params) => navigate(`/products/${params.id}`)}
             // 성능 최적화 옵션
-            rowBuffer={10}
-            columnBuffer={4}
+            rowBufferPx={520}
+            columnBufferPx={200}
             rowHeight={52}
             disableVirtualization={false}
             keepNonExistentRowsSelected={false}
             density="standard"
-            sx={{ 
-              border: 0,
-              '& .MuiDataGrid-row:hover': {
-                cursor: 'pointer',
-              }
-            }}
           />
         </Box>
+        
+        <BulkImportDialog
+          open={importDialogOpen}
+          onClose={() => setImportDialogOpen(false)}
+          entityType="products"
+          onSuccess={(count) => {
+            alert(`${count}개 상품이 성공적으로 import되었습니다.`);
+            setImportDialogOpen(false);
+            dispatch(fetchProductsWithFilters({ filters, page: 1, pageSize: pagination.pageSize }));
+          }}
+          onError={(error) => {
+            alert(`Import 실패: ${error}`);
+          }}
+        />
+        
+        <Popper
+          sx={{ zIndex: 1 }}
+          open={exportMenuOpen}
+          anchorEl={exportAnchorRef.current}
+          role={undefined}
+          transition
+          disablePortal
+        >
+          {({ TransitionProps, placement }) => (
+            <Grow
+              {...TransitionProps}
+              style={{
+                transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom',
+              }}
+            >
+              <Paper>
+                <ClickAwayListener onClickAway={handleExportMenuClose}>
+                  <MenuList autoFocusItem>
+                    <MenuItem onClick={() => handleExportFormat('csv')}>
+                      CSV 파일로 내보내기
+                    </MenuItem>
+                    <MenuItem onClick={() => handleExportFormat('json')}>
+                      JSON 파일로 내보내기
+                    </MenuItem>
+                    <MenuItem onClick={() => handleExportFormat('xlsx')}>
+                      Excel 파일로 내보내기
+                    </MenuItem>
+                  </MenuList>
+                </ClickAwayListener>
+              </Paper>
+            </Grow>
+          )}
+        </Popper>
       </Box>
     </ListLayout>
   );

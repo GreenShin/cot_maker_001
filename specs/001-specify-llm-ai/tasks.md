@@ -87,6 +87,10 @@
 - [x] T041 Update `specs/001-specify-llm-ai/quickstart.md` with run/seed/import steps
 - [x] T042 Update docs for schemas and import/export formats in `specs/001-specify-llm-ai/contracts/`
 
+## Phase 3.6: Feature Enhancements
+- [x] T043 Add owned products count column to Users list page in `src/pages/users/UsersListPage.tsx`
+- [x] T044 Fix DataGrid scroll and layout issues in all list pages in `src/pages/*/`, `src/components/layout/ListLayout.tsx`
+
 ## Dependencies
 - Tests (T008–T017) before implementation (T018–T031)
 - T018 blocks T019–T021, T022

@@ -105,7 +105,7 @@ export class StorageService {
     
     if ('bulkImport' in adapter) {
       // IndexedDB 어댑터의 배치 처리 사용
-      await (adapter as any).bulkImport(data, 1000);
+      await (adapter as any).bulkImport(data, 1000, onProgress);
     } else {
       // InMemory 어댑터의 경우 개별 처리
       for (let i = 0; i < data.length; i++) {

@@ -15,9 +15,9 @@ import {
   StepLabel,
   StepContent,
 } from '@mui/material';
-import { CloudUpload, CheckCircle, Error, Info } from '@mui/icons-material';
+import { CloudUpload, CheckCircle, Error as ErrorIcon, Info } from '@mui/icons-material';
 import { storageService } from '../../services/storage/storageService';
-import { importCsvData, importJsonData, importXlsxData } from '../../services/io/importer';
+import { importCsvData, importJsonData, importXlsxData, type ImportableEntity } from '../../services/io/importer';
 
 interface BulkImportDialogProps {
   open: boolean;
@@ -26,6 +26,16 @@ interface BulkImportDialogProps {
   onSuccess?: (count: number) => void;
   onError?: (error: string) => void;
 }
+
+// Entity type 매핑 함수
+const getImportableEntityType = (entityType: 'users' | 'products' | 'cots'): ImportableEntity => {
+  switch (entityType) {
+    case 'users': return 'userAnon';
+    case 'products': return 'product';
+    case 'cots': return 'cotqa';
+    default: throw new Error(`지원하지 않는 엔티티: ${entityType}`);
+  }
+};
 
 interface ImportProgress {
   stage: 'parsing' | 'validating' | 'importing' | 'completed' | 'error';
@@ -92,22 +102,53 @@ export function BulkImportDialog({
 
     try {
       // 1단계: 파일 파싱
+      const importableEntityType = getImportableEntityType(entityType);
       let parseResult;
+      const progressCallback = (progress: number) => {
+        setImportProgress({
+          stage: 'parsing',
+          progress: progress * 0.5, // 파싱은 전체의 50%
+          message: '파일을 파싱하는 중...'
+        });
+      };
+
       switch (fileType) {
         case 'csv':
-          parseResult = await importCsvData(file, entityType as any);
+          const csvText = await file.text();
+          parseResult = await importCsvData(csvText, importableEntityType, { 
+            onProgress: progressCallback 
+          });
           break;
         case 'json':
-          parseResult = await importJsonData(file, entityType as any);
+          const jsonText = await file.text();
+          try {
+            const jsonData = JSON.parse(jsonText);
+            if (!Array.isArray(jsonData)) {
+              throw new Error('JSON 파일은 배열 형태여야 합니다');
+            }
+            parseResult = await importJsonData(jsonData, importableEntityType, { 
+              onProgress: progressCallback 
+            });
+          } catch (jsonError: any) {
+            throw new Error(`JSON 파싱 오류: ${jsonError.message}`);
+          }
           break;
         case 'xlsx':
           const arrayBuffer = await file.arrayBuffer();
-          parseResult = await importXlsxData(arrayBuffer, entityType as any);
+          parseResult = await importXlsxData(arrayBuffer, importableEntityType, { 
+            onProgress: progressCallback 
+          });
           break;
       }
 
       if (!parseResult.success) {
-        throw new Error(`파싱 실패: ${parseResult.errors.join(', ')}`);
+        const errorMessages = parseResult.errors
+          .slice(0, 5) // 처음 5개 에러만 표시
+          .map(error => `행 ${error.row}: ${error.message}`)
+          .join(', ');
+        const totalErrors = parseResult.errors.length;
+        const moreErrors = totalErrors > 5 ? ` (총 ${totalErrors}개 에러)` : '';
+        throw new Error(`파싱 실패: ${errorMessages}${moreErrors}`);
       }
 
       setImportProgress({
@@ -286,7 +327,7 @@ export function BulkImportDialog({
                   <StepLabel
                     error={importProgress.stage === 'error' && index === getActiveStep()}
                     StepIconComponent={({ active, completed, error }) => {
-                      if (error) return <Error color="error" />;
+                      if (error) return <ErrorIcon color="error" />;
                       if (completed) return <CheckCircle color="success" />;
                       if (active) return <Info color="primary" />;
                       return <div style={{ width: 24, height: 24, borderRadius: '50%', backgroundColor: '#e0e0e0' }} />;

@@ -6,6 +6,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import { RootState, AppDispatch } from '../store';
 import { createCoT, updateCoT, deleteCoT, fetchCoTById } from '../store/slices/cotsSlice';
+import { fetchUserById } from '../store/slices/usersSlice';
+import { fetchProductById } from '../store/slices/productsSlice';
 import { UserAnon } from '../models/userAnon';
 import { Product } from '../models/product';
 import type { CoTQA } from '../models/cotqa';
@@ -108,9 +110,42 @@ export function useCotForm({ isEditMode }: UseCotFormProps) {
         author: currentCoT.author || '',
       });
 
-      // TODO: 기존 선택된 질문자/상품 정보 설정
-      // setSelectedUser() - questioner ID로부터 사용자 정보 가져오기
-      // setSelectedProducts() - products ID 배열로부터 상품 정보 가져오기
+      // 기존 선택된 질문자/상품 정보 설정
+      if (currentCoT.questioner) {
+        // 질문자 ID로부터 사용자 정보 가져오기
+        dispatch(fetchUserById(currentCoT.questioner))
+          .unwrap()
+          .then(user => {
+            setSelectedUser(user);
+          })
+          .catch(error => {
+            console.warn('Failed to load questioner:', error);
+          });
+      } else {
+        setSelectedUser(null);
+      }
+
+      if (currentCoT.products && currentCoT.products.length > 0) {
+        // 상품 ID 배열로부터 상품 정보 가져오기
+        const productPromises = currentCoT.products.map(productId =>
+          dispatch(fetchProductById(productId)).unwrap()
+        );
+        
+        Promise.allSettled(productPromises)
+          .then(results => {
+            const loadedProducts = results
+              .filter((result): result is PromiseFulfilledResult<Product> => 
+                result.status === 'fulfilled'
+              )
+              .map(result => result.value);
+            setSelectedProducts(loadedProducts);
+          })
+          .catch(error => {
+            console.warn('Failed to load products:', error);
+          });
+      } else {
+        setSelectedProducts([]);
+      }
     }
   }, [currentCoT, isEditMode, reset]);
 

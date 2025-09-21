@@ -33,6 +33,123 @@ const getSchemaForEntity = (entityType: ImportableEntity) => {
   }
 };
 
+// 엔티티별 데이터 전처리 함수
+const preprocessRowData = (row: any, entityType: ImportableEntity): any => {
+  const processedRow = { ...row };
+  
+  switch (entityType) {
+    case 'userAnon':
+      // ownedProducts 필드 처리 - undefined, null, 빈 문자열 모두 빈 배열로 처리
+      if (!processedRow.ownedProducts || processedRow.ownedProducts === '') {
+        processedRow.ownedProducts = [];
+      } else if (typeof processedRow.ownedProducts === 'string') {
+        try {
+          // JSON 문자열인 경우
+          if (processedRow.ownedProducts.startsWith('[') || processedRow.ownedProducts.startsWith('{')) {
+            processedRow.ownedProducts = JSON.parse(processedRow.ownedProducts);
+          } 
+          // 구분자로 구분된 문자열인 경우 (productName:purchaseDate|productName:purchaseDate)
+          else if (processedRow.ownedProducts.includes('|')) {
+            const products = processedRow.ownedProducts.split('|').map((item: string) => {
+              const [productName, purchaseDate] = item.split(':');
+              return { 
+                productName: productName?.trim() || '', 
+                purchaseDate: purchaseDate?.trim() || '' 
+              };
+            }).filter((item: any) => item.productName && item.purchaseDate);
+            processedRow.ownedProducts = products;
+          }
+          // 단일 상품인 경우
+          else if (processedRow.ownedProducts.includes(':')) {
+            const [productName, purchaseDate] = processedRow.ownedProducts.split(':');
+            processedRow.ownedProducts = [{ 
+              productName: productName?.trim() || '', 
+              purchaseDate: purchaseDate?.trim() || '' 
+            }];
+          }
+          // 그 외의 경우 빈 배열로 처리
+          else {
+            processedRow.ownedProducts = [];
+          }
+        } catch (error) {
+          // 파싱 실패 시 빈 배열로 처리
+          processedRow.ownedProducts = [];
+        }
+      } else if (!Array.isArray(processedRow.ownedProducts)) {
+        // 배열이 아닌 다른 타입인 경우 빈 배열로 처리
+        processedRow.ownedProducts = [];
+      }
+      break;
+      
+    case 'cotqa':
+      // products 필드 처리 - undefined, null, 빈 문자열 모두 빈 배열로 처리
+      if (!processedRow.products || processedRow.products === '') {
+        processedRow.products = [];
+      } else if (typeof processedRow.products === 'string') {
+        try {
+          if (processedRow.products.startsWith('[')) {
+            processedRow.products = JSON.parse(processedRow.products);
+          } else if (processedRow.products.includes(',')) {
+            processedRow.products = processedRow.products.split(',').map((item: string) => item.trim());
+          } else if (processedRow.products.trim()) {
+            processedRow.products = [processedRow.products.trim()];
+          } else {
+            processedRow.products = [];
+          }
+        } catch (error) {
+          processedRow.products = [];
+        }
+      } else if (!Array.isArray(processedRow.products)) {
+        // 배열이 아닌 다른 타입인 경우 빈 배열로 처리
+        processedRow.products = [];
+      }
+      break;
+      
+    case 'product':
+      // 특별한 전처리가 필요한 경우 여기에 추가
+      break;
+  }
+  
+  return processedRow;
+};
+
+// Zod 에러를 사용자 친화적 메시지로 변환
+const formatZodError = (error: any): string => {
+  if (error.errors && Array.isArray(error.errors)) {
+    return error.errors.map((err: any) => {
+      const path = err.path.length > 0 ? `'${err.path.join('.')}'` : '데이터';
+      
+      switch (err.code) {
+        case 'invalid_type':
+          if (err.path[0] === 'ownedProducts') {
+            return `보유상품 데이터 형식이 올바르지 않습니다 (배열이어야 함)`;
+          }
+          return `${path} 필드 타입이 올바르지 않습니다`;
+        case 'invalid_enum_value':
+          return `${path} 값이 유효하지 않습니다. 허용값: ${err.options?.join(', ')}`;
+        case 'too_small':
+          if (err.type === 'array') {
+            return `${path} 배열이 최소 ${err.minimum}개 항목이 필요합니다`;
+          }
+          return `${path} 값이 너무 짧습니다 (최소 ${err.minimum}자)`;
+        case 'invalid_string':
+          if (err.validation === 'regex') {
+            if (err.path[0] === 'purchaseDate') {
+              return `구매년월은 YYYY-MM 형식이어야 합니다 (예: 2024-01)`;
+            }
+          }
+          return `${path} 형식이 올바르지 않습니다`;
+        case 'required_error':
+          return `필수 필드 ${path}가 누락되었습니다`;
+        default:
+          return err.message || '알 수 없는 유효성 검사 오류';
+      }
+    }).join(', ');
+  }
+  
+  return error.message || '데이터 유효성 검사 실패';
+};
+
 // CSV 임포트 (Papa Parse + Streaming)
 export async function importCsvData<T>(
   csvContent: string,
@@ -62,13 +179,28 @@ export async function importCsvData<T>(
           const rowNumber = processedRows + index + 1;
           
           try {
-            const validatedData = schema.parse(row) as T;
+            // 데이터 전처리
+            const preprocessedRow = preprocessRowData(row, entityType);
+            
+            // 디버깅을 위한 로깅
+            if (entityType === 'userAnon' && rowNumber <= 3) {
+              console.log(`Row ${rowNumber} - Original:`, row);
+              console.log(`Row ${rowNumber} - Preprocessed:`, preprocessedRow);
+            }
+            
+            const validatedData = schema.parse(preprocessedRow) as T;
             result.data.push(validatedData);
             result.summary.successRows++;
           } catch (error: any) {
+            // 디버깅을 위한 상세한 에러 로깅
+            if (entityType === 'userAnon' && rowNumber <= 3) {
+              console.log(`Row ${rowNumber} - Validation Error:`, error);
+              console.log(`Row ${rowNumber} - Error details:`, JSON.stringify(error, null, 2));
+            }
+            
             result.errors.push({
               row: rowNumber,
-              message: error.message,
+              message: formatZodError(error),
               data: row
             });
             result.summary.errorRows++;
@@ -125,13 +257,15 @@ export async function importJsonData<T>(
 
   for (let i = 0; i < jsonData.length; i++) {
     try {
-      const validatedData = schema.parse(jsonData[i]) as T;
+      // 데이터 전처리
+      const preprocessedRow = preprocessRowData(jsonData[i], entityType);
+      const validatedData = schema.parse(preprocessedRow) as T;
       result.data.push(validatedData);
       result.summary.successRows++;
     } catch (error: any) {
       result.errors.push({
         row: i + 1,
-        message: error.message,
+        message: formatZodError(error),
         data: jsonData[i]
       });
       result.summary.errorRows++;

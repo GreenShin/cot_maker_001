@@ -1,0 +1,60 @@
+[
+  {
+    "id": "user-001",
+    "customerSource": "증권",
+    "ageGroup": "30대",
+    "gender": "남",
+    "investmentAmount": "1000만원 이하",
+    "investmentTendency": "공격투자형",
+    "ownedProducts": "ABC펀드:2024-01|XYZ주식:2024-02",
+    "createdAt": "2024-01-15T00:00:00Z",
+    "updatedAt": "2024-01-15T00:00:00Z"
+  },
+  {
+    "id": "user-002",
+    "customerSource": "보험",
+    "ageGroup": "40대",
+    "gender": "여",
+    "investmentAmount": "3000만원 이하",
+    "insuranceCrossRatio": "보장+변액",
+    "ownedProducts": [
+      {
+        "productName": "보장성보험",
+        "purchaseDate": "2023-12"
+      }
+    ],
+    "createdAt": "2024-01-16T00:00:00Z",
+    "updatedAt": "2024-01-16T00:00:00Z"
+  },
+  {
+    "id": "user-003",
+    "customerSource": "증권",
+    "ageGroup": "50대",
+    "gender": "남",
+    "investmentAmount": "5000만원 이하",
+    "investmentTendency": "적극투자형",
+    "ownedProducts": [
+      {
+        "productName": "글로벌펀드",
+        "purchaseDate": "2024-03"
+      },
+      {
+        "productName": "국내주식형펀드",
+        "purchaseDate": "2024-01"
+      }
+    ],
+    "createdAt": "2024-01-17T00:00:00Z",
+    "updatedAt": "2024-01-17T00:00:00Z"
+  },
+  {
+    "id": "user-004",
+    "customerSource": "보험",
+    "ageGroup": "20대",
+    "gender": "여",
+    "investmentAmount": "1억원 이하",
+    "insuranceCrossRatio": "변액only",
+    "ownedProducts": [],
+    "createdAt": "2024-01-18T00:00:00Z",
+    "updatedAt": "2024-01-18T00:00:00Z"
+  }
+]

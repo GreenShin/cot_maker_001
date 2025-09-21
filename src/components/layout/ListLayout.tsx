@@ -20,7 +20,7 @@ export function ListLayout({ title, toolbar, children }: ListLayoutProps) {
         )}
       </Box>
       
-      <Paper sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+      <Paper sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
         {children}
       </Paper>
     </Box>

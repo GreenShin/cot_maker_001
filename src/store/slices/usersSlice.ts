@@ -151,6 +151,40 @@ export const deleteUser = createAsyncThunk(
   }
 );
 
+export const importUsers = createAsyncThunk(
+  'users/importUsers',
+  async (usersData: UserAnon[], { rejectWithValue }) => {
+    try {
+      console.log('Importing Users data:', usersData.length);
+      const results = [];
+      
+      // 배치 단위로 import 처리
+      const batchSize = 100;
+      for (let i = 0; i < usersData.length; i += batchSize) {
+        const batch = usersData.slice(i, i + batchSize);
+        const batchResults = await Promise.allSettled(
+          batch.map(user => storage.create(user))
+        );
+        
+        const successfulResults = batchResults
+          .filter((result): result is PromiseFulfilledResult<UserAnon> => 
+            result.status === 'fulfilled'
+          )
+          .map(result => result.value);
+          
+        results.push(...successfulResults);
+      }
+      
+      console.log('Users imported successfully:', results.length);
+      return results;
+    } catch (error) {
+      console.error('Error importing users:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      return rejectWithValue(errorMessage);
+    }
+  }
+);
+
 export const usersSlice = createSlice({
   name: 'users',
   initialState,
@@ -282,6 +316,21 @@ export const usersSlice = createSlice({
       .addCase(deleteUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || '질문자 삭제 실패';
+      })
+      
+      // importUsers
+      .addCase(importUsers.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(importUsers.fulfilled, (state, action) => {
+        state.loading = false;
+        // Import된 항목들을 기존 목록에 추가
+        state.items.unshift(...action.payload);
+      })
+      .addCase(importUsers.rejected, (state, action) => {
+        state.loading = false;
+        state.error = (action.payload as string) || action.error.message || '질문자 Import 실패';
       });
   }
 });

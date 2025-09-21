@@ -1,12 +1,14 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { DataGrid, type GridColDef } from '@mui/x-data-grid';
-import { Button, TextField, Select, MenuItem, FormControl, InputLabel, Box } from '@mui/material';
-import { Add as AddIcon, Upload as UploadIcon, Download as DownloadIcon } from '@mui/icons-material';
+import { Button, TextField, Select, MenuItem, FormControl, InputLabel, Box, ButtonGroup, ClickAwayListener, Grow, Paper, Popper, MenuList } from '@mui/material';
+import { Add as AddIcon, Upload as UploadIcon, Download as DownloadIcon, ArrowDropDown } from '@mui/icons-material';
 import { ListLayout } from '../../components/layout/ListLayout';
+import { BulkImportDialog } from '../../components/common/BulkImportDialog';
 import type { RootState, AppDispatch } from '../../store';
 import { fetchCoTs, searchCoTs, setFilters } from '../../store/slices/cotsSlice';
+import { handleExport } from '../shared/importExportActions';
 import type { SearchFilters } from '../../services/query/queryService';
 
 const columns: GridColDef[] = [
@@ -27,6 +29,9 @@ export function CoTsListPage() {
   const [searchText, setSearchText] = useState(filters.text || '');
   const [productSource, setProductSource] = useState(filters.productSource || '');
   const [questionType, setQuestionType] = useState(filters.questionType || '');
+  const [importDialogOpen, setImportDialogOpen] = useState(false);
+  const [exportMenuOpen, setExportMenuOpen] = useState(false);
+  const exportAnchorRef = React.useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     dispatch(fetchCoTs({}));
@@ -43,6 +48,36 @@ export function CoTsListPage() {
     dispatch(searchCoTs({ filters: newFilters }));
   };
 
+  const handleImport = () => {
+    setImportDialogOpen(true);
+  };
+
+  const handleExportFormat = async (format: 'csv' | 'json' | 'xlsx') => {
+    try {
+      await handleExport(items, { format, entity: 'cots' }, 
+        () => {
+          const formatNames = { csv: 'CSV', json: 'JSON', xlsx: 'Excel' };
+          alert(`${formatNames[format]} 파일이 다운로드되었습니다!`);
+        },
+        (error) => alert(`Export 실패: ${error}`)
+      );
+    } catch (error) {
+      alert(`Export 중 오류: ${error}`);
+    }
+    setExportMenuOpen(false);
+  };
+
+  const handleExportMenuToggle = () => {
+    setExportMenuOpen((prevOpen) => !prevOpen);
+  };
+
+  const handleExportMenuClose = (event: Event | React.SyntheticEvent) => {
+    if (exportAnchorRef.current && exportAnchorRef.current.contains(event.target as HTMLElement)) {
+      return;
+    }
+    setExportMenuOpen(false);
+  };
+
   const toolbar = (
     <>
       <Button 
@@ -52,12 +87,20 @@ export function CoTsListPage() {
       >
         새 CoT 생성
       </Button>
-      <Button variant="outlined" startIcon={<UploadIcon />}>
+      <Button variant="outlined" startIcon={<UploadIcon />} onClick={handleImport}>
         Import
       </Button>
-      <Button variant="outlined" startIcon={<DownloadIcon />}>
-        Export
-      </Button>
+      <ButtonGroup variant="outlined" ref={exportAnchorRef}>
+        <Button startIcon={<DownloadIcon />} onClick={() => handleExportFormat('csv')}>
+          Export
+        </Button>
+        <Button
+          size="small"
+          onClick={handleExportMenuToggle}
+        >
+          <ArrowDropDown />
+        </Button>
+      </ButtonGroup>
     </>
   );
 
@@ -109,8 +152,17 @@ export function CoTsListPage() {
 
   return (
     <ListLayout title="CoTs" toolbar={toolbar}>
-      {searchBar}
-      <DataGrid
+      <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', p: 2 }}>
+        {searchBar}
+        <Box sx={{ flex: 1, minHeight: 0, mt: 2 }}>
+          <DataGrid
+            sx={{ 
+              border: 0,
+              height: '100%',
+              '& .MuiDataGrid-row:hover': {
+                cursor: 'pointer',
+              }
+            }}
         rows={items}
         columns={columns}
         loading={loading}
@@ -125,19 +177,63 @@ export function CoTsListPage() {
         disableRowSelectionOnClick
         onRowClick={(params) => navigate(`/cots/${params.id}`)}
         // 성능 최적화 옵션
-        rowBuffer={10}
-        columnBuffer={5}
+        rowBufferPx={520}
+        columnBufferPx={260}
         rowHeight={52}
         disableVirtualization={false}
         keepNonExistentRowsSelected={false}
         density="standard"
-        sx={{ 
-          border: 0,
-          '& .MuiDataGrid-row:hover': {
-            cursor: 'pointer',
-          }
+      />
+        </Box>
+      
+      <BulkImportDialog
+        open={importDialogOpen}
+        onClose={() => setImportDialogOpen(false)}
+        entityType="cots"
+        onSuccess={(count) => {
+          alert(`${count}개 CoT가 성공적으로 import되었습니다.`);
+          setImportDialogOpen(false);
+          dispatch(fetchCoTs({})); // 목록 새로고침
+        }}
+        onError={(error) => {
+          alert(`Import 실패: ${error}`);
         }}
       />
+      
+      <Popper
+        sx={{ zIndex: 1 }}
+        open={exportMenuOpen}
+        anchorEl={exportAnchorRef.current}
+        role={undefined}
+        transition
+        disablePortal
+      >
+        {({ TransitionProps, placement }) => (
+          <Grow
+            {...TransitionProps}
+            style={{
+              transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom',
+            }}
+          >
+            <Paper>
+              <ClickAwayListener onClickAway={handleExportMenuClose}>
+                <MenuList autoFocusItem>
+                  <MenuItem onClick={() => handleExportFormat('csv')}>
+                    CSV 파일로 내보내기
+                  </MenuItem>
+                  <MenuItem onClick={() => handleExportFormat('json')}>
+                    JSON 파일로 내보내기
+                  </MenuItem>
+                  <MenuItem onClick={() => handleExportFormat('xlsx')}>
+                    Excel 파일로 내보내기
+                  </MenuItem>
+                </MenuList>
+              </ClickAwayListener>
+            </Paper>
+          </Grow>
+        )}
+      </Popper>
+      </Box>
     </ListLayout>
   );
 }

@@ -69,6 +69,40 @@ export const createCoT = createAsyncThunk(
   }
 );
 
+export const importCoTs = createAsyncThunk(
+  'cots/importCoTs',
+  async (cotsData: CoTQA[], { rejectWithValue }) => {
+    try {
+      console.log('Importing CoTs data:', cotsData.length);
+      const results = [];
+      
+      // 배치 단위로 import 처리
+      const batchSize = 100;
+      for (let i = 0; i < cotsData.length; i += batchSize) {
+        const batch = cotsData.slice(i, i + batchSize);
+        const batchResults = await Promise.allSettled(
+          batch.map(cot => storage.create(cot))
+        );
+        
+        const successfulResults = batchResults
+          .filter((result): result is PromiseFulfilledResult<CoTQA> => 
+            result.status === 'fulfilled'
+          )
+          .map(result => result.value);
+          
+        results.push(...successfulResults);
+      }
+      
+      console.log('CoTs imported successfully:', results.length);
+      return results;
+    } catch (error) {
+      console.error('Error importing CoTs:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      return rejectWithValue(errorMessage);
+    }
+  }
+);
+
 export const updateCoT = createAsyncThunk(
   'cots/updateCoT',
   async ({ id, data }: { id: string; data: Partial<CoTQA> }) => {

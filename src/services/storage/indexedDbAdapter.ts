@@ -386,7 +386,7 @@ export class IndexedDBStorageAdapter<T extends { id: string; createdAt?: string;
   /**
    * 대량 데이터 Import (배치 처리)
    */
-  async bulkImport(items: T[], batchSize = 1000): Promise<void> {
+  async bulkImport(items: T[], batchSize = 1000, onProgress?: (progress: number) => void): Promise<void> {
     const store = await this.getStore('readwrite');
     
     for (let i = 0; i < items.length; i += batchSize) {
@@ -400,9 +400,13 @@ export class IndexedDBStorageAdapter<T extends { id: string; createdAt?: string;
         }))
       );
       
-      // 진행률 표시 (선택적)
-      console.log(`Imported ${Math.min(i + batchSize, items.length)}/${items.length} items`);
+      // 진행률 업데이트
+      const progress = Math.round(((i + batchSize) / items.length) * 100);
+      console.log(`Bulk import progress: ${progress}% (${Math.min(i + batchSize, items.length)}/${items.length} items)`);
+      onProgress?.(Math.min(progress, 100));
     }
+    
+    onProgress?.(100);
   }
 
   /**

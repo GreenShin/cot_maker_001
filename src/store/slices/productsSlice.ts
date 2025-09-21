@@ -152,6 +152,40 @@ export const deleteProduct = createAsyncThunk(
   }
 );
 
+export const importProducts = createAsyncThunk(
+  'products/importProducts',
+  async (productsData: Product[], { rejectWithValue }) => {
+    try {
+      console.log('Importing Products data:', productsData.length);
+      const results = [];
+      
+      // 배치 단위로 import 처리
+      const batchSize = 100;
+      for (let i = 0; i < productsData.length; i += batchSize) {
+        const batch = productsData.slice(i, i + batchSize);
+        const batchResults = await Promise.allSettled(
+          batch.map(product => storage.create(product))
+        );
+        
+        const successfulResults = batchResults
+          .filter((result): result is PromiseFulfilledResult<Product> => 
+            result.status === 'fulfilled'
+          )
+          .map(result => result.value);
+          
+        results.push(...successfulResults);
+      }
+      
+      console.log('Products imported successfully:', results.length);
+      return results;
+    } catch (error) {
+      console.error('Error importing products:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      return rejectWithValue(errorMessage);
+    }
+  }
+);
+
 
 export const productsSlice = createSlice({
   name: 'products',
@@ -294,6 +328,21 @@ export const productsSlice = createSlice({
       .addCase(deleteProduct.rejected, (state, action) => {
         state.loading = false;
         state.error = (action.payload as string) || action.error.message || '상품 삭제 실패';
+      })
+      
+      // importProducts
+      .addCase(importProducts.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(importProducts.fulfilled, (state, action) => {
+        state.loading = false;
+        // Import된 항목들을 기존 목록에 추가
+        state.items.unshift(...action.payload);
+      })
+      .addCase(importProducts.rejected, (state, action) => {
+        state.loading = false;
+        state.error = (action.payload as string) || action.error.message || '상품 Import 실패';
       });
   }
 });
