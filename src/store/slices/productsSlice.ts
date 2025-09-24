@@ -186,6 +186,34 @@ export const importProducts = createAsyncThunk(
   }
 );
 
+// Export용 전체 상품 조회
+export const fetchAllProductsForExport = createAsyncThunk(
+  'products/fetchAllProductsForExport',
+  async (filters: ProductSearchFilters | undefined, { rejectWithValue }) => {
+    try {
+      const queryOptions: QueryOptions = {};
+      
+      if (filters) {
+        const builtOptions = buildProductQueryOptions(filters);
+        queryOptions.filters = builtOptions.filters;
+      }
+      
+      // 전체 데이터 조회 (페이지네이션 없이)
+      const result = await storage.getPaginated({
+        ...queryOptions,
+        page: 1,
+        pageSize: 999999 // 매우 큰 수로 전체 데이터 조회
+      });
+      
+      console.log(`Fetched ${result.items.length} products for export`);
+      return result.items;
+    } catch (error: any) {
+      console.error('Error fetching all products for export:', error);
+      return rejectWithValue(error.message || '상품 조회 중 오류가 발생했습니다');
+    }
+  }
+);
+
 
 export const productsSlice = createSlice({
   name: 'products',

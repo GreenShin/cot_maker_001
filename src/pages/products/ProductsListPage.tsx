@@ -11,6 +11,7 @@ import { handleExport } from '../shared/importExportActions';
 import type { RootState, AppDispatch } from '../../store';
 import { 
   fetchProductsWithFilters, 
+  fetchAllProductsForExport,
   setFilters,
   clearFilters,
   type ProductSearchFilters
@@ -72,13 +73,21 @@ export function ProductsListPage() {
 
   const handleExportFormat = async (format: 'csv' | 'json' | 'xlsx') => {
     try {
-      await handleExport(items, { format, entity: 'products' }, 
-        () => {
-          const formatNames = { csv: 'CSV', json: 'JSON', xlsx: 'Excel' };
-          alert(`${formatNames[format]} 파일이 다운로드되었습니다!`);
-        },
-        (error) => alert(`Export 실패: ${error}`)
-      );
+      // 전체 데이터 조회
+      const result = await dispatch(fetchAllProductsForExport(filters));
+      
+      if (fetchAllProductsForExport.fulfilled.match(result)) {
+        const allProducts = result.payload;
+        await handleExport(allProducts, { format, entity: 'products' }, 
+          () => {
+            const formatNames = { csv: 'CSV', json: 'JSON', xlsx: 'Excel' };
+            alert(`${allProducts.length}개 상품이 ${formatNames[format]} 파일로 다운로드되었습니다!`);
+          },
+          (error) => alert(`Export 실패: ${error}`)
+        );
+      } else {
+        throw new Error('전체 데이터 조회 실패');
+      }
     } catch (error) {
       alert(`Export 중 오류: ${error}`);
     }
@@ -169,12 +178,15 @@ export function ProductsListPage() {
         
         <BulkImportDialog
           open={importDialogOpen}
-          onClose={() => setImportDialogOpen(false)}
-          entityType="products"
-          onSuccess={(count) => {
-            alert(`${count}개 상품이 성공적으로 import되었습니다.`);
+          onClose={(shouldRefresh) => {
             setImportDialogOpen(false);
-            dispatch(fetchProductsWithFilters({ filters, page: 1, pageSize: pagination.pageSize }));
+            if (shouldRefresh) {
+              dispatch(fetchProductsWithFilters({ filters, page: 1, pageSize: pagination.pageSize }));
+            }
+          }}
+          entityType="products"
+          onSuccess={() => {
+            // Alert 제거 - 팝업 내에서 성공 메시지 표시
           }}
           onError={(error) => {
             alert(`Import 실패: ${error}`);

@@ -9,7 +9,7 @@ import {
   Select,
   FormControl,
   InputLabel,
-  Grid,
+  Grid2,
   Divider,
   IconButton,
 } from '@mui/material';
@@ -124,13 +124,13 @@ export function CotFormPanel({
       </Box>
 
       {/* 스크롤 가능한 폼 콘텐츠 */}
-      <Box sx={{ flex: 1, overflow: 'auto' }}>
+      <Box sx={{ flex: 1, overflow: 'auto', pt: 1 }}>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
 
       <Box component="form" sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
         {/* 첫 번째 줄: 상품분류, 질문유형 */}
-        <Grid container spacing={2}>
-          <Grid item xs={6}>
+        <Grid2 container spacing={2}>
+          <Grid2 size={6}>
             <Controller
               name="productSource"
               control={control}
@@ -147,8 +147,8 @@ export function CotFormPanel({
                 </FormControl>
               )}
             />
-          </Grid>
-          <Grid item xs={6}>
+          </Grid2>
+          <Grid2 size={6}>
             <Controller
               name="questionType"
               control={control}
@@ -173,8 +173,8 @@ export function CotFormPanel({
                 </FormControl>
               )}
             />
-          </Grid>
-        </Grid>
+          </Grid2>
+        </Grid2>
 
         {/* 두 번째 줄: 질문 */}
         <Controller
@@ -278,8 +278,8 @@ export function CotFormPanel({
         />
 
         {/* CoT 상태 및 작성자 */}
-        <Grid container spacing={2}>
-          <Grid item xs={6}>
+        <Grid2 container spacing={2}>
+          <Grid2 size={6}>
             <Controller
               name="datasetStatus"
               control={control}
@@ -298,8 +298,8 @@ export function CotFormPanel({
                 </FormControl>
               )}
             />
-          </Grid>
-          <Grid item xs={6}>
+          </Grid2>
+          <Grid2 size={6}>
             <Controller
               name="author"
               control={control}
@@ -314,8 +314,8 @@ export function CotFormPanel({
                 />
               )}
             />
-          </Grid>
-        </Grid>
+          </Grid2>
+        </Grid2>
       </Box>
         </Box>
       </Box>

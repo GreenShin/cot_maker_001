@@ -21,7 +21,7 @@ import { importCsvData, importJsonData, importXlsxData, type ImportableEntity } 
 
 interface BulkImportDialogProps {
   open: boolean;
-  onClose: () => void;
+  onClose: (shouldRefresh?: boolean) => void;
   entityType: 'users' | 'products' | 'cots';
   onSuccess?: (count: number) => void;
   onError?: (error: string) => void;
@@ -225,10 +225,11 @@ export function BulkImportDialog({
 
   const handleClose = () => {
     if (!isImporting) {
+      const shouldRefresh = importResult?.success || false;
       setFile(null);
       setImportProgress({ stage: 'parsing', progress: 0, message: '준비 중...' });
       setImportResult(null);
-      onClose();
+      onClose(shouldRefresh);
     }
   };
 
