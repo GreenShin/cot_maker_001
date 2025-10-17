@@ -2,12 +2,12 @@ import React, { useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { DataGrid, type GridColDef } from '@mui/x-data-grid';
-import { Button, Box, ButtonGroup, ClickAwayListener, Grow, Paper, Popper, MenuList, MenuItem } from '@mui/material';
-import { Upload as UploadIcon, Download as DownloadIcon, Add as AddIcon, ArrowDropDown } from '@mui/icons-material';
+import { Button, Box } from '@mui/material';
+import { Upload as UploadIcon, Download as DownloadIcon, Add as AddIcon } from '@mui/icons-material';
 import { ListLayout } from '../../components/layout/ListLayout';
 import { UserSearchFiltersComponent, type UserSearchFiltersProps } from '../../components/users/UserSearchFilters';
 import { BulkImportDialog } from '../../components/common/BulkImportDialog';
-import { handleExport } from '../shared/importExportActions';
+import { ExportDialog } from '../../components/common/ExportDialog';
 import type { RootState, AppDispatch } from '../../store';
 import { 
   fetchUsersWithFilters, 
@@ -42,8 +42,8 @@ export function UsersListPage() {
   const navigate = useNavigate();
   const { items, loading, pagination, filters } = useSelector((state: RootState) => state.users);
   const [importDialogOpen, setImportDialogOpen] = React.useState(false);
-  const [exportMenuOpen, setExportMenuOpen] = React.useState(false);
-  const exportAnchorRef = React.useRef<HTMLDivElement>(null);
+  const [exportDialogOpen, setExportDialogOpen] = React.useState(false);
+  const [exportData, setExportData] = React.useState<any[]>([]);
 
   // 초기 데이터 로드 (컴포넌트 마운트 시 한 번만)
   useEffect(() => {
@@ -83,38 +83,21 @@ export function UsersListPage() {
     setImportDialogOpen(true);
   };
 
-  const handleExportFormat = async (format: 'csv' | 'json' | 'xlsx') => {
+  const handleExport = async () => {
     try {
       // 전체 데이터 조회
       const result = await dispatch(fetchAllUsersForExport(filters));
       
       if (fetchAllUsersForExport.fulfilled.match(result)) {
         const allUsers = result.payload;
-        await handleExport(allUsers, { format, entity: 'users' }, 
-          () => {
-            const formatNames = { csv: 'CSV', json: 'JSON', xlsx: 'Excel' };
-            alert(`${allUsers.length}개 질문자가 ${formatNames[format]} 파일로 다운로드되었습니다!`);
-          },
-          (error) => alert(`Export 실패: ${error}`)
-        );
+        setExportData(allUsers);
+        setExportDialogOpen(true);
       } else {
         throw new Error('전체 데이터 조회 실패');
       }
     } catch (error) {
-      alert(`Export 중 오류: ${error}`);
+      alert(`Export 준비 중 오류: ${error}`);
     }
-    setExportMenuOpen(false);
-  };
-
-  const handleExportMenuToggle = () => {
-    setExportMenuOpen((prevOpen) => !prevOpen);
-  };
-
-  const handleExportMenuClose = (event: Event | React.SyntheticEvent) => {
-    if (exportAnchorRef.current && exportAnchorRef.current.contains(event.target as HTMLElement)) {
-      return;
-    }
-    setExportMenuOpen(false);
   };
 
   const toolbar = (
@@ -130,17 +113,9 @@ export function UsersListPage() {
       <Button variant="outlined" startIcon={<UploadIcon />} onClick={handleImport}>
         Import
       </Button>
-      <ButtonGroup variant="outlined" ref={exportAnchorRef}>
-        <Button startIcon={<DownloadIcon />} onClick={() => handleExportFormat('csv')}>
-          Export
-        </Button>
-        <Button
-          size="small"
-          onClick={handleExportMenuToggle}
-        >
-          <ArrowDropDown />
-        </Button>
-      </ButtonGroup>
+      <Button variant="outlined" startIcon={<DownloadIcon />} onClick={handleExport}>
+        Export
+      </Button>
     </>
   );
 
@@ -212,39 +187,12 @@ export function UsersListPage() {
           }}
         />
         
-        <Popper
-          sx={{ zIndex: 1 }}
-          open={exportMenuOpen}
-          anchorEl={exportAnchorRef.current}
-          role={undefined}
-          transition
-          disablePortal
-        >
-          {({ TransitionProps, placement }) => (
-            <Grow
-              {...TransitionProps}
-              style={{
-                transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom',
-              }}
-            >
-              <Paper>
-                <ClickAwayListener onClickAway={handleExportMenuClose}>
-                  <MenuList autoFocusItem>
-                    <MenuItem onClick={() => handleExportFormat('csv')}>
-                      CSV 파일로 내보내기
-                    </MenuItem>
-                    <MenuItem onClick={() => handleExportFormat('json')}>
-                      JSON 파일로 내보내기
-                    </MenuItem>
-                    <MenuItem onClick={() => handleExportFormat('xlsx')}>
-                      Excel 파일로 내보내기
-                    </MenuItem>
-                  </MenuList>
-                </ClickAwayListener>
-              </Paper>
-            </Grow>
-          )}
-        </Popper>
+        <ExportDialog
+          open={exportDialogOpen}
+          onClose={() => setExportDialogOpen(false)}
+          entityType="users"
+          data={exportData}
+        />
       </Box>
     </ListLayout>
   );

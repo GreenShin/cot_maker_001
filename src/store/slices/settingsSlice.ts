@@ -1,9 +1,32 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 
+// 탭 콘텐츠 인터페이스
+export interface TabContent {
+  questionerJudgment: string;
+  question: string;
+  cot1: string;
+  cot2: string;
+  cot3: string;
+  answer: string;
+}
+
+// 증권 탭 타입
+export type SecuritiesTabType = '고객특성강조형' | '투자성향조건기반형' | '상품비교추천형';
+
+// 보험 탭 타입
+export type InsuranceTabType = '연령별생애주기저축성' | '투자성상품추천형' | '건강질병보장대비형';
+
 export interface SettingsState {
   author: string;
-  canEditUsers: boolean;
-  canEditProducts: boolean;
+  category: '증권' | '보험'; // 상품분류
+  currentTab: {
+    증권: SecuritiesTabType;
+    보험: InsuranceTabType;
+  };
+  tabs: {
+    증권: Record<SecuritiesTabType, TabContent>;
+    보험: Record<InsuranceTabType, TabContent>;
+  };
   fontSize: number;
   theme: 'light' | 'dark';
   // UI 상태
@@ -12,11 +35,36 @@ export interface SettingsState {
 
 const STORAGE_KEY = 'cotAdminSettings';
 
+// 빈 탭 콘텐츠
+const emptyTabContent: TabContent = {
+  questionerJudgment: '',
+  question: '',
+  cot1: '',
+  cot2: '',
+  cot3: '',
+  answer: ''
+};
+
 // 기본값
 const initialState: SettingsState = {
   author: '관리자',
-  canEditUsers: true,
-  canEditProducts: true,
+  category: '증권',
+  currentTab: {
+    증권: '고객특성강조형',
+    보험: '연령별생애주기저축성'
+  },
+  tabs: {
+    증권: {
+      고객특성강조형: { ...emptyTabContent },
+      투자성향조건기반형: { ...emptyTabContent },
+      상품비교추천형: { ...emptyTabContent }
+    },
+    보험: {
+      연령별생애주기저축성: { ...emptyTabContent },
+      투자성상품추천형: { ...emptyTabContent },
+      건강질병보장대비형: { ...emptyTabContent }
+    }
+  },
   fontSize: 14,
   theme: 'light',
   isLoaded: false
@@ -97,15 +145,36 @@ export const settingsSlice = createSlice({
       saveSettingsToStorage(state);
     },
 
-    // 질문자 수정 권한 토글
-    toggleCanEditUsers: (state) => {
-      state.canEditUsers = !state.canEditUsers;
+    // 카테고리 변경
+    setCategory: (state, action: PayloadAction<'증권' | '보험'>) => {
+      state.category = action.payload;
       saveSettingsToStorage(state);
     },
 
-    // 상품 수정 권한 토글
-    toggleCanEditProducts: (state) => {
-      state.canEditProducts = !state.canEditProducts;
+    // 현재 탭 변경
+    setCurrentTab: (state, action: PayloadAction<{ category: '증권' | '보험'; tab: SecuritiesTabType | InsuranceTabType }>) => {
+      const { category, tab } = action.payload;
+      if (category === '증권') {
+        state.currentTab.증권 = tab as SecuritiesTabType;
+      } else {
+        state.currentTab.보험 = tab as InsuranceTabType;
+      }
+      saveSettingsToStorage(state);
+    },
+
+    // 탭 콘텐츠 필드 업데이트
+    setTabField: (state, action: PayloadAction<{
+      category: '증권' | '보험';
+      tab: SecuritiesTabType | InsuranceTabType;
+      field: keyof TabContent;
+      value: string;
+    }>) => {
+      const { category, tab, field, value } = action.payload;
+      if (category === '증권') {
+        state.tabs.증권[tab as SecuritiesTabType][field] = value;
+      } else {
+        state.tabs.보험[tab as InsuranceTabType][field] = value;
+      }
       saveSettingsToStorage(state);
     },
 
@@ -153,8 +222,9 @@ export const settingsSlice = createSlice({
 export const {
   initializeSettings,
   setAuthor,
-  toggleCanEditUsers,
-  toggleCanEditProducts,
+  setCategory,
+  setCurrentTab,
+  setTabField,
   setFontSize,
   toggleTheme,
   setTheme,

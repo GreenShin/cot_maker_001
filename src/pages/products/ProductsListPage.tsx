@@ -2,12 +2,12 @@ import React, { useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { DataGrid, type GridColDef } from '@mui/x-data-grid';
-import { Button, Box, ButtonGroup, ClickAwayListener, Grow, Paper, Popper, MenuList, MenuItem } from '@mui/material';
-import { Upload as UploadIcon, Download as DownloadIcon, Add as AddIcon, ArrowDropDown } from '@mui/icons-material';
+import { Button, Box } from '@mui/material';
+import { Upload as UploadIcon, Download as DownloadIcon, Add as AddIcon } from '@mui/icons-material';
 import { ListLayout } from '../../components/layout/ListLayout';
 import { ProductSearchFiltersComponent, type ProductSearchFiltersProps } from '../../components/products/ProductSearchFilters';
 import { BulkImportDialog } from '../../components/common/BulkImportDialog';
-import { handleExport } from '../shared/importExportActions';
+import { ExportDialog } from '../../components/common/ExportDialog';
 import type { RootState, AppDispatch } from '../../store';
 import { 
   fetchProductsWithFilters, 
@@ -17,22 +17,63 @@ import {
   type ProductSearchFilters
 } from '../../store/slices/productsSlice';
 
-const columns: GridColDef[] = [
-  { field: 'productSource', headerName: '상품출처', width: 100 },
-  { field: 'productName', headerName: '상품명', width: 200, flex: 1 },
-  { field: 'productCategory', headerName: '상품분류', width: 150 },
-  { field: 'taxType', headerName: '세금유형', width: 100 },
-  { field: 'riskLevel', headerName: '위험등급', width: 100 },
-  { field: 'managementCompany', headerName: '운용사', width: 150 },
-];
+function useProductColumns(productSourceFilter: string): GridColDef[] {
+  // 공통 컬럼
+  const base: GridColDef[] = [
+    { field: 'productSource', headerName: '상품출처', width: 100 },
+    { field: 'productName', headerName: '상품명', width: 220, flex: 1 },
+    { field: 'productCategory', headerName: '상품분류', width: 140 },
+  ];
+
+  if (productSourceFilter === '증권') {
+    const securitiesCols: GridColDef[] = [
+      { field: 'protectedType', headerName: '유형', width: 120 },
+      { field: 'riskGrade', headerName: '위험등급(라벨)', width: 140 },
+      { field: 'incomeRate6m', headerName: '6개월수익률', width: 130 },
+      {
+        field: 'maturity',
+        headerName: '만기',
+        width: 140,
+        valueGetter: (params: { row: any }) => {
+          const mt = params.row?.maturityType;
+          const mp = params.row?.maturityPeriod;
+          if (mt === '있음') return mp ? `${mt} / ${mp}` : '있음';
+          if (mt === '없음') return '없음';
+          return '';
+        }
+      },
+      { field: 'paymentType', headerName: '납입형태', width: 110 },
+    ];
+    return [...base, ...securitiesCols];
+  }
+
+  if (productSourceFilter === '보험') {
+    const insuranceCols: GridColDef[] = [
+      { field: 'riderType', headerName: '특약유형', width: 120 },
+      { field: 'productPeriod', headerName: '보험기간', width: 110 },
+      { field: 'renewableType', headerName: '갱신형', width: 100 },
+      { field: 'refundType', headerName: '해약환급', width: 100 },
+      { field: 'eligibleAge', headerName: '자격연령', width: 110 },
+    ];
+    return [...base, ...insuranceCols];
+  }
+
+  // 필터 없음: 공통 컬럼 + 최소 정보
+  return [
+    ...base,
+    { field: 'taxType', headerName: '세금유형', width: 100 },
+    { field: 'riskLevel', headerName: '위험등급', width: 100 },
+  ];
+}
 
 export function ProductsListPage() {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const { items, loading, pagination, filters } = useSelector((state: RootState) => state.products);
+  const columns = React.useMemo(() => useProductColumns(filters.productSource), [filters.productSource]);
   const [importDialogOpen, setImportDialogOpen] = React.useState(false);
-  const [exportMenuOpen, setExportMenuOpen] = React.useState(false);
-  const exportAnchorRef = React.useRef<HTMLDivElement>(null);
+  const [exportDialogOpen, setExportDialogOpen] = React.useState(false);
+  const [exportData, setExportData] = React.useState<any[]>([]);
 
   // 초기 데이터 로드 (컴포넌트 마운트 시 한 번만)
   useEffect(() => {
@@ -71,38 +112,21 @@ export function ProductsListPage() {
     setImportDialogOpen(true);
   };
 
-  const handleExportFormat = async (format: 'csv' | 'json' | 'xlsx') => {
+  const handleExport = async () => {
     try {
       // 전체 데이터 조회
       const result = await dispatch(fetchAllProductsForExport(filters));
       
       if (fetchAllProductsForExport.fulfilled.match(result)) {
         const allProducts = result.payload;
-        await handleExport(allProducts, { format, entity: 'products' }, 
-          () => {
-            const formatNames = { csv: 'CSV', json: 'JSON', xlsx: 'Excel' };
-            alert(`${allProducts.length}개 상품이 ${formatNames[format]} 파일로 다운로드되었습니다!`);
-          },
-          (error) => alert(`Export 실패: ${error}`)
-        );
+        setExportData(allProducts);
+        setExportDialogOpen(true);
       } else {
         throw new Error('전체 데이터 조회 실패');
       }
     } catch (error) {
-      alert(`Export 중 오류: ${error}`);
+      alert(`Export 준비 중 오류: ${error}`);
     }
-    setExportMenuOpen(false);
-  };
-
-  const handleExportMenuToggle = () => {
-    setExportMenuOpen((prevOpen) => !prevOpen);
-  };
-
-  const handleExportMenuClose = (event: Event | React.SyntheticEvent) => {
-    if (exportAnchorRef.current && exportAnchorRef.current.contains(event.target as HTMLElement)) {
-      return;
-    }
-    setExportMenuOpen(false);
   };
 
   const toolbar = (
@@ -118,17 +142,9 @@ export function ProductsListPage() {
       <Button variant="outlined" startIcon={<UploadIcon />} onClick={handleImport}>
         Import
       </Button>
-      <ButtonGroup variant="outlined" ref={exportAnchorRef}>
-        <Button startIcon={<DownloadIcon />} onClick={() => handleExportFormat('csv')}>
-          Export
-        </Button>
-        <Button
-          size="small"
-          onClick={handleExportMenuToggle}
-        >
-          <ArrowDropDown />
-        </Button>
-      </ButtonGroup>
+      <Button variant="outlined" startIcon={<DownloadIcon />} onClick={handleExport}>
+        Export
+      </Button>
     </>
   );
 
@@ -193,39 +209,12 @@ export function ProductsListPage() {
           }}
         />
         
-        <Popper
-          sx={{ zIndex: 1 }}
-          open={exportMenuOpen}
-          anchorEl={exportAnchorRef.current}
-          role={undefined}
-          transition
-          disablePortal
-        >
-          {({ TransitionProps, placement }) => (
-            <Grow
-              {...TransitionProps}
-              style={{
-                transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom',
-              }}
-            >
-              <Paper>
-                <ClickAwayListener onClickAway={handleExportMenuClose}>
-                  <MenuList autoFocusItem>
-                    <MenuItem onClick={() => handleExportFormat('csv')}>
-                      CSV 파일로 내보내기
-                    </MenuItem>
-                    <MenuItem onClick={() => handleExportFormat('json')}>
-                      JSON 파일로 내보내기
-                    </MenuItem>
-                    <MenuItem onClick={() => handleExportFormat('xlsx')}>
-                      Excel 파일로 내보내기
-                    </MenuItem>
-                  </MenuList>
-                </ClickAwayListener>
-              </Paper>
-            </Grow>
-          )}
-        </Popper>
+        <ExportDialog
+          open={exportDialogOpen}
+          onClose={() => setExportDialogOpen(false)}
+          entityType="products"
+          data={exportData}
+        />
       </Box>
     </ListLayout>
   );

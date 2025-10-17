@@ -17,7 +17,7 @@ import {
   Warning,
   CheckCircle,
   Speed,
-  Database,
+  Dataset,
 } from '@mui/icons-material';
 import { storageService } from '../../services/storage/storageService';
 
@@ -132,7 +132,7 @@ export function StorageStatusCard() {
               size="small"
               label={status.isIndexedDB ? 'IndexedDB' : 'Memory'}
               color={status.isIndexedDB ? 'success' : 'warning'}
-              icon={status.isIndexedDB ? <Database /> : <Speed />}
+              icon={status.isIndexedDB ? <Dataset /> : <Speed />}
             />
           </Box>
           <Tooltip title="새로고침">

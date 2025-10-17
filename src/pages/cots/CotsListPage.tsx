@@ -2,19 +2,22 @@ import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { DataGrid, type GridColDef } from '@mui/x-data-grid';
-import { Button, TextField, Select, MenuItem, FormControl, InputLabel, Box, ButtonGroup, ClickAwayListener, Grow, Paper, Popper, MenuList } from '@mui/material';
-import { Add as AddIcon, Upload as UploadIcon, Download as DownloadIcon, ArrowDropDown } from '@mui/icons-material';
+import { Button, TextField, Select, MenuItem, FormControl, InputLabel, Box } from '@mui/material';
+import { Add as AddIcon, Upload as UploadIcon, Download as DownloadIcon, BarChart as BarChartIcon } from '@mui/icons-material';
 import { ListLayout } from '../../components/layout/ListLayout';
 import { BulkImportDialog } from '../../components/common/BulkImportDialog';
+import { ExportDialog } from '../../components/common/ExportDialog';
+import { CotsStatsDialog } from '../../components/cots/CotsStatsDialog';
 import type { RootState, AppDispatch } from '../../store';
 import { fetchCoTs, fetchAllCoTsForExport, searchCoTs, setFilters } from '../../store/slices/cotsSlice';
-import { handleExport } from '../shared/importExportActions';
+import { fetchUsers } from '../../store/slices/usersSlice';
 import type { SearchFilters } from '../../services/query/queryService';
 
 const columns: GridColDef[] = [
   { field: 'productSource', headerName: '상품분류', width: 100 },
   { field: 'questionType', headerName: '질문유형', width: 200 },
-  // 성별/연령대는 질문자 조인 후 계산 컬럼으로 복원 예정
+  { field: 'questionerGender', headerName: '성별', width: 80 },
+  { field: 'questionerAgeGroup', headerName: '연령대', width: 100 },
   { field: 'question', headerName: '질문', width: 300, flex: 1 },
   { field: 'author', headerName: '작성자', width: 120 },
   { field: 'createdAt', headerName: '등록일', width: 120 },
@@ -30,11 +33,13 @@ export function CoTsListPage() {
   const [productSource, setProductSource] = useState(filters.productSource || '');
   const [questionType, setQuestionType] = useState(filters.questionType || '');
   const [importDialogOpen, setImportDialogOpen] = useState(false);
-  const [exportMenuOpen, setExportMenuOpen] = useState(false);
-  const exportAnchorRef = React.useRef<HTMLDivElement>(null);
+  const [exportDialogOpen, setExportDialogOpen] = useState(false);
+  const [statsDialogOpen, setStatsDialogOpen] = useState(false);
+  const [exportData, setExportData] = useState<any[]>([]);
 
   useEffect(() => {
     dispatch(fetchCoTs({}));
+    dispatch(fetchUsers({})); // 통계를 위해 사용자 데이터 로드
   }, [dispatch]);
 
   const handleSearch = () => {
@@ -52,38 +57,21 @@ export function CoTsListPage() {
     setImportDialogOpen(true);
   };
 
-  const handleExportFormat = async (format: 'csv' | 'json' | 'xlsx') => {
+  const handleExport = async () => {
     try {
       // 전체 데이터 조회
       const result = await dispatch(fetchAllCoTsForExport());
       
       if (fetchAllCoTsForExport.fulfilled.match(result)) {
         const allCots = result.payload;
-        await handleExport(allCots, { format, entity: 'cots' }, 
-          () => {
-            const formatNames = { csv: 'CSV', json: 'JSON', xlsx: 'Excel' };
-            alert(`${allCots.length}개 CoT가 ${formatNames[format]} 파일로 다운로드되었습니다!`);
-          },
-          (error) => alert(`Export 실패: ${error}`)
-        );
+        setExportData(allCots);
+        setExportDialogOpen(true);
       } else {
         throw new Error('전체 데이터 조회 실패');
       }
     } catch (error) {
-      alert(`Export 중 오류: ${error}`);
+      alert(`Export 준비 중 오류: ${error}`);
     }
-    setExportMenuOpen(false);
-  };
-
-  const handleExportMenuToggle = () => {
-    setExportMenuOpen((prevOpen) => !prevOpen);
-  };
-
-  const handleExportMenuClose = (event: Event | React.SyntheticEvent) => {
-    if (exportAnchorRef.current && exportAnchorRef.current.contains(event.target as HTMLElement)) {
-      return;
-    }
-    setExportMenuOpen(false);
   };
 
   const toolbar = (
@@ -95,20 +83,15 @@ export function CoTsListPage() {
       >
         새 CoT 생성
       </Button>
+      <Button variant="outlined" startIcon={<BarChartIcon />} onClick={() => setStatsDialogOpen(true)}>
+        통계
+      </Button>
       <Button variant="outlined" startIcon={<UploadIcon />} onClick={handleImport}>
         Import
       </Button>
-      <ButtonGroup variant="outlined" ref={exportAnchorRef}>
-        <Button startIcon={<DownloadIcon />} onClick={() => handleExportFormat('csv')}>
-          Export
-        </Button>
-        <Button
-          size="small"
-          onClick={handleExportMenuToggle}
-        >
-          <ArrowDropDown />
-        </Button>
-      </ButtonGroup>
+      <Button variant="outlined" startIcon={<DownloadIcon />} onClick={handleExport}>
+        Export
+      </Button>
     </>
   );
 
@@ -211,39 +194,17 @@ export function CoTsListPage() {
         }}
       />
       
-      <Popper
-        sx={{ zIndex: 1 }}
-        open={exportMenuOpen}
-        anchorEl={exportAnchorRef.current}
-        role={undefined}
-        transition
-        disablePortal
-      >
-        {({ TransitionProps, placement }) => (
-          <Grow
-            {...TransitionProps}
-            style={{
-              transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom',
-            }}
-          >
-            <Paper>
-              <ClickAwayListener onClickAway={handleExportMenuClose}>
-                <MenuList autoFocusItem>
-                  <MenuItem onClick={() => handleExportFormat('csv')}>
-                    CSV 파일로 내보내기
-                  </MenuItem>
-                  <MenuItem onClick={() => handleExportFormat('json')}>
-                    JSON 파일로 내보내기
-                  </MenuItem>
-                  <MenuItem onClick={() => handleExportFormat('xlsx')}>
-                    Excel 파일로 내보내기
-                  </MenuItem>
-                </MenuList>
-              </ClickAwayListener>
-            </Paper>
-          </Grow>
-        )}
-      </Popper>
+      <ExportDialog
+        open={exportDialogOpen}
+        onClose={() => setExportDialogOpen(false)}
+        entityType="cots"
+        data={exportData}
+      />
+      
+      <CotsStatsDialog
+        open={statsDialogOpen}
+        onClose={() => setStatsDialogOpen(false)}
+      />
       </Box>
     </ListLayout>
   );

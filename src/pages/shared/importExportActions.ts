@@ -28,15 +28,23 @@ export const handleImport = async (
   try {
     let result: ImportResult<any>;
 
+    // File을 ArrayBuffer로 읽기
+    const arrayBuffer = await file.arrayBuffer();
+    const entityType = getEntityType(options.entity);
+
     switch (options.format) {
       case 'csv':
-        result = await importCsvData(file, options.entity as any);
+        result = await importCsvData(arrayBuffer, entityType);
         break;
-      case 'json':
-        result = await importJsonData(file, options.entity as any);
+      case 'json': {
+        // JSON은 텍스트로 읽어야 함
+        const text = await file.text();
+        const jsonData = JSON.parse(text);
+        result = await importJsonData(jsonData, entityType);
         break;
+      }
       case 'xlsx':
-        result = await importXlsxData(file, options.entity as any);
+        result = await importXlsxData(arrayBuffer, entityType);
         break;
       default:
         throw new Error('지원하지 않는 파일 형식입니다');
@@ -84,13 +92,13 @@ export const handleExport = async (
 
     switch (options.format) {
       case 'csv':
-        result = await exportToCsv(data, entityType, { filename: options.filename });
+        result = await exportToCsv(data as any, entityType, { filename: options.filename });
         break;
       case 'json':
-        result = await exportToJson(data, entityType, { filename: options.filename });
+        result = await exportToJson(data as any, entityType, { filename: options.filename });
         break;
       case 'xlsx':
-        result = await exportToXlsx(data, entityType, { filename: options.filename });
+        result = await exportToXlsx(data as any, entityType, { filename: options.filename });
         break;
       default:
         throw new Error('지원하지 않는 파일 형식입니다');

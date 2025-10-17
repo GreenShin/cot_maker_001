@@ -62,21 +62,47 @@ describe('CoTQA Schema Contract', () => {
     expect(() => cotQASchema.parse(invalidCoT)).toThrow();
   });
 
-  it('should require CoT1, CoT2, CoT3', () => {
-    const missingRequiredCoT = {
+  it('should allow optional CoT1, CoT2, CoT3, answer, author fields', () => {
+    const minimalCoT = {
       id: 'cot-4',
       productSource: '증권' as const,
       questionType: '고객 특성 강조형' as const,
-      questioner: 'user-1',
-      products: ['prod-1'],
-      question: '질문',
-      cot1: 'CoT1',
-      cot2: 'CoT2',
-      // cot3 missing
-      answer: '답변',
+      question: '질문만 있는 CoT',
+      status: '초안' as const
+      // cot1, cot2, cot3, answer, author, questioner, products 모두 선택사항
+    };
+
+    expect(() => cotQASchema.parse(minimalCoT)).not.toThrow();
+  });
+
+  it('should require productSource, questionType, question, and status', () => {
+    const missingRequiredFields = {
+      id: 'cot-5',
+      productSource: '증권' as const,
+      questionType: '고객 특성 강조형' as const,
+      // question 누락
       status: '완료' as const
     };
 
-    expect(() => cotQASchema.parse(missingRequiredCoT)).toThrow();
+    expect(() => cotQASchema.parse(missingRequiredFields)).toThrow();
+  });
+
+  it('should trim whitespace from string fields', () => {
+    const cotWithWhitespace = {
+      id: 'cot-6',
+      productSource: '증권' as const,
+      questionType: '고객 특성 강조형' as const,
+      question: '  질문  ',
+      cot1: '  CoT1  ',
+      answer: '  답변  ',
+      author: '  작성자  ',
+      status: '완료' as const
+    };
+
+    const result = cotQASchema.parse(cotWithWhitespace);
+    expect(result.question).toBe('질문');
+    expect(result.cot1).toBe('CoT1');
+    expect(result.answer).toBe('답변');
+    expect(result.author).toBe('작성자');
   });
 });

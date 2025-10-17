@@ -1,5 +1,6 @@
 import Papa from 'papaparse';
 import * as XLSX from 'xlsx';
+import Encoding from 'encoding-japanese';
 import { userAnonSchema, type UserAnon } from '../../models/userAnon';
 import { productSchema, type Product } from '../../models/product';
 import { cotQASchema, type CoTQA } from '../../models/cotqa';
@@ -17,10 +18,13 @@ export interface ImportResult<T> {
   };
 }
 
+export type CharsetEncoding = 'utf-8' | 'utf-8-bom' | 'euc-kr' | 'shift-jis' | 'iso-8859-1' | 'windows-1252';
+
 export interface ImportOptions {
   onProgress?: (progress: number) => void;
   worksheetName?: string;
   batchSize?: number;
+  charset?: CharsetEncoding;
 }
 
 // 엔티티별 스키마 매핑
@@ -35,7 +39,7 @@ const getSchemaForEntity = (entityType: ImportableEntity) => {
 
 // 엔티티별 데이터 전처리 함수
 const preprocessRowData = (row: any, entityType: ImportableEntity): any => {
-  const processedRow = { ...row };
+  let processedRow: any = { ...row };
   
   switch (entityType) {
     case 'userAnon':
@@ -82,31 +86,136 @@ const preprocessRowData = (row: any, entityType: ImportableEntity): any => {
       break;
       
     case 'cotqa':
-      // products 필드 처리 - undefined, null, 빈 문자열 모두 빈 배열로 처리
-      if (!processedRow.products || processedRow.products === '') {
-        processedRow.products = [];
-      } else if (typeof processedRow.products === 'string') {
-        try {
-          if (processedRow.products.startsWith('[')) {
-            processedRow.products = JSON.parse(processedRow.products);
-          } else if (processedRow.products.includes(',')) {
-            processedRow.products = processedRow.products.split(',').map((item: string) => item.trim());
-          } else if (processedRow.products.trim()) {
-            processedRow.products = [processedRow.products.trim()];
-          } else {
-            processedRow.products = [];
-          }
-        } catch (error) {
-          processedRow.products = [];
+      // 필드명 매핑 (import 필드 -> 내부 필드)
+      {
+        const cotqaImport: any = {};
+        
+        // 필드명 변환
+        if ('question_key' in processedRow) cotqaImport.id = processedRow.question_key;
+        else if ('id' in processedRow) cotqaImport.id = processedRow.id; // backward compatibility
+        
+        if ('product_type' in processedRow) cotqaImport.productSource = processedRow.product_type;
+        else if ('productSource' in processedRow) cotqaImport.productSource = processedRow.productSource; // backward compatibility
+        
+        if ('question_type' in processedRow) cotqaImport.questionType = processedRow.question_type;
+        else if ('questionType' in processedRow) cotqaImport.questionType = processedRow.questionType; // backward compatibility
+        
+        if ('created_at' in processedRow) cotqaImport.createdAt = processedRow.created_at;
+        else if ('createdAt' in processedRow) cotqaImport.createdAt = processedRow.createdAt; // backward compatibility
+        
+        if ('updated_at' in processedRow) cotqaImport.updatedAt = processedRow.updated_at;
+        else if ('updatedAt' in processedRow) cotqaImport.updatedAt = processedRow.updatedAt; // backward compatibility
+        
+        // 유지되는 필드들
+        if ('questioner' in processedRow) {
+          cotqaImport.questioner = processedRow.questioner || undefined;
         }
-      } else if (!Array.isArray(processedRow.products)) {
-        // 배열이 아닌 다른 타입인 경우 빈 배열로 처리
-        processedRow.products = [];
+        
+        if ('questioner_gender' in processedRow) {
+          cotqaImport.questionerGender = processedRow.questioner_gender || undefined;
+        } else if ('questionerGender' in processedRow) {
+          cotqaImport.questionerGender = processedRow.questionerGender || undefined;
+        }
+        
+        if ('questioner_age_group' in processedRow) {
+          cotqaImport.questionerAgeGroup = processedRow.questioner_age_group || undefined;
+        } else if ('questionerAgeGroup' in processedRow) {
+          cotqaImport.questionerAgeGroup = processedRow.questionerAgeGroup || undefined;
+        }
+        
+        if ('products' in processedRow) {
+          // products 문자열을 배열로 변환 (CSV 호환)
+          if (!processedRow.products || processedRow.products === '') {
+            cotqaImport.products = [];
+          } else if (typeof processedRow.products === 'string') {
+            cotqaImport.products = processedRow.products.split('|').filter((p: string) => p.trim());
+          } else if (Array.isArray(processedRow.products)) {
+            cotqaImport.products = processedRow.products;
+          } else {
+            cotqaImport.products = [];
+          }
+        } else {
+          cotqaImport.products = [];
+        }
+        
+        if ('question' in processedRow) cotqaImport.question = processedRow.question;
+        if ('cot1' in processedRow) cotqaImport.cot1 = processedRow.cot1;
+        if ('cot2' in processedRow) cotqaImport.cot2 = processedRow.cot2;
+        if ('cot3' in processedRow) cotqaImport.cot3 = processedRow.cot3;
+        if ('answer' in processedRow) cotqaImport.answer = processedRow.answer;
+        
+        if ('status' in processedRow) {
+          cotqaImport.status = processedRow.status || '초안';
+        } else {
+          cotqaImport.status = '초안';
+        }
+        
+        if ('author' in processedRow) {
+          cotqaImport.author = processedRow.author || undefined;
+        }
+        
+        // 동적 CoT 필드들
+        Object.keys(processedRow).forEach(key => {
+          if (key.match(/^cot[4-9]$/) || key.match(/^cot\d{2,}$/)) {
+            cotqaImport[key] = processedRow[key];
+          }
+        });
+        
+        processedRow = cotqaImport;
       }
       break;
       
     case 'product':
-      // 특별한 전처리가 필요한 경우 여기에 추가
+      // snake_case → camelCase 매핑 및 값 정규화
+      {
+        const mapKey = (key: string): string => {
+          const mapping: Record<string, string> = {
+            product_name: 'productName',
+            product_type: 'productCategory',
+            protected_type: 'protectedType',
+            maturity_type: 'maturityType',
+            income_rate: 'incomeRate6m',
+            'income-rate': 'incomeRate6m',
+            risk_grade: 'riskGrade',
+            'risk_ grade': 'riskGrade',
+            tax_type: 'taxType',
+            payment_type: 'paymentType',
+            loss_rate: 'lossRate',
+            liquidity_conditions: 'liquidityConditions',
+            mother_product_name: 'motherProductName',
+            rider_type: 'riderType',
+            product_period: 'productPeriod',
+            disclosure_type: 'disclosureType',
+            renewable_type: 'renewableType',
+            refund_type: 'refundType',
+            exclusion_items: 'exclusionItems',
+            payment_conditions: 'paymentConditions',
+            eligible_age: 'eligibleAge',
+          };
+          return mapping[key] || key;
+        };
+
+        const normalized: any = {};
+        Object.keys(processedRow).forEach((key) => {
+          const value = processedRow[key];
+          // 빈 문자열을 undefined로 변환 (선택적 필드가 제대로 처리되도록)
+          normalized[mapKey(key)] = value === '' ? undefined : value;
+        });
+
+        // 값 정규화: 예시로 productSource, taxType 등 공통 필드 소문자/공백 제거 후 매핑
+        if (typeof normalized.productSource === 'string') {
+          const v = normalized.productSource.trim();
+          if (v === '증권' || v === '보험') normalized.productSource = v;
+        }
+        if (typeof normalized.taxType === 'string') {
+          const v = normalized.taxType.replace(/\s/g, '');
+          // 내부 기본 스키마는 '과세'|'비과세' 사용
+          if (v === '일반과세') normalized.taxType = '과세';
+          if (v === '비과세') normalized.taxType = '비과세';
+          if (v === '세금우대' || v === '연금저축') normalized.taxType = '과세';
+        }
+        processedRow = normalized;
+      }
       break;
   }
   
@@ -150,14 +259,95 @@ const formatZodError = (error: any): string => {
   return error.message || '데이터 유효성 검사 실패';
 };
 
+// Charset 디코딩 유틸리티
+function decodeFromCharset(buffer: ArrayBuffer, charset: CharsetEncoding): string {
+  const uint8Array = new Uint8Array(buffer);
+  let codes = Array.from(uint8Array);
+
+  // UTF-8 BOM 체크 (0xEF, 0xBB, 0xBF)
+  const hasUtf8Bom = codes.length >= 3 && 
+                      codes[0] === 0xEF && 
+                      codes[1] === 0xBB && 
+                      codes[2] === 0xBF;
+
+  if (hasUtf8Bom) {
+    // BOM 제거하고 UTF-8로 디코딩
+    const decoder = new TextDecoder('utf-8');
+    return decoder.decode(uint8Array.slice(3));
+  }
+
+  // charset 파라미터에 따라 디코딩
+  switch (charset) {
+    case 'utf-8':
+    case 'utf-8-bom':
+      // UTF-8 디코딩
+      try {
+        const decoder = new TextDecoder('utf-8');
+        return decoder.decode(uint8Array);
+      } catch (e) {
+        // UTF-8 디코딩 실패 시 fallback
+        return String.fromCharCode(...codes);
+      }
+    
+    case 'euc-kr':
+      // EUC-KR 디코딩
+      // encoding-japanese의 EUCJP를 사용 (한글 일부 지원)
+      try {
+        const unicodeArray = Encoding.convert(codes, {
+          to: 'UNICODE',
+          from: 'EUCJP'
+        });
+        return Encoding.codeToString(unicodeArray);
+      } catch (e) {
+        // 실패 시 UTF-8 시도
+        try {
+          const decoder = new TextDecoder('utf-8');
+          return decoder.decode(uint8Array);
+        } catch (e2) {
+          return String.fromCharCode(...codes);
+        }
+      }
+    
+    case 'shift-jis':
+      // Shift-JIS 디코딩
+      const unicodeArray = Encoding.convert(codes, {
+        to: 'UNICODE',
+        from: 'SJIS'
+      });
+      return Encoding.codeToString(unicodeArray);
+    
+    case 'iso-8859-1':
+    case 'windows-1252':
+      // Latin-1 디코딩
+      return String.fromCharCode(...codes);
+    
+    default:
+      // 기본: UTF-8
+      try {
+        const decoder = new TextDecoder('utf-8');
+        return decoder.decode(uint8Array);
+      } catch (e) {
+        return String.fromCharCode(...codes);
+      }
+  }
+}
+
 // CSV 임포트 (Papa Parse + Streaming)
 export async function importCsvData<T>(
-  csvContent: string,
+  csvContent: string | ArrayBuffer,
   entityType: ImportableEntity,
   options: ImportOptions = {}
 ): Promise<ImportResult<T>> {
-  const { onProgress, batchSize = 1000 } = options;
+  const { onProgress, batchSize = 1000, charset = 'utf-8-bom' } = options;
   const schema = getSchemaForEntity(entityType);
+  
+  // ArrayBuffer인 경우 charset으로 디코딩
+  let csvText: string;
+  if (csvContent instanceof ArrayBuffer) {
+    csvText = decodeFromCharset(csvContent, charset);
+  } else {
+    csvText = csvContent;
+  }
   
   const result: ImportResult<T> = {
     success: false,
@@ -170,10 +360,10 @@ export async function importCsvData<T>(
     let processedRows = 0;
     let totalRows = 0;
 
-    Papa.parse(csvContent, {
+    Papa.parse(csvText, {
       header: true,
       skipEmptyLines: true,
-      chunk: (results, parser) => {
+      chunk: (results: Papa.ParseResult<any>, parser: Papa.Parser) => {
         // 배치 처리
         results.data.forEach((row: any, index: number) => {
           const rowNumber = processedRows + index + 1;
@@ -228,7 +418,7 @@ export async function importCsvData<T>(
         if (onProgress) onProgress(100);
         resolve(result);
       },
-      error: (error) => {
+      error: (error: any) => {
         result.errors.push({
           row: 0,
           message: `CSV 파싱 오류: ${error.message}`
@@ -302,7 +492,7 @@ export async function importXlsxData<T>(
   try {
     // XLSX 파일 읽기
     const workbook = XLSX.read(xlsxBuffer, { type: 'array' });
-    const sheetName = worksheetName || workbook.SheetNames[0];
+    const sheetName: string = (worksheetName as string) ?? workbook.SheetNames[0];
     
     if (!workbook.Sheets[sheetName]) {
       result.errors.push({

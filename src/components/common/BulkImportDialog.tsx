@@ -14,10 +14,14 @@ import {
   Step,
   StepLabel,
   StepContent,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from '@mui/material';
 import { CloudUpload, CheckCircle, Error as ErrorIcon, Info } from '@mui/icons-material';
 import { storageService } from '../../services/storage/storageService';
-import { importCsvData, importJsonData, importXlsxData, type ImportableEntity } from '../../services/io/importer';
+import { importCsvData, importJsonData, importXlsxData, type ImportableEntity, type CharsetEncoding } from '../../services/io/importer';
 
 interface BulkImportDialogProps {
   open: boolean;
@@ -45,6 +49,16 @@ interface ImportProgress {
   processedItems?: number;
 }
 
+// Charset 옵션 정의
+const charsetOptions: { value: CharsetEncoding; label: string; description: string }[] = [
+  { value: 'utf-8-bom', label: 'UTF-8 BOM (권장)', description: 'Excel 호환, 한글 정상 표시' },
+  { value: 'utf-8', label: 'UTF-8', description: '유니코드 표준 (BOM 없음)' },
+  { value: 'euc-kr', label: 'EUC-KR', description: '한국어 레거시 인코딩' },
+  { value: 'shift-jis', label: 'Shift-JIS', description: '일본어' },
+  { value: 'iso-8859-1', label: 'ISO-8859-1', description: '서유럽 문자' },
+  { value: 'windows-1252', label: 'Windows-1252', description: 'Windows 라틴 문자' },
+];
+
 export function BulkImportDialog({
   open,
   onClose,
@@ -53,6 +67,7 @@ export function BulkImportDialog({
   onError
 }: BulkImportDialogProps) {
   const [file, setFile] = useState<File | null>(null);
+  const [charset, setCharset] = useState<CharsetEncoding>('utf-8-bom');
   const [importProgress, setImportProgress] = useState<ImportProgress>({
     stage: 'parsing',
     progress: 0,
@@ -114,9 +129,10 @@ export function BulkImportDialog({
 
       switch (fileType) {
         case 'csv':
-          const csvText = await file.text();
-          parseResult = await importCsvData(csvText, importableEntityType, { 
-            onProgress: progressCallback 
+          const csvBuffer = await file.arrayBuffer();
+          parseResult = await importCsvData(csvBuffer, importableEntityType, { 
+            onProgress: progressCallback,
+            charset 
           });
           break;
         case 'json':
@@ -317,6 +333,33 @@ export function BulkImportDialog({
                 </Box>
               )}
             </Box>
+
+            {file && getFileType(file) === 'csv' && (
+              <Box sx={{ mt: 3 }}>
+                <FormControl fullWidth>
+                  <InputLabel>문자 인코딩</InputLabel>
+                  <Select
+                    value={charset}
+                    onChange={(e) => setCharset(e.target.value as CharsetEncoding)}
+                    label="문자 인코딩"
+                  >
+                    {charsetOptions.map((option) => (
+                      <MenuItem key={option.value} value={option.value}>
+                        <Box>
+                          <Typography>{option.label}</Typography>
+                          <Typography variant="caption" color="text.secondary">
+                            {option.description}
+                          </Typography>
+                        </Box>
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+                <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block' }}>
+                  💡 Excel에서 저장한 CSV 파일은 대부분 <strong>UTF-8 BOM</strong>입니다. 한글이 깨지면 다른 인코딩을 시도해보세요.
+                </Typography>
+              </Box>
+            )}
           </Box>
         )}
 

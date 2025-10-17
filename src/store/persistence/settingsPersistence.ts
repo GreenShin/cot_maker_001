@@ -1,13 +1,38 @@
-import { SettingsState } from '../slices/settingsSlice';
+import { SettingsState, TabContent } from '../slices/settingsSlice';
 
-// LocalStorage 키
-const SETTINGS_STORAGE_KEY = 'cot-maker-settings';
+// LocalStorage 키 (settingsSlice.ts의 STORAGE_KEY와 동일해야 함)
+const SETTINGS_STORAGE_KEY = 'cotAdminSettings';
+
+// 빈 탭 콘텐츠
+const emptyTabContent: TabContent = {
+  questionerJudgment: '',
+  question: '',
+  cot1: '',
+  cot2: '',
+  cot3: '',
+  answer: ''
+};
 
 // 기본 설정값
 export const defaultSettings: SettingsState = {
   author: '',
-  canEditUsers: true,
-  canEditProducts: true,
+  category: '증권',
+  currentTab: {
+    증권: '고객특성강조형',
+    보험: '연령별생애주기저축성'
+  },
+  tabs: {
+    증권: {
+      고객특성강조형: { ...emptyTabContent },
+      투자성향조건기반형: { ...emptyTabContent },
+      상품비교추천형: { ...emptyTabContent }
+    },
+    보험: {
+      연령별생애주기저축성: { ...emptyTabContent },
+      투자성상품추천형: { ...emptyTabContent },
+      건강질병보장대비형: { ...emptyTabContent }
+    }
+  },
   fontSize: 14,
   theme: 'light',
   isLoaded: false,
@@ -19,8 +44,9 @@ export const saveSettings = (settings: SettingsState): void => {
     // 저장할 설정 데이터 (isLoaded 제외)
     const settingsToSave: Omit<SettingsState, 'isLoaded'> = {
       author: settings.author,
-      canEditUsers: settings.canEditUsers,
-      canEditProducts: settings.canEditProducts,
+      category: settings.category,
+      currentTab: settings.currentTab,
+      tabs: settings.tabs,
       fontSize: settings.fontSize,
       theme: settings.theme,
     };
@@ -43,11 +69,47 @@ export const loadSettings = (): SettingsState => {
 
     const parsed = JSON.parse(serialized);
     
+    // 탭 콘텐츠 검증 함수
+    const validateTabContent = (content: any): TabContent => {
+      if (!content || typeof content !== 'object') {
+        return { ...emptyTabContent };
+      }
+      return {
+        questionerJudgment: typeof content.questionerJudgment === 'string' ? content.questionerJudgment : '',
+        question: typeof content.question === 'string' ? content.question : '',
+        cot1: typeof content.cot1 === 'string' ? content.cot1 : '',
+        cot2: typeof content.cot2 === 'string' ? content.cot2 : '',
+        cot3: typeof content.cot3 === 'string' ? content.cot3 : '',
+        answer: typeof content.answer === 'string' ? content.answer : ''
+      };
+    };
+
     // 타입 검증 및 기본값 병합
     const settings: SettingsState = {
       author: typeof parsed.author === 'string' ? parsed.author : defaultSettings.author,
-      canEditUsers: typeof parsed.canEditUsers === 'boolean' ? parsed.canEditUsers : defaultSettings.canEditUsers,
-      canEditProducts: typeof parsed.canEditProducts === 'boolean' ? parsed.canEditProducts : defaultSettings.canEditProducts,
+      category: (parsed.category === '증권' || parsed.category === '보험')
+        ? parsed.category
+        : defaultSettings.category,
+      currentTab: {
+        증권: parsed.currentTab?.증권 && ['고객특성강조형', '투자성향조건기반형', '상품비교추천형'].includes(parsed.currentTab.증권)
+          ? parsed.currentTab.증권
+          : defaultSettings.currentTab.증권,
+        보험: parsed.currentTab?.보험 && ['연령별생애주기저축성', '투자성상품추천형', '건강질병보장대비형'].includes(parsed.currentTab.보험)
+          ? parsed.currentTab.보험
+          : defaultSettings.currentTab.보험
+      },
+      tabs: {
+        증권: {
+          고객특성강조형: validateTabContent(parsed.tabs?.증권?.고객특성강조형),
+          투자성향조건기반형: validateTabContent(parsed.tabs?.증권?.투자성향조건기반형),
+          상품비교추천형: validateTabContent(parsed.tabs?.증권?.상품비교추천형)
+        },
+        보험: {
+          연령별생애주기저축성: validateTabContent(parsed.tabs?.보험?.연령별생애주기저축성),
+          투자성상품추천형: validateTabContent(parsed.tabs?.보험?.투자성상품추천형),
+          건강질병보장대비형: validateTabContent(parsed.tabs?.보험?.건강질병보장대비형)
+        }
+      },
       fontSize: typeof parsed.fontSize === 'number' && parsed.fontSize >= 10 && parsed.fontSize <= 24 
         ? parsed.fontSize 
         : defaultSettings.fontSize,
@@ -95,13 +157,23 @@ export const validateSettings = (settings: Partial<SettingsState>): boolean => {
       return false;
     }
 
-    // 토글 설정 검증
-    if (settings.canEditUsers !== undefined && typeof settings.canEditUsers !== 'boolean') {
+    // 카테고리 검증
+    if (settings.category !== undefined && settings.category !== '증권' && settings.category !== '보험') {
       return false;
     }
 
-    if (settings.canEditProducts !== undefined && typeof settings.canEditProducts !== 'boolean') {
-      return false;
+    // 현재 탭 검증
+    if (settings.currentTab !== undefined) {
+      if (typeof settings.currentTab !== 'object') {
+        return false;
+      }
+    }
+
+    // 탭 검증
+    if (settings.tabs !== undefined) {
+      if (typeof settings.tabs !== 'object') {
+        return false;
+      }
     }
 
     // 폰트 크기 검증
@@ -145,20 +217,53 @@ export const migrateSettings = (version: string): SettingsState => {
 
 // 설정 내보내기
 export const exportSettings = (): string => {
-  const settings = loadSettings();
-  const exportData = {
-    version: '1.0.0',
-    timestamp: new Date().toISOString(),
-    settings: {
-      author: settings.author,
-      canEditUsers: settings.canEditUsers,
-      canEditProducts: settings.canEditProducts,
-      fontSize: settings.fontSize,
-      theme: settings.theme,
-    },
-  };
-  
-  return JSON.stringify(exportData, null, 2);
+  try {
+    // localStorage에서 직접 읽어서 export (검증 없이 원본 데이터)
+    const storedData = localStorage.getItem(SETTINGS_STORAGE_KEY);
+    
+    if (storedData) {
+      const parsedSettings = JSON.parse(storedData);
+      const exportData = {
+        version: '1.0.0',
+        timestamp: new Date().toISOString(),
+        settings: parsedSettings,
+      };
+      return JSON.stringify(exportData, null, 2);
+    } else {
+      // localStorage에 데이터가 없으면 현재 기본값으로 export
+      const settings = loadSettings();
+      const exportData = {
+        version: '1.0.0',
+        timestamp: new Date().toISOString(),
+        settings: {
+          author: settings.author,
+          category: settings.category,
+          currentTab: settings.currentTab,
+          tabs: settings.tabs,
+          fontSize: settings.fontSize,
+          theme: settings.theme,
+        },
+      };
+      return JSON.stringify(exportData, null, 2);
+    }
+  } catch (error) {
+    console.error('설정 내보내기 오류:', error);
+    // 오류 발생 시 기본값으로 export
+    const settings = loadSettings();
+    const exportData = {
+      version: '1.0.0',
+      timestamp: new Date().toISOString(),
+      settings: {
+        author: settings.author,
+        category: settings.category,
+        currentTab: settings.currentTab,
+        tabs: settings.tabs,
+        fontSize: settings.fontSize,
+        theme: settings.theme,
+      },
+    };
+    return JSON.stringify(exportData, null, 2);
+  }
 };
 
 // 설정 가져오기

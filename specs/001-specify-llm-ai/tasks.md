@@ -90,6 +90,10 @@
 ## Phase 3.6: Feature Enhancements
 - [x] T043 Add owned products count column to Users list page in `src/pages/users/UsersListPage.tsx`
 - [x] T044 Fix DataGrid scroll and layout issues in all list pages in `src/pages/*/`, `src/components/layout/ListLayout.tsx`
+- [x] T045 Improve Import UX: Remove success alerts and move data refresh to completion button in `src/components/common/BulkImportDialog.tsx`, `src/pages/*/`
+- [x] T046 Fix Export functionality to download all data instead of current page data in `src/store/slices/*.ts`, `src/pages/*/`
+- [x] T047 Add charset encoding selection for import/export operations with EUC-KR as default in `src/services/io/{exporter.ts,importer.ts}`, `src/components/common/{BulkImportDialog.tsx,ExportDialog.tsx}`, `src/pages/*/`
+- [x] T048 Update CoT import/export field name mapping (id→question_key, productSource→product_type, questionType→question_type, createdAt→created_at, updatedAt→updated_at) with backward compatibility in `src/services/io/{exporter.ts,importer.ts}`, `specs/001-specify-llm-ai/contracts/cotqa.schema.md`, `tests/contract/{export,import}/`
 
 ## Dependencies
 - Tests (T008–T017) before implementation (T018–T031)

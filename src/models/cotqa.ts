@@ -12,23 +12,29 @@ const insuranceQuestionTypes = z.enum([
 // CoT 상태 정의
 const cotStatus = z.enum(['초안', '검토중', '완료', '보류']);
 
-// 동적 CoT 단계를 위한 스키마
+// trim 유틸리티 함수
+const trimmedString = () => z.string().transform(val => val?.trim() || '');
+const trimmedOptionalString = () => z.string().transform(val => val?.trim() || '').optional();
+
+// 동적 CoT 단계를 위한 스키마 (선택사항으로 변경)
 const dynamicCoTSchema = z.object({
-  cot1: z.string().min(1, 'CoT1을 입력해주세요'),
-  cot2: z.string().min(1, 'CoT2를 입력해주세요'),
-  cot3: z.string().min(1, 'CoT3을 입력해주세요'),
-}).catchall(z.string().optional()); // cot4, cot5, ... 동적 필드 허용
+  cot1: trimmedOptionalString(),
+  cot2: trimmedOptionalString(),
+  cot3: trimmedOptionalString(),
+}).catchall(trimmedOptionalString()); // cot4, cot5, ... 동적 필드 허용
 
 // 기본 CoTQA 스키마
 const baseCotQASchema = z.object({
   id: z.string(),
-  productSource: z.enum(['증권', '보험']),
-  questioner: z.string().optional(), // 선택사항으로 변경
-  products: z.array(z.string()).optional().default([]), // 선택사항으로 변경
-  question: z.string().min(1, '질문을 입력해주세요'),
-  answer: z.string().min(1, '답변을 입력해주세요'),
-  status: cotStatus,
-  author: z.string().optional(),
+  productSource: z.enum(['증권', '보험']), // 필수
+  questioner: trimmedOptionalString(),
+  questionerGender: z.enum(['남', '여']).optional(), // 질문자 성별 (질문자 선택 시 자동 저장)
+  questionerAgeGroup: z.enum(['10대', '20대', '30대', '40대', '50대', '60대', '70대', '80대 이상']).optional(), // 질문자 연령대 (질문자 선택 시 자동 저장)
+  products: z.array(z.string()).optional().default([]),
+  question: trimmedString().refine(val => val.length > 0, '질문을 입력해주세요'), // 필수
+  answer: trimmedOptionalString(), // 선택사항으로 변경
+  status: cotStatus, // 필수
+  author: trimmedOptionalString(),
   // 메타데이터
   createdAt: z.string().optional(),
   updatedAt: z.string().optional()
@@ -79,7 +85,7 @@ export const getQuestionTypesBySource = (productSource: '증권' | '보험') => 
 };
 
 // CoT 단계 관리 유틸리티
-export const getCoTSteps = (cotqa: CoTQA): Array<{ key: string; value: string; required: boolean }> => {
+export const getCoTSteps = (cotqa: CoTQA): Array<{ key: string; value: string | undefined; required: boolean }> => {
   const steps = [
     { key: 'cot1', value: cotqa.cot1, required: true },
     { key: 'cot2', value: cotqa.cot2, required: true },
@@ -91,7 +97,7 @@ export const getCoTSteps = (cotqa: CoTQA): Array<{ key: string; value: string; r
     if (key.match(/^cot[4-9]$/) || key.match(/^cot\d{2,}$/)) {
       steps.push({ 
         key, 
-        value: (cotqa as any)[key] || '', 
+        value: (cotqa as any)[key], 
         required: false 
       });
     }

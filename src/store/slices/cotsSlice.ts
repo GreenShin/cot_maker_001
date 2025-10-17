@@ -125,9 +125,23 @@ export const fetchAllCoTsForExport = createAsyncThunk(
 
 export const updateCoT = createAsyncThunk(
   'cots/updateCoT',
-  async ({ id, data }: { id: string; data: Partial<CoTQA> }) => {
-    const updatedCoT = await storage.update(id, data);
-    return updatedCoT;
+  async ({ id, data }: { id: string; data: Partial<CoTQA> }, { rejectWithValue }) => {
+    try {
+      console.log('=== updateCoT thunk started ===');
+      console.log('ID:', id);
+      console.log('Data to update:', data);
+      
+      const updatedCoT = await storage.update(id, data);
+      
+      console.log('Update successful:', updatedCoT);
+      return updatedCoT;
+    } catch (error: any) {
+      console.error('=== updateCoT thunk failed ===');
+      console.error('Error:', error);
+      console.error('Error message:', error.message);
+      console.error('Error stack:', error.stack);
+      return rejectWithValue(error.message || 'CoT 수정 실패');
+    }
   }
 );
 

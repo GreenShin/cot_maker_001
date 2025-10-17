@@ -194,7 +194,7 @@ export class QueryService {
     // 텍스트 검색 적용
     if (options.search) {
       // CoT 데이터인 경우 특별 처리
-      if (result.length > 0 && 'question' in result[0] && 'cot1' in result[0]) {
+      if (result.length > 0 && result[0] && typeof result[0] === 'object' && 'question' in result[0] && 'cot1' in result[0]) {
         result = this.searchCoTContent(result, options.search);
       } else {
         // 일반 텍스트 검색

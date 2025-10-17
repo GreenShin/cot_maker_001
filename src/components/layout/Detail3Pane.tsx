@@ -59,7 +59,7 @@ export function Detail3Pane({ leftPanel, centerPanel, rightPanel }: Detail3PaneP
           sx={{ 
             width: '100%',
             height: '100%',
-            p: 2,
+            p: 0,
             display: 'flex',
             flexDirection: 'column',
             borderRadius: '4px 0 0 4px',
@@ -82,7 +82,7 @@ export function Detail3Pane({ leftPanel, centerPanel, rightPanel }: Detail3PaneP
       <Paper 
         sx={{ 
           flex: 1,
-          p: 3,
+          p: 0,
           display: 'flex',
           flexDirection: 'column',
           borderRadius: 0,
@@ -107,7 +107,7 @@ export function Detail3Pane({ leftPanel, centerPanel, rightPanel }: Detail3PaneP
           sx={{ 
             width: '100%',
             height: '100%',
-            p: 2,
+            p: 0,
             display: 'flex',
             flexDirection: 'column',
             borderRadius: '0 4px 4px 0',

@@ -306,28 +306,31 @@ interface ImportError {
 ]
 ```
 
-### cots.json
+### cots.json (Export 형식)
+
+**주의**: Export 시에는 필드명이 변환됩니다.
+
 ```json
 [
   {
-    "id": "cot-001",
-    "productSource": "증권",
-    "questionType": "투자성향 및 조건 기반형",
-    "questioner": "user-0001",
-    "products": ["product-001"],
+    "question_key": "cot-001",
+    "product_type": "증권",
+    "question_type": "투자성향 및 조건 기반형",
     "question": "30대 직장인으로 안정적인 해외 투자를 원합니다. 어떤 상품을 추천하시나요?",
     "cot1": "먼저 고객의 투자 목적과 위험 성향을 파악해보겠습니다. 30대 직장인으로 안정적인 해외 투자를 원한다고 하셨습니다.",
     "cot2": "고객의 투자성향이 '적극투자형'이지만 안정성을 중시한다고 하셨으므로, 분산투자가 가능한 해외 ETF 상품을 고려해보겠습니다.",
     "cot3": "S&P500 ETF는 미국 대형주 500개 기업에 분산투자하여 안정성과 성장성을 동시에 추구할 수 있는 상품입니다.",
     "cot4": "또한 달러 자산으로 환율 헤지 효과도 기대할 수 있어 포트폴리오 다변화에 도움이 됩니다.",
-    "answer": "고객님의 투자 성향과 목적을 고려할 때, 삼성 S&P500 ETF를 추천드립니다. 이 상품은 미국 우량 기업들에 분산투자하여 안정성을 확보하면서도 장기적인 성장 가능성을 제공합니다.",
-    "status": "완료",
-    "author": "관리자",
-    "createdAt": "2024-01-01T00:00:00.000Z",
-    "updatedAt": "2024-01-01T00:00:00.000Z"
+    "answer": "고객님의 투자 성향과 목적을 고려할 때, 삼성 S&P500 ETF를 추천드립니다. 이 상품은 미국 우량 기업들에 분산투자하여 안정성을 확보하면서도 장기적인 성장 가능성을 제공합니다."
   }
 ]
 ```
+
+**필드명 매핑 (Export)**:
+- `id` → `question_key`
+- `productSource` → `product_type`
+- `questionType` → `question_type`
+- `questioner`, `products`, `status`, `author`, `createdAt`, `updatedAt` → 삭제됨
 
 ### users.csv
 ```csv

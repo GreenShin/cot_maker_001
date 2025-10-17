@@ -168,8 +168,6 @@ export function ProductSelectorDialog({
             rowSelectionModel={selectionModel}
             onRowSelectionModelChange={setSelectionModel}
             // 성능 최적화 옵션
-            rowBuffer={5}
-            columnBuffer={4}
             rowHeight={52}
             disableVirtualization={false}
             keepNonExistentRowsSelected={true}

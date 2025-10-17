@@ -11,11 +11,13 @@ import {
   FormControl,
   InputLabel,
   Box,
+  Typography,
 } from '@mui/material';
+import { Search as SearchIcon } from '@mui/icons-material';
 import { DataGrid, GridColDef, GridRowSelectionModel } from '@mui/x-data-grid';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from '../../store';
-import { fetchUsers } from '../../store/slices/usersSlice';
+import { fetchUsers, fetchUsersWithFilters, type UserSearchFilters } from '../../store/slices/usersSlice';
 import { UserAnon } from '../../models/userAnon';
 
 interface UserSelectorDialogProps {
@@ -52,6 +54,12 @@ export function UserSelectorDialog({
 
   React.useEffect(() => {
     if (open) {
+      // 다이얼로그 열릴 때 필터 초기화 및 전체 목록 로드
+      setFilters({
+        gender: '',
+        ageGroup: '',
+        customerSource: '',
+      });
       dispatch(fetchUsers({}));
     }
   }, [open, dispatch]);
@@ -64,8 +72,16 @@ export function UserSelectorDialog({
 
   const handleFilterChange = (field: string, value: string) => {
     setFilters(prev => ({ ...prev, [field]: value }));
-    // TODO: 필터링된 사용자 목록 요청
-    // dispatch(searchUsers({ filters: { ...filters, [field]: value } }));
+  };
+
+  const handleSearch = () => {
+    const searchFilters: UserSearchFilters = {
+      searchKeyword: '',
+      customerSource: filters.customerSource,
+      ageGroup: filters.ageGroup,
+      gender: filters.gender,
+    };
+    dispatch(fetchUsersWithFilters({ filters: searchFilters }));
   };
 
   const handleSelect = () => {
@@ -75,6 +91,14 @@ export function UserSelectorDialog({
         onSelect(selectedUser);
         onClose();
       }
+    }
+  };
+
+  const handleRowDoubleClick = (params: any) => {
+    const selectedUser = items.find(user => user.id === params.id);
+    if (selectedUser) {
+      onSelect(selectedUser);
+      onClose();
     }
   };
 
@@ -90,21 +114,28 @@ export function UserSelectorDialog({
       maxWidth="md"
       fullWidth
     >
-      <DialogTitle>질문자 선택</DialogTitle>
+      <DialogTitle>
+        <Typography variant="h6" component="div">
+          질문자 선택
+        </Typography>
+        <Typography variant="caption" color="text.secondary">
+          행을 클릭하여 선택하거나, 더블클릭하면 바로 적용됩니다
+        </Typography>
+      </DialogTitle>
       
       <DialogContent>
         {/* 필터 섹션 */}
-        <Box sx={{ display: 'flex', gap: 2, mb: 2, pt: 1 }}>
+        <Box sx={{ display: 'flex', gap: 2, mb: 2, pt: 1, alignItems: 'flex-end' }}>
           <FormControl sx={{ minWidth: 120 }}>
-            <InputLabel>성별</InputLabel>
+            <InputLabel>고객출처</InputLabel>
             <Select
-              value={filters.gender}
-              label="성별"
-              onChange={(e) => handleFilterChange('gender', e.target.value)}
+              value={filters.customerSource}
+              label="고객출처"
+              onChange={(e) => handleFilterChange('customerSource', e.target.value)}
             >
               <MenuItem value="">전체</MenuItem>
-              <MenuItem value="남">남성</MenuItem>
-              <MenuItem value="여">여성</MenuItem>
+              <MenuItem value="증권">증권</MenuItem>
+              <MenuItem value="보험">보험</MenuItem>
             </Select>
           </FormControl>
 
@@ -128,17 +159,25 @@ export function UserSelectorDialog({
           </FormControl>
 
           <FormControl sx={{ minWidth: 120 }}>
-            <InputLabel>고객출처</InputLabel>
+            <InputLabel>성별</InputLabel>
             <Select
-              value={filters.customerSource}
-              label="고객출처"
-              onChange={(e) => handleFilterChange('customerSource', e.target.value)}
+              value={filters.gender}
+              label="성별"
+              onChange={(e) => handleFilterChange('gender', e.target.value)}
             >
               <MenuItem value="">전체</MenuItem>
-              <MenuItem value="증권">증권</MenuItem>
-              <MenuItem value="보험">보험</MenuItem>
+              <MenuItem value="남">남성</MenuItem>
+              <MenuItem value="여">여성</MenuItem>
             </Select>
           </FormControl>
+
+          <Button 
+            variant="contained" 
+            startIcon={<SearchIcon />}
+            onClick={handleSearch}
+          >
+            검색
+          </Button>
         </Box>
 
         {/* 사용자 목록 */}
@@ -155,18 +194,22 @@ export function UserSelectorDialog({
               pageSize: pagination.pageSize
             }}
             pageSizeOptions={[25, 50, 100]}
-            checkboxSelection
-            disableRowSelectionOnClick
             rowSelectionModel={selectionModel}
             onRowSelectionModelChange={setSelectionModel}
+            onRowDoubleClick={handleRowDoubleClick}
             // 성능 최적화 옵션
-            rowBuffer={5}
-            columnBuffer={3}
+            rowBufferPx={260}
+            columnBufferPx={156}
             rowHeight={52}
             disableVirtualization={false}
             keepNonExistentRowsSelected={true}
             density="compact"
-            sx={{ border: 0 }}
+            sx={{ 
+              border: 0,
+              '& .MuiDataGrid-row': {
+                cursor: 'pointer',
+              },
+            }}
           />
         </Box>
       </DialogContent>

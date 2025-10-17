@@ -26,7 +26,7 @@ const userFormSchema = z.object({
   ownedProducts: z.array(z.object({
     productName: z.string(),
     purchaseDate: z.string()
-  })).optional().default([])
+  })).default([])
 });
 
 export type UserFormData = z.infer<typeof userFormSchema>;
@@ -45,7 +45,7 @@ export function useUserForm({ isEditMode }: UseUserFormProps) {
   const [deleteConfirmOpen, setDeleteConfirmOpen] = React.useState(false);
 
   // React Hook Form 설정
-  const form = useForm<UserFormData>({
+  const form = useForm({
     resolver: zodResolver(userFormSchema),
     defaultValues: {
       customerSource: '증권',

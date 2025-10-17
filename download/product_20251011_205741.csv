@@ -1,0 +1,3 @@
+﻿productSource,productName,productCategory,taxType,riskLevel,description,managementCompany,expectedReturn,id,createdAt,updatedAt,protectedType,maturityType,maturityPeriod,incomeRate6m,riskGrade,paymentType,lossRate,liquidityConditions,motherProductName,riderType,productPeriod,disclosureType,renewableType,refundType,exclusionItems,paymentConditions,eligibleAge,pdfFilename
+증권,증권11,채권형,과세,2,증권11 설명,운용사 111,연 51%,products-1758507923330-ql40f6lxe,2025-09-22T02:25:23.330Z,2025-10-11T07:41:36.994Z,원금보장형,없음,,+3.5%,6등급(매우낮은위험),일시납,무,환매 불가능,,,,,,,,,,
+보험,보험1,연금,과세,2,,,,products-1758507933434-1fdcqp4vt,2025-09-22T02:25:33.434Z,2025-09-22T02:25:33.434Z,,,,,,,,,,,,,,,,,,

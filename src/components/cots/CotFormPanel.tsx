@@ -12,6 +12,8 @@ import {
   Grid2,
   Divider,
   IconButton,
+  FormHelperText,
+  Alert,
 } from '@mui/material';
 import {
   Add as AddIcon,
@@ -37,13 +39,13 @@ interface CotFormData {
 
 interface CotFormPanelProps {
   isEditMode: boolean;
-  control: Control<CotFormData>;
-  errors: FieldErrors<CotFormData>;
+  control: Control<any>;
+  errors: FieldErrors<any>;
   isSubmitting: boolean;
   watchedProductSource: string;
   cotFields: string[];
   cotNFields: Record<string, string>;
-  onSubmit: () => void;
+  onSubmit: (e?: React.BaseSyntheticEvent) => Promise<void>;
   onBack: () => void;
   onDelete: () => void;
   onAddCotField: () => void;
@@ -76,8 +78,13 @@ export function CotFormPanel({
   onCotNFieldChange,
 }: CotFormPanelProps) {
   const { heights, adjustFieldHeight, getFieldHeight, getFieldRows } = useTextareaHeights();
+  
   return (
-    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+    <Box 
+      component="form" 
+      onSubmit={onSubmit}
+      sx={{ height: '100%', display: 'flex', flexDirection: 'column', p: 3 }}
+    >
       {/* 고정 헤더 */}
       <Box sx={{ 
         flexShrink: 0, 
@@ -94,6 +101,7 @@ export function CotFormPanel({
         </Typography>
         <Box>
           <Button
+            type="button"
             variant="outlined"
             startIcon={<ArrowBackIcon />}
             onClick={onBack}
@@ -103,6 +111,7 @@ export function CotFormPanel({
           </Button>
           {isEditMode && (
             <Button
+              type="button"
               variant="outlined"
               color="error"
               startIcon={<DeleteForeverIcon />}
@@ -113,9 +122,9 @@ export function CotFormPanel({
             </Button>
           )}
           <Button
+            type="submit"
             variant="contained"
             startIcon={<SaveIcon />}
-            onClick={onSubmit}
             disabled={isSubmitting}
           >
             저장
@@ -126,8 +135,35 @@ export function CotFormPanel({
       {/* 스크롤 가능한 폼 콘텐츠 */}
       <Box sx={{ flex: 1, overflow: 'auto', pt: 1 }}>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-
-      <Box component="form" sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+        {/* 에러 알림 */}
+        {errors.questionType && (
+          <Alert 
+            severity="error" 
+            sx={{ 
+              '& .MuiAlert-message': { 
+                fontSize: '1rem',
+                fontWeight: 500 
+              } 
+            }}
+          >
+            질문유형을 선택해 주세요
+          </Alert>
+        )}
+        
+        {errors.question && (
+          <Alert 
+            severity="error" 
+            sx={{ 
+              '& .MuiAlert-message': { 
+                fontSize: '1rem',
+                fontWeight: 500 
+              } 
+            }}
+          >
+            질문을 입력해 주세요
+          </Alert>
+        )}
+        
         {/* 첫 번째 줄: 상품분류, 질문유형 */}
         <Grid2 container spacing={2}>
           <Grid2 size={6}>
@@ -136,10 +172,10 @@ export function CotFormPanel({
               control={control}
               render={({ field }) => (
                 <FormControl fullWidth error={!!errors.productSource}>
-                  <InputLabel>상품분류</InputLabel>
+                  <InputLabel>상품분류 *</InputLabel>
                   <Select
                     {...field}
-                    label="상품분류"
+                    label="상품분류 *"
                   >
                     <MenuItem value="증권">증권</MenuItem>
                     <MenuItem value="보험">보험</MenuItem>
@@ -153,11 +189,28 @@ export function CotFormPanel({
               name="questionType"
               control={control}
               render={({ field }) => (
-                <FormControl fullWidth error={!!errors.questionType}>
-                  <InputLabel>질문유형</InputLabel>
+                <FormControl 
+                  fullWidth 
+                  error={!!errors.questionType}
+                  sx={{
+                    ...(errors.questionType && {
+                      '& .MuiOutlinedInput-root': {
+                        '& fieldset': {
+                          borderWidth: 2,
+                          borderColor: 'error.main',
+                        },
+                      },
+                      '& .MuiInputLabel-root': {
+                        color: 'error.main',
+                        fontWeight: 600,
+                      },
+                    }),
+                  }}
+                >
+                  <InputLabel>질문유형 *</InputLabel>
                   <Select
                     {...field}
-                    label="질문유형"
+                    label="질문유형 *"
                   >
                     {getQuestionTypes(watchedProductSource).map((type) => (
                       <MenuItem key={type} value={type}>
@@ -166,9 +219,15 @@ export function CotFormPanel({
                     ))}
                   </Select>
                   {errors.questionType && (
-                    <Typography variant="caption" color="error" sx={{ mt: 0.5 }}>
-                      {errors.questionType.message}
-                    </Typography>
+                    <FormHelperText 
+                      sx={{ 
+                        fontSize: '0.875rem',
+                        fontWeight: 500,
+                        ml: 0
+                      }}
+                    >
+                      {String(errors.questionType?.message ?? '')}
+                    </FormHelperText>
                   )}
                 </FormControl>
               )}
@@ -184,14 +243,28 @@ export function CotFormPanel({
             <ResizableTextField
               {...field}
               fieldName="question"
-              label="질문"
+              label="질문 *"
               rows={getFieldRows("question")}
               heightPx={getFieldHeight("question")}
               fullWidth
               placeholder="질문을 입력해 주세요"
               error={!!errors.question}
-              helperText={errors.question?.message}
+              helperText={String(errors.question?.message ?? '')}
               onHeightChange={adjustFieldHeight}
+              sx={{
+                ...(errors.question && {
+                  '& .MuiOutlinedInput-root': {
+                    '& fieldset': {
+                      borderWidth: 2,
+                      borderColor: 'error.main',
+                    },
+                  },
+                  '& .MuiInputLabel-root': {
+                    color: 'error.main',
+                    fontWeight: 600,
+                  },
+                }),
+              }}
             />
           )}
         />
@@ -208,13 +281,13 @@ export function CotFormPanel({
                     <ResizableTextField
                       {...field}
                       fieldName={`cot${index + 1}`}
-                      label={fieldName + ' (필수)'}
+                      label={fieldName}
                       rows={getFieldRows(`cot${index + 1}`)}
                       heightPx={getFieldHeight(`cot${index + 1}`)}
                       fullWidth
                       placeholder={`${fieldName} 내용을 입력해 주세요`}
-                      error={!!errors[`cot${index + 1}` as keyof typeof errors]}
-                      helperText={errors[`cot${index + 1}` as keyof typeof errors]?.message}
+                      error={!!(errors as any)[`cot${index + 1}`]}
+                      helperText={(errors as any)[`cot${index + 1}`]?.message ?? ''}
                       onHeightChange={adjustFieldHeight}
                     />
                   )}
@@ -271,7 +344,7 @@ export function CotFormPanel({
               fullWidth
               placeholder="답변을 입력해 주세요"
               error={!!errors.answer}
-              helperText={errors.answer?.message}
+              helperText={String(errors.answer?.message ?? '')}
               onHeightChange={adjustFieldHeight}
             />
           )}
@@ -285,10 +358,10 @@ export function CotFormPanel({
               control={control}
               render={({ field }) => (
                 <FormControl fullWidth>
-                  <InputLabel>CoT 상태</InputLabel>
+                  <InputLabel>CoT 상태 *</InputLabel>
                   <Select
                     {...field}
-                    label="CoT 상태"
+                    label="CoT 상태 *"
                   >
                     <MenuItem value="초안">초안</MenuItem>
                     <MenuItem value="검토중">검토중</MenuItem>
@@ -310,13 +383,12 @@ export function CotFormPanel({
                   fullWidth
                   disabled={isEditMode}
                   error={!!errors.author}
-                  helperText={errors.author?.message || (isEditMode ? '수정 모드에서는 작성자를 변경할 수 없습니다' : '설정에서 기본 작성자를 변경할 수 있습니다')}
+                  helperText={String((errors.author?.message ?? '') || (isEditMode ? '수정 모드에서는 작성자를 변경할 수 없습니다' : '설정에서 기본 작성자를 변경할 수 있습니다'))}
                 />
               )}
             />
           </Grid2>
         </Grid2>
-      </Box>
         </Box>
       </Box>
     </Box>

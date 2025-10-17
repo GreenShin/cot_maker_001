@@ -149,7 +149,7 @@ export class TextSearchService {
       
       // 각 필드에서 매치 찾기
       for (const field of searchFields) {
-        const matches = this.findMatches(field.value, query, field.key, options);
+        const matches = this.findMatches(field.value ?? '', query, field.key, options);
         allMatches.push(...matches);
       }
       
@@ -211,7 +211,7 @@ export class TextSearchService {
     for (const item of items) {
       const allMatches: SearchMatch[] = [];
       
-      const searchFields = [
+      const searchFields: Array<{ key: string; value: string }> = [
         { key: 'ageGroup', value: item.ageGroup },
         { key: 'gender', value: item.gender },
         { key: 'customerSource', value: item.customerSource },
@@ -219,9 +219,9 @@ export class TextSearchService {
       
       // 고객출처별 특수 필드
       if (item.customerSource === '증권' && 'investmentTendency' in item) {
-        searchFields.push({ key: 'investmentTendency', value: item.investmentTendency || '' });
+        searchFields.push({ key: 'investmentTendency', value: (item as any).investmentTendency || '' });
       } else if (item.customerSource === '보험' && 'insuranceCrossRatio' in item) {
-        searchFields.push({ key: 'insuranceCrossRatio', value: item.insuranceCrossRatio || '' });
+        searchFields.push({ key: 'insuranceCrossRatio', value: (item as any).insuranceCrossRatio || '' });
       }
       
       // 보유 상품 검색
@@ -229,7 +229,7 @@ export class TextSearchService {
         item.ownedProducts.forEach((product, index) => {
           searchFields.push({
             key: `ownedProducts[${index}].productName`,
-            value: product.productName,
+            value: product.productName ?? '',
           });
         });
       }
@@ -295,7 +295,7 @@ export class TextSearchService {
       
       if ('question' in item) {
         // CoTQA
-        texts.push(item.question, item.cot1, item.cot2, item.cot3, item.answer);
+        texts.push(item.question ?? '', item.cot1 ?? '', item.cot2 ?? '', item.cot3 ?? '', item.answer ?? '');
       } else if ('productName' in item) {
         // Product
         texts.push(item.productName, item.productCategory);

@@ -1,7 +1,6 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Box } from '@mui/material';
-import { Detail3Pane } from '../../components/layout/Detail3Pane';
+import { Container, Box } from '@mui/material';
 import { ConfirmDialog } from '../../components/common/ConfirmDialog';
 import { ProductFormPanel } from '../../components/products/ProductFormPanel';
 import { useProductForm } from '../../hooks/useProductForm';
@@ -44,33 +43,28 @@ export function ProductsDetailPage({}: ProductsDetailPageProps) {
   // 로딩 중이거나 데이터가 없으면 (편집 모드에서) 로딩 스피너 등을 표시할 수 있음
   if (isEditMode && loading && !currentProduct) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+      <Container maxWidth="lg" sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
         Loading...
-      </Box>
+      </Container>
     );
   }
 
   return (
     <>
-      <Detail3Pane
-        centerPanel={
-          <ProductFormPanel
-            isEditMode={isEditMode}
-            control={control}
-            errors={errors}
-            isSubmitting={isSubmitting}
-            watchedProductSource={watchedProductSource}
-            onSubmit={onSubmit}
-            onBack={handleBack}
-            onDelete={handleDelete}
-          />
-        }
-        // 상품 상세는 1패널로 구성되므로,
-        // 여기서는 centerPanel만 사용하고 left/rightPanel은 비워둠.
-        // 필요에 따라 다른 정보 패널을 추가할 수 있음.
-        leftPanel={<Box />}
-        rightPanel={<Box />}
-      />
+      <Box sx={{ height: '100%', overflow: 'hidden' }}>
+        <Container maxWidth="lg" sx={{ py: 2, height: '100%', display: 'flex', flexDirection: 'column' }}>
+        <ProductFormPanel
+          isEditMode={isEditMode}
+          control={control}
+          errors={errors}
+          isSubmitting={isSubmitting}
+          watchedProductSource={watchedProductSource}
+          onSubmit={onSubmit}
+          onBack={handleBack}
+          onDelete={handleDelete}
+        />
+        </Container>
+      </Box>
 
       {/* 삭제 확인 다이얼로그 */}
       <ConfirmDialog

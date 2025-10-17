@@ -1,4 +1,4 @@
-import { StorageAdapter, PaginatedResult, QueryOptions } from './storage';
+import { StorageAdapter, PaginatedResult, QueryOptions, InMemoryStorageAdapter } from './storage';
 
 /**
  * IndexedDB 기반 스토리지 어댑터
@@ -123,7 +123,26 @@ export class IndexedDBStorageAdapter<T extends { id: string; createdAt?: string;
     const store = await this.getStore();
     return new Promise((resolve, reject) => {
       const request = store.getAll();
-      request.onsuccess = () => resolve(request.result);
+      request.onsuccess = () => {
+        let results = request.result;
+        // CoT 데이터 정규화
+        if (this.entityName === 'cots') {
+          results = results.map((item: any) => {
+            // products 필드가 배열이 아니면 빈 배열로 변환
+            if (!Array.isArray(item.products)) {
+              console.warn(`CoT ${item.id} has invalid products field:`, item.products, '- normalizing to []');
+              item.products = [];
+            }
+            // questioner 필드가 빈 문자열이면 undefined로 변환
+            if (item.questioner === '') {
+              console.warn(`CoT ${item.id} has empty questioner field - normalizing to undefined`);
+              item.questioner = undefined;
+            }
+            return item;
+          });
+        }
+        resolve(results);
+      };
       request.onerror = () => reject(request.error);
     });
   }
@@ -132,7 +151,23 @@ export class IndexedDBStorageAdapter<T extends { id: string; createdAt?: string;
     const store = await this.getStore();
     return new Promise((resolve, reject) => {
       const request = store.get(id);
-      request.onsuccess = () => resolve(request.result || null);
+      request.onsuccess = () => {
+        const result = request.result;
+        // CoT 데이터 정규화
+        if (result && this.entityName === 'cots') {
+          // products 필드가 배열이 아니면 빈 배열로 변환
+          if (!Array.isArray(result.products)) {
+            console.warn(`CoT ${id} has invalid products field:`, result.products, '- normalizing to []');
+            result.products = [];
+          }
+          // questioner 필드가 빈 문자열이면 undefined로 변환
+          if (result.questioner === '') {
+            console.warn(`CoT ${id} has empty questioner field - normalizing to undefined`);
+            result.questioner = undefined;
+          }
+        }
+        resolve(result || null);
+      };
       request.onerror = () => reject(request.error);
     });
   }
@@ -157,9 +192,17 @@ export class IndexedDBStorageAdapter<T extends { id: string; createdAt?: string;
   }
 
   async update(id: string, item: Partial<T>): Promise<T> {
+    console.log(`=== IndexedDB ${this.entityName} update ===`);
+    console.log('ID:', id);
+    console.log('Partial item:', item);
+    
     const existing = await this.getById(id);
+    console.log('Existing item:', existing);
+    
     if (!existing) {
-      throw new Error(`${this.entityName} with id ${id} not found`);
+      const error = `${this.entityName} with id ${id} not found`;
+      console.error(error);
+      throw new Error(error);
     }
 
     const updated = {
@@ -169,11 +212,19 @@ export class IndexedDBStorageAdapter<T extends { id: string; createdAt?: string;
       updatedAt: new Date().toISOString()
     } as T;
 
+    console.log('Updated item (merged):', updated);
+
     const store = await this.getStore('readwrite');
     return new Promise((resolve, reject) => {
       const request = store.put(updated);
-      request.onsuccess = () => resolve(updated);
-      request.onerror = () => reject(request.error);
+      request.onsuccess = () => {
+        console.log('IndexedDB put successful');
+        resolve(updated);
+      };
+      request.onerror = () => {
+        console.error('IndexedDB put failed:', request.error);
+        reject(request.error);
+      };
     });
   }
 
@@ -201,6 +252,9 @@ export class IndexedDBStorageAdapter<T extends { id: string; createdAt?: string;
 
     // 첫 번째 필터로 초기 결과 집합 구성
     const primaryKey = filterKeys[0];
+    if (!primaryKey) {
+      return this.getAll();
+    }
     const primaryValue = filters[primaryKey];
 
     return new Promise((resolve, reject) => {
@@ -209,7 +263,7 @@ export class IndexedDBStorageAdapter<T extends { id: string; createdAt?: string;
       // 인덱스가 있는 필드면 인덱스 사용
       try {
         const index = store.index(primaryKey);
-        request = index.getAll(primaryValue);
+        request = primaryValue !== undefined ? index.getAll(primaryValue) : store.getAll();
       } catch {
         // 인덱스가 없으면 전체 스캔
         request = store.getAll();
@@ -475,7 +529,6 @@ export class StorageFactory {
       return new IndexedDBStorageAdapter<T>(entityName);
     } else {
       // IndexedDB를 사용할 수 없는 환경에서는 InMemory 사용
-      const { InMemoryStorageAdapter } = require('./storage');
       return new InMemoryStorageAdapter<T>(entityName);
     }
   }

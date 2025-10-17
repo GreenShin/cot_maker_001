@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { Container } from '@mui/material';
+import { Container, Box } from '@mui/material';
 import { ConfirmDialog } from '../../components/common/ConfirmDialog';
 import { UserFormPanel } from '../../components/users/UserFormPanel';
 import { useUserForm } from '../../hooks/useUserForm';
@@ -58,7 +58,8 @@ export function UsersDetailPage() {
 
   return (
     <>
-      <Container maxWidth="lg" sx={{ py: 2 }}>
+      <Box sx={{ height: '100%', overflow: 'hidden' }}>
+        <Container maxWidth="lg" sx={{ py: 2, height: '100%', display: 'flex', flexDirection: 'column' }}>
         <UserFormPanel
           isEditMode={isEditMode}
           control={control}
@@ -72,7 +73,8 @@ export function UsersDetailPage() {
           onAddOwnedProduct={handleAddOwnedProduct}
           onRemoveOwnedProduct={handleRemoveOwnedProduct}
         />
-      </Container>
+        </Container>
+      </Box>
       
       {/* 삭제 확인 다이얼로그 */}
       <ConfirmDialog

@@ -44,8 +44,8 @@ interface OwnedProductField {
 
 interface UserFormPanelProps {
   isEditMode: boolean;
-  control: Control<UserFormData>;
-  errors: FieldErrors<UserFormData>;
+  control: Control<any>;
+  errors: FieldErrors<any>;
   isSubmitting: boolean;
   watchedCustomerSource: string;
   ownedProductFields: OwnedProductField[];
@@ -135,7 +135,7 @@ export function UserFormPanel({
       </Box>
 
       {/* 스크롤 가능한 폼 콘텐츠 */}
-      <Box sx={{ flex: 1, overflow: 'auto' }}>
+      <Box sx={{ flex: 1, overflowY: 'auto' }}>
         <Box component="form" sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
           
           {/* 기본 정보 섹션 */}
@@ -324,8 +324,8 @@ export function UserFormPanel({
                                   {...inputField}
                                   label="상품명"
                                   fullWidth
-                                  error={!!errors.ownedProducts?.[index]?.productName}
-                                  helperText={errors.ownedProducts?.[index]?.productName?.message}
+                                  error={!!(errors.ownedProducts as any)?.[index]?.productName}
+                                  helperText={(errors.ownedProducts as any)?.[index]?.productName?.message ?? ''}
                                 />
                               )}
                             />
@@ -340,8 +340,8 @@ export function UserFormPanel({
                                   label="구매년월 (YYYY-MM)"
                                   placeholder="2024-01"
                                   fullWidth
-                                  error={!!errors.ownedProducts?.[index]?.purchaseDate}
-                                  helperText={errors.ownedProducts?.[index]?.purchaseDate?.message || 'YYYY-MM 형식으로 입력'}
+                                  error={!!(errors.ownedProducts as any)?.[index]?.purchaseDate}
+                                  helperText={(errors.ownedProducts as any)?.[index]?.purchaseDate?.message ?? 'YYYY-MM 형식으로 입력'}
                                 />
                               )}
                             />

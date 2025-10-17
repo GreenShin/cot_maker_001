@@ -25,7 +25,7 @@ export function ProductPanel({
   onOpenProductSelector 
 }: ProductPanelProps) {
   return (
-    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', p: 2 }}>
       {/* 고정 헤더 */}
       <Box sx={{ 
         flexShrink: 0, 

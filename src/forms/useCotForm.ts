@@ -42,15 +42,15 @@ export const cotqaToFormData = (cotqa: CoTQA): CotFormData => {
   const formData: CotFormData = {
     productSource: cotqa.productSource,
     questionType: cotqa.questionType,
-    questioner: cotqa.questioner,
-    products: cotqa.products,
+    questioner: cotqa.questioner ?? '',
+    products: cotqa.products ?? [],
     question: cotqa.question,
-    cot1: cotqa.cot1,
-    cot2: cotqa.cot2,
-    cot3: cotqa.cot3,
-    answer: cotqa.answer,
+    cot1: cotqa.cot1 ?? '',
+    cot2: cotqa.cot2 ?? '',
+    cot3: cotqa.cot3 ?? '',
+    answer: cotqa.answer ?? '',
     status: cotqa.status,
-    author: cotqa.author,
+    author: cotqa.author ?? '',
   };
 
   // 동적 CoT 필드들 추가

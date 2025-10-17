@@ -206,23 +206,130 @@ export type InsuranceCoTQA = z.infer<typeof insuranceCotQASchema>;
 }
 ```
 
-## 📊 CSV 형식
+## 📊 Import/Export 형식
 
-### 헤더
+### Import/Export 필드명 매핑
+
+**모든 형식(CSV, JSON, XLSX)**에서 Import/Export 시 동일한 필드명 매핑이 적용됩니다:
+
+| 내부 필드명 | Import/Export 필드명 | 변경 유형 |
+|-----------|-------------------|---------|
+| id | question_key | 변경 |
+| productSource | product_type | 변경 |
+| questionType | question_type | 변경 |
+| questioner | questioner | 유지 |
+| products | products | 유지 (CSV에서는 \| 구분) |
+| question | question | 유지 |
+| cot1 | cot1 | 유지 |
+| cot2 | cot2 | 유지 |
+| cot3 | cot3 | 유지 |
+| answer | answer | 유지 |
+| status | status | 유지 |
+| author | author | 유지 |
+| createdAt | created_at | 변경 |
+| updatedAt | updated_at | 변경 |
+
+**참고**: 
+- `products` 필드는 CSV/XLSX에서 `|` 구분자로 연결된 문자열로 표현됩니다 (예: "product-1|product-2|product-3")
+- JSON에서는 배열로 표현됩니다
+
+### Export CSV 헤더
 ```csv
-id,productSource,questionType,questioner,products,question,cot1,cot2,cot3,cot4,cot5,answer,status,author,createdAt,updatedAt
+question_key,product_type,question_type,questioner,products,question,cot1,cot2,cot3,answer,status,author,created_at,updated_at
+```
+
+동적 CoT 단계가 있는 경우:
+```csv
+question_key,product_type,question_type,questioner,products,question,cot1,cot2,cot3,cot4,cot5,answer,status,author,created_at,updated_at
 ```
 
 ### 데이터 행 예제
 ```csv
-cot-sec-001,증권,투자성향 및 조건 기반형,user-sec-001,"[""product-sec-001"",""product-sec-002""]","30대 직장인으로 안정적인 해외 투자를 원합니다. 월 100만원씩 투자할 예정인데, 어떤 상품을 추천하시나요?","먼저 고객의 투자 목적과 위험 성향을 파악해보겠습니다...","고객의 투자성향이 '적극투자형'이지만 안정성을 중시한다고 하셨으므로...","S&P500 ETF와 글로벌 펀드를 조합하면...",,,"고객님의 투자 성향과 목적을 고려할 때, 삼성 S&P500 ETF(월 60만원)와 미래에셋 글로벌 펀드(월 40만원)의 조합을 추천드립니다...",완료,투자전문가,2024-01-01T00:00:00.000Z,2024-01-01T00:00:00.000Z
+cot-sec-001,증권,투자성향 및 조건 기반형,user-sec-001,product-sec-001|product-sec-002,"30대 직장인으로 안정적인 해외 투자를 원합니다. 월 100만원씩 투자할 예정인데, 어떤 상품을 추천하시나요?","먼저 고객의 투자 목적과 위험 성향을 파악해보겠습니다...","고객의 투자성향이 '적극투자형'이지만 안정성을 중시한다고 하셨으므로...","S&P500 ETF와 글로벌 펀드를 조합하면...","고객님의 투자 성향과 목적을 고려할 때, 삼성 S&P500 ETF(월 60만원)와 미래에셋 글로벌 펀드(월 40만원)의 조합을 추천드립니다...",완료,투자전문가,2024-01-01T00:00:00.000Z,2024-01-01T00:00:00.000Z
 ```
 
 ### CSV 특별 규칙
-- `products`: JSON 배열 문자열로 직렬화
 - 긴 텍스트: 따옴표로 감싸기
 - 빈 CoT 단계: 빈 문자열로 표현
 - 쉼표/따옴표 포함 텍스트: 이스케이프 처리
+- 동적 CoT 필드(cot4, cot5, ...): 필요한 경우에만 포함
+
+### JSON Export 예제
+
+**기본 구조 (3단계 CoT):**
+```json
+[
+  {
+    "question_key": "cot-sec-001",
+    "product_type": "증권",
+    "question_type": "투자성향 및 조건 기반형",
+    "questioner": "user-sec-001",
+    "products": "product-sec-001|product-sec-002",
+    "question": "30대 직장인으로 안정적인 해외 투자를 원합니다.",
+    "cot1": "먼저 고객의 투자 목적과 위험 성향을 파악해보겠습니다.",
+    "cot2": "고객의 투자성향이 '적극투자형'이지만 안정성을 중시한다고 하셨으므로...",
+    "cot3": "S&P500 ETF와 글로벌 펀드를 조합하면 안정성과 성장성을 동시에 추구할 수 있습니다.",
+    "answer": "고객님의 투자 성향과 목적을 고려할 때, 삼성 S&P500 ETF와 미래에셋 글로벌 펀드의 조합을 추천드립니다.",
+    "status": "완료",
+    "author": "투자전문가",
+    "created_at": "2024-01-01T00:00:00.000Z",
+    "updated_at": "2024-01-01T00:00:00.000Z"
+  }
+]
+```
+
+**확장 구조 (5단계 CoT):**
+```json
+[
+  {
+    "question_key": "cot-ins-001",
+    "product_type": "보험",
+    "question_type": "연령별 및 생애주기 저축성 상품 추천형",
+    "questioner": "user-ins-001",
+    "products": "product-ins-001|product-ins-002",
+    "question": "40대 주부로 두 자녀가 있습니다. 노후 준비와 자녀 교육비를 마련하고 싶습니다.",
+    "cot1": "40대 주부 고객의 상황을 분석해보겠습니다.",
+    "cot2": "생애주기상 40대는 교육비 부담이 큰 시기입니다.",
+    "cot3": "종신보험은 평생 보장과 함께 해약환급금을 통한 목돈 마련이 가능합니다.",
+    "cot4": "두 상품을 조합하면 안정적인 보장과 성장 가능성을 모두 확보할 수 있습니다.",
+    "cot5": "납입 기간과 보험료를 고객의 경제적 여건에 맞게 설계해야 합니다.",
+    "answer": "삼성 종신보험과 KB 변액보험의 조합을 추천드립니다.",
+    "status": "검토중",
+    "author": "보험전문가",
+    "created_at": "2024-01-02T00:00:00.000Z",
+    "updated_at": "2024-01-02T00:00:00.000Z"
+  }
+]
+```
+
+### XLSX Export 형식
+
+XLSX 파일은 다음과 같은 구조로 export됩니다:
+
+**워크시트 구조:**
+- Sheet 이름: 기본값 "Sheet1" (사용자 지정 가능)
+- 첫 번째 행: 헤더 (question_key, product_type, question_type, question, cot1, cot2, cot3, answer, ...)
+- 이후 행: 데이터
+
+**특징:**
+- JSON/CSV와 동일한 필드명 매핑 적용
+- Excel에서 바로 열어 편집 가능
+- 동적 CoT 필드(cot4, cot5, ...) 자동 포함
+- 한글 인코딩 문제 없음
+
+### Import 필드명 지원
+
+Import 시에는 **하위 호환성**을 위해 구 필드명도 인식합니다:
+
+| Export 필드명 | Import 시 인식 가능한 필드명 |
+|--------------|---------------------------|
+| question_key | question_key, id |
+| product_type | product_type, productSource |
+| question_type | question_type, questionType |
+| created_at | created_at, createdAt |
+| updated_at | updated_at, updatedAt |
+
+**예시:** 이전 버전에서 export한 JSON 파일이 `id`, `productSource`, `questionType`, `createdAt`, `updatedAt`을 사용하더라도 정상적으로 import됩니다.
 
 ## 🧪 테스트 케이스
 

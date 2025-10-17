@@ -4,19 +4,113 @@
 
 ## 🚀 빠른 시작
 
-### 1. 의존성 설치
+### 사전 요구사항
+
+이 프로젝트를 실행하기 위해서는 **Node.js**와 **npm**이 설치되어 있어야 합니다.
+
+#### Windows에서 Node.js 설치
+
+1. **Node.js 공식 웹사이트 방문**
+   - [https://nodejs.org](https://nodejs.org) 접속
+   - LTS(Long Term Support) 버전 다운로드 (권장: v18.x 이상)
+
+2. **설치 프로그램 실행**
+   - 다운로드한 `.msi` 파일 실행
+   - 설치 마법사의 지시에 따라 진행
+   - "Automatically install the necessary tools" 옵션 선택 (권장)
+
+3. **설치 확인**
+   ```bash
+   # 명령 프롬프트(cmd) 또는 PowerShell에서 실행
+   node --version
+   npm --version
+   ```
+
+#### macOS에서 Node.js 설치
+
+**방법 1: 공식 설치 프로그램 사용**
+
+1. **Node.js 공식 웹사이트 방문**
+   - [https://nodejs.org](https://nodejs.org) 접속
+   - LTS(Long Term Support) 버전 다운로드 (권장: v18.x 이상)
+
+2. **설치 프로그램 실행**
+   - 다운로드한 `.pkg` 파일 실행
+   - 설치 마법사의 지시에 따라 진행
+
+**방법 2: Homebrew 사용 (권장)**
+
+1. **Homebrew 설치** (미설치 시)
+   ```bash
+   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+   ```
+
+2. **Node.js 설치**
+   ```bash
+   brew install node
+   ```
+
+3. **설치 확인**
+   ```bash
+   node --version
+   npm --version
+   ```
+
+#### 권장 버전
+- **Node.js**: v18.0.0 이상
+- **npm**: v9.0.0 이상
+
+> **참고**: npm은 Node.js 설치 시 자동으로 함께 설치됩니다.
+
+#### Yarn 설치 (선택사항)
+
+npm 대신 yarn을 사용하려면:
+
+**Windows**
 ```bash
+npm install -g yarn
+```
+
+**macOS**
+```bash
+# Homebrew 사용
+brew install yarn
+
+# 또는 npm 사용
+npm install -g yarn
+```
+
+설치 확인:
+```bash
+yarn --version
+```
+
+---
+
+### 1. 의존성 설치
+
+npm 또는 yarn을 사용할 수 있습니다:
+
+```bash
+# npm 사용
 npm install
+
+# 또는 yarn 사용
+yarn install
 ```
 
 ### 2. 개발 서버 실행
 ```bash
 npm run dev
+# 또는
+yarn dev
 ```
 
 ### 3. 샘플 데이터 생성 (선택사항)
 ```bash
 npm run seed
+# 또는
+yarn seed
 ```
 
 생성된 샘플 데이터는 `public/sample-data/` 폴더에 저장됩니다.
@@ -150,32 +244,34 @@ interface CoTQA {
 
 ## 🔧 개발 명령어
 
+npm 또는 yarn을 사용할 수 있습니다:
+
 ```bash
 # 개발 서버 시작
-npm run dev
+npm run dev          # 또는 yarn dev
 
 # 빌드
-npm run build
+npm run build        # 또는 yarn build
 
 # 테스트 실행
-npm run test
+npm run test         # 또는 yarn test
 
 # E2E 테스트
-npm run test:e2e
+npm run test:e2e     # 또는 yarn test:e2e
 
 # 린트 검사
-npm run lint
+npm run lint         # 또는 yarn lint
 
 # 코드 포맷팅
-npm run format
+npm run format       # 또는 yarn format
 
 # 샘플 데이터 생성
-npm run seed
+npm run seed         # 또는 yarn seed
 ```
 
 ## 📦 샘플 데이터
 
-`npm run seed` 명령으로 생성되는 샘플 데이터:
+`npm run seed` (또는 `yarn seed`) 명령으로 생성되는 샘플 데이터:
 
 - **질문자**: 100명 (증권/보험 고객 혼합)
 - **상품**: 50개 (ETF, 펀드, 보험 등)
