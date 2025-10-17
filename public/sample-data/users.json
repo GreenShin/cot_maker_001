@@ -1,0 +1,2338 @@
+[
+  {
+    "id": "user-0001",
+    "customerSource": "보험",
+    "ageGroup": "40대",
+    "gender": "여",
+    "ownedProducts": [
+      {
+        "productName": "미래에셋 글로벌 펀드",
+        "purchaseDate": "2024-08-15"
+      },
+      {
+        "productName": "삼성 종신보험",
+        "purchaseDate": "2024-07-28"
+      },
+      {
+        "productName": "우리 CMA",
+        "purchaseDate": "2024-08-14"
+      },
+      {
+        "productName": "현대해상 실손보험",
+        "purchaseDate": "2024-08-20"
+      },
+      {
+        "productName": "KB 변액보험",
+        "purchaseDate": "2024-12-07"
+      }
+    ],
+    "createdAt": "2025-04-14T06:47:25.374Z",
+    "updatedAt": "2025-09-20T22:49:15.358Z",
+    "insuranceType": "변액+기타"
+  },
+  {
+    "id": "user-0002",
+    "customerSource": "증권",
+    "ageGroup": "40대",
+    "gender": "남",
+    "ownedProducts": [
+      {
+        "productName": "삼성 S&P500 ETF",
+        "purchaseDate": "2024-06-17"
+      },
+      {
+        "productName": "우리 CMA",
+        "purchaseDate": "2024-01-20"
+      },
+      {
+        "productName": "신한 정기예금",
+        "purchaseDate": "2024-06-01"
+      }
+    ],
+    "createdAt": "2024-11-12T08:07:31.017Z",
+    "updatedAt": "2025-09-20T22:49:15.358Z",
+    "investmentTendency": "공격투자형",
+    "investmentAmount": 9000
+  },
+  {
+    "id": "user-0003",
+    "customerSource": "증권",
+    "ageGroup": "10대",
+    "gender": "여",
+    "ownedProducts": [
+      {
+        "productName": "우리 CMA",
+        "purchaseDate": "2024-11-28"
+      },
+      {
+        "productName": "우리 CMA",
+        "purchaseDate": "2024-06-23"
+      },
+      {
+        "productName": "현대해상 실손보험",
+        "purchaseDate": "2024-03-05"
+      }
+    ],
+    "createdAt": "2025-07-07T07:32:06.227Z",
+    "updatedAt": "2025-09-20T22:49:15.358Z",
+    "investmentTendency": "적극투자형",
+    "investmentAmount": 6000
+  },
+  {
+    "id": "user-0004",
+    "customerSource": "보험",
+    "ageGroup": "20대",
+    "gender": "남",
+    "ownedProducts": [
+      {
+        "productName": "우리 CMA",
+        "purchaseDate": "2024-11-16"
+      },
+      {
+        "productName": "KODEX 200 ETF",
+        "purchaseDate": "2025-04-23"
+      }
+    ],
+    "createdAt": "2025-01-14T11:29:02.535Z",
+    "updatedAt": "2025-09-20T22:49:15.358Z",
+    "insuranceType": "보장+기타"
+  },
+  {
+    "id": "user-0005",
+    "customerSource": "증권",
+    "ageGroup": "40대",
+    "gender": "여",
+    "ownedProducts": [
+      {
+        "productName": "KB 적금",
+        "purchaseDate": "2024-06-29"
+      },
+      {
+        "productName": "KB 변액보험",
+        "purchaseDate": "2024-10-15"
+      }
+    ],
+    "createdAt": "2025-09-05T15:04:14.510Z",
+    "updatedAt": "2025-09-20T22:49:15.358Z",
+    "investmentTendency": "적극투자형",
+    "investmentAmount": 1000
+  },
+  {
+    "id": "user-0006",
+    "customerSource": "보험",
+    "ageGroup": "70대",
+    "gender": "여",
+    "ownedProducts": [
+      {
+        "productName": "KB 적금",
+        "purchaseDate": "2024-02-18"
+      },
+      {
+        "productName": "우리 CMA",
+        "purchaseDate": "2024-06-22"
+      },
+      {
+        "productName": "KB 적금",
+        "purchaseDate": "2025-02-11"
+      },
+      {
+        "productName": "KODEX 200 ETF",
+        "purchaseDate": "2025-08-31"
+      }
+    ],
+    "createdAt": "2025-04-19T03:22:49.902Z",
+    "updatedAt": "2025-09-20T22:49:15.358Z",
+    "insuranceType": "보장only"
+  },
+  {
+    "id": "user-0007",
+    "customerSource": "증권",
+    "ageGroup": "30대",
+    "gender": "여",
+    "ownedProducts": [
+      {
+        "productName": "미래에셋 글로벌 펀드",
+        "purchaseDate": "2024-12-21"
+      }
+    ],
+    "createdAt": "2025-03-16T21:16:16.528Z",
+    "updatedAt": "2025-09-20T22:49:15.358Z",
+    "investmentTendency": "안정추구형",
+    "investmentAmount": 5000
+  },
+  {
+    "id": "user-0008",
+    "customerSource": "보험",
+    "ageGroup": "40대",
+    "gender": "남",
+    "ownedProducts": [
+      {
+        "productName": "우리 CMA",
+        "purchaseDate": "2025-08-29"
+      },
+      {
+        "productName": "삼성 S&P500 ETF",
+        "purchaseDate": "2024-05-26"
+      }
+    ],
+    "createdAt": "2025-09-13T10:09:20.558Z",
+    "updatedAt": "2025-09-20T22:49:15.358Z",
+    "insuranceType": "기타only"
+  },
+  {
+    "id": "user-0009",
+    "customerSource": "보험",
+    "ageGroup": "60대",
+    "gender": "남",
+    "ownedProducts": [
+      {
+        "productName": "우리 CMA",
+        "purchaseDate": "2024-10-29"
+      },
+      {
+        "productName": "KB 변액보험",
+        "purchaseDate": "2025-02-21"
+      },
+      {
+        "productName": "삼성 S&P500 ETF",
+        "purchaseDate": "2025-04-20"
+      },
+      {
+        "productName": "KODEX 200 ETF",
+        "purchaseDate": "2025-05-20"
+      },
+      {
+        "productName": "KB 변액보험",
+        "purchaseDate": "2023-11-15"
+      }
+    ],
+    "createdAt": "2025-05-19T17:10:06.844Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "insuranceType": "미정의"
+  },
+  {
+    "id": "user-0010",
+    "customerSource": "보험",
+    "ageGroup": "10대",
+    "gender": "남",
+    "ownedProducts": [
+      {
+        "productName": "현대해상 실손보험",
+        "purchaseDate": "2023-12-13"
+      },
+      {
+        "productName": "삼성 S&P500 ETF",
+        "purchaseDate": "2024-12-26"
+      },
+      {
+        "productName": "신한 정기예금",
+        "purchaseDate": "2025-06-21"
+      }
+    ],
+    "createdAt": "2025-04-04T02:15:53.717Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "insuranceType": "변액+기타"
+  },
+  {
+    "id": "user-0011",
+    "customerSource": "보험",
+    "ageGroup": "40대",
+    "gender": "여",
+    "ownedProducts": [
+      {
+        "productName": "삼성 S&P500 ETF",
+        "purchaseDate": "2024-06-14"
+      }
+    ],
+    "createdAt": "2025-03-07T16:38:04.098Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "insuranceType": "기타only"
+  },
+  {
+    "id": "user-0012",
+    "customerSource": "보험",
+    "ageGroup": "10대",
+    "gender": "남",
+    "ownedProducts": [
+      {
+        "productName": "현대해상 실손보험",
+        "purchaseDate": "2024-11-07"
+      },
+      {
+        "productName": "삼성 종신보험",
+        "purchaseDate": "2025-02-11"
+      },
+      {
+        "productName": "우리 CMA",
+        "purchaseDate": "2025-07-24"
+      }
+    ],
+    "createdAt": "2025-08-23T00:17:25.530Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "insuranceType": "보장+변액"
+  },
+  {
+    "id": "user-0013",
+    "customerSource": "보험",
+    "ageGroup": "10대",
+    "gender": "남",
+    "ownedProducts": [
+      {
+        "productName": "우리 CMA",
+        "purchaseDate": "2024-03-14"
+      },
+      {
+        "productName": "미래에셋 글로벌 펀드",
+        "purchaseDate": "2024-08-03"
+      },
+      {
+        "productName": "미래에셋 글로벌 펀드",
+        "purchaseDate": "2024-09-14"
+      }
+    ],
+    "createdAt": "2025-08-09T22:54:48.757Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "insuranceType": "보장+기타"
+  },
+  {
+    "id": "user-0014",
+    "customerSource": "보험",
+    "ageGroup": "40대",
+    "gender": "남",
+    "ownedProducts": [
+      {
+        "productName": "우리 CMA",
+        "purchaseDate": "2024-03-28"
+      }
+    ],
+    "createdAt": "2025-04-20T17:29:13.795Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "insuranceType": "보장only"
+  },
+  {
+    "id": "user-0015",
+    "customerSource": "증권",
+    "ageGroup": "60대",
+    "gender": "여",
+    "ownedProducts": [
+      {
+        "productName": "신한 정기예금",
+        "purchaseDate": "2025-07-16"
+      }
+    ],
+    "createdAt": "2024-09-29T08:50:06.886Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "investmentTendency": "위험중립형",
+    "investmentAmount": 4000
+  },
+  {
+    "id": "user-0016",
+    "customerSource": "증권",
+    "ageGroup": "50대",
+    "gender": "남",
+    "ownedProducts": [
+      {
+        "productName": "미래에셋 글로벌 펀드",
+        "purchaseDate": "2024-08-13"
+      },
+      {
+        "productName": "현대해상 실손보험",
+        "purchaseDate": "2024-04-26"
+      },
+      {
+        "productName": "삼성 종신보험",
+        "purchaseDate": "2024-07-08"
+      },
+      {
+        "productName": "우리 CMA",
+        "purchaseDate": "2025-03-04"
+      },
+      {
+        "productName": "KODEX 200 ETF",
+        "purchaseDate": "2025-03-11"
+      }
+    ],
+    "createdAt": "2024-11-18T17:31:22.115Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "investmentTendency": "위험중립형",
+    "investmentAmount": 5000
+  },
+  {
+    "id": "user-0017",
+    "customerSource": "증권",
+    "ageGroup": "60대",
+    "gender": "남",
+    "ownedProducts": [
+      {
+        "productName": "미래에셋 글로벌 펀드",
+        "purchaseDate": "2023-11-20"
+      },
+      {
+        "productName": "삼성 종신보험",
+        "purchaseDate": "2024-10-21"
+      }
+    ],
+    "createdAt": "2025-06-10T10:25:32.886Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "investmentTendency": "전문투자가형",
+    "investmentAmount": 1000
+  },
+  {
+    "id": "user-0018",
+    "customerSource": "증권",
+    "ageGroup": "40대",
+    "gender": "남",
+    "ownedProducts": [
+      {
+        "productName": "KB 변액보험",
+        "purchaseDate": "2024-06-16"
+      },
+      {
+        "productName": "삼성 S&P500 ETF",
+        "purchaseDate": "2025-06-27"
+      }
+    ],
+    "createdAt": "2025-08-23T19:17:00.639Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "investmentTendency": "위험중립형",
+    "investmentAmount": 5000
+  },
+  {
+    "id": "user-0019",
+    "customerSource": "보험",
+    "ageGroup": "40대",
+    "gender": "남",
+    "ownedProducts": [
+      {
+        "productName": "우리 CMA",
+        "purchaseDate": "2024-06-20"
+      },
+      {
+        "productName": "KB 적금",
+        "purchaseDate": "2024-06-13"
+      },
+      {
+        "productName": "미래에셋 글로벌 펀드",
+        "purchaseDate": "2025-06-19"
+      },
+      {
+        "productName": "신한 정기예금",
+        "purchaseDate": "2025-03-05"
+      }
+    ],
+    "createdAt": "2024-12-14T17:45:27.204Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "insuranceType": "기타only"
+  },
+  {
+    "id": "user-0020",
+    "customerSource": "증권",
+    "ageGroup": "70대",
+    "gender": "여",
+    "ownedProducts": [
+      {
+        "productName": "우리 CMA",
+        "purchaseDate": "2024-02-23"
+      },
+      {
+        "productName": "삼성 종신보험",
+        "purchaseDate": "2024-10-03"
+      },
+      {
+        "productName": "미래에셋 글로벌 펀드",
+        "purchaseDate": "2024-12-19"
+      },
+      {
+        "productName": "KB 변액보험",
+        "purchaseDate": "2023-10-02"
+      },
+      {
+        "productName": "KB 적금",
+        "purchaseDate": "2025-05-11"
+      }
+    ],
+    "createdAt": "2024-10-12T10:51:06.256Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "investmentTendency": "위험중립형",
+    "investmentAmount": 3000
+  },
+  {
+    "id": "user-0021",
+    "customerSource": "보험",
+    "ageGroup": "70대",
+    "gender": "남",
+    "ownedProducts": [
+      {
+        "productName": "삼성 종신보험",
+        "purchaseDate": "2024-02-10"
+      },
+      {
+        "productName": "KB 적금",
+        "purchaseDate": "2024-10-23"
+      },
+      {
+        "productName": "KODEX 200 ETF",
+        "purchaseDate": "2024-02-02"
+      },
+      {
+        "productName": "삼성 종신보험",
+        "purchaseDate": "2024-11-10"
+      }
+    ],
+    "createdAt": "2025-08-06T02:39:13.002Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "insuranceType": "보장+기타"
+  },
+  {
+    "id": "user-0022",
+    "customerSource": "보험",
+    "ageGroup": "10대",
+    "gender": "남",
+    "ownedProducts": [
+      {
+        "productName": "미래에셋 글로벌 펀드",
+        "purchaseDate": "2024-02-05"
+      },
+      {
+        "productName": "우리 CMA",
+        "purchaseDate": "2025-04-25"
+      },
+      {
+        "productName": "삼성 S&P500 ETF",
+        "purchaseDate": "2024-02-02"
+      },
+      {
+        "productName": "신한 정기예금",
+        "purchaseDate": "2025-04-19"
+      },
+      {
+        "productName": "우리 CMA",
+        "purchaseDate": "2024-03-01"
+      }
+    ],
+    "createdAt": "2024-11-23T04:19:32.240Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "insuranceType": "보장+변액"
+  },
+  {
+    "id": "user-0023",
+    "customerSource": "증권",
+    "ageGroup": "10대",
+    "gender": "여",
+    "ownedProducts": [
+      {
+        "productName": "현대해상 실손보험",
+        "purchaseDate": "2024-03-31"
+      }
+    ],
+    "createdAt": "2025-09-05T12:00:16.170Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "investmentTendency": "적극투자형",
+    "investmentAmount": 1000
+  },
+  {
+    "id": "user-0024",
+    "customerSource": "보험",
+    "ageGroup": "20대",
+    "gender": "여",
+    "ownedProducts": [
+      {
+        "productName": "삼성 S&P500 ETF",
+        "purchaseDate": "2024-07-17"
+      },
+      {
+        "productName": "현대해상 실손보험",
+        "purchaseDate": "2024-11-08"
+      },
+      {
+        "productName": "미래에셋 글로벌 펀드",
+        "purchaseDate": "2024-12-15"
+      }
+    ],
+    "createdAt": "2025-03-17T20:10:22.763Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "insuranceType": "보장only"
+  },
+  {
+    "id": "user-0025",
+    "customerSource": "증권",
+    "ageGroup": "40대",
+    "gender": "여",
+    "ownedProducts": [
+      {
+        "productName": "KB 변액보험",
+        "purchaseDate": "2025-06-17"
+      },
+      {
+        "productName": "KB 변액보험",
+        "purchaseDate": "2025-04-22"
+      },
+      {
+        "productName": "신한 정기예금",
+        "purchaseDate": "2025-03-08"
+      },
+      {
+        "productName": "현대해상 실손보험",
+        "purchaseDate": "2024-01-25"
+      }
+    ],
+    "createdAt": "2025-06-23T06:17:46.722Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "investmentTendency": "적극투자형",
+    "investmentAmount": 8000
+  },
+  {
+    "id": "user-0026",
+    "customerSource": "보험",
+    "ageGroup": "60대",
+    "gender": "여",
+    "ownedProducts": [
+      {
+        "productName": "KB 변액보험",
+        "purchaseDate": "2023-12-04"
+      },
+      {
+        "productName": "우리 CMA",
+        "purchaseDate": "2025-09-14"
+      }
+    ],
+    "createdAt": "2024-12-22T12:35:03.555Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "insuranceType": "보장+기타"
+  },
+  {
+    "id": "user-0027",
+    "customerSource": "증권",
+    "ageGroup": "50대",
+    "gender": "여",
+    "ownedProducts": [
+      {
+        "productName": "KB 변액보험",
+        "purchaseDate": "2024-11-06"
+      },
+      {
+        "productName": "현대해상 실손보험",
+        "purchaseDate": "2024-08-09"
+      }
+    ],
+    "createdAt": "2025-03-23T18:51:35.450Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "investmentTendency": "전문투자가형",
+    "investmentAmount": 10000
+  },
+  {
+    "id": "user-0028",
+    "customerSource": "증권",
+    "ageGroup": "30대",
+    "gender": "여",
+    "ownedProducts": [
+      {
+        "productName": "미래에셋 글로벌 펀드",
+        "purchaseDate": "2023-10-19"
+      },
+      {
+        "productName": "신한 정기예금",
+        "purchaseDate": "2024-04-04"
+      },
+      {
+        "productName": "신한 정기예금",
+        "purchaseDate": "2024-06-17"
+      }
+    ],
+    "createdAt": "2025-06-30T12:17:40.220Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "investmentTendency": "공격투자형",
+    "investmentAmount": 9000
+  },
+  {
+    "id": "user-0029",
+    "customerSource": "보험",
+    "ageGroup": "20대",
+    "gender": "남",
+    "ownedProducts": [
+      {
+        "productName": "신한 정기예금",
+        "purchaseDate": "2023-10-04"
+      },
+      {
+        "productName": "삼성 S&P500 ETF",
+        "purchaseDate": "2025-08-19"
+      }
+    ],
+    "createdAt": "2025-02-27T07:16:49.661Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "insuranceType": "보장+기타"
+  },
+  {
+    "id": "user-0030",
+    "customerSource": "증권",
+    "ageGroup": "50대",
+    "gender": "여",
+    "ownedProducts": [
+      {
+        "productName": "KB 변액보험",
+        "purchaseDate": "2025-06-15"
+      },
+      {
+        "productName": "신한 정기예금",
+        "purchaseDate": "2024-04-07"
+      },
+      {
+        "productName": "현대해상 실손보험",
+        "purchaseDate": "2024-09-28"
+      },
+      {
+        "productName": "삼성 종신보험",
+        "purchaseDate": "2025-02-01"
+      }
+    ],
+    "createdAt": "2025-06-17T21:14:57.653Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "investmentTendency": "미정의",
+    "investmentAmount": 4000
+  },
+  {
+    "id": "user-0031",
+    "customerSource": "보험",
+    "ageGroup": "10대",
+    "gender": "여",
+    "ownedProducts": [
+      {
+        "productName": "신한 정기예금",
+        "purchaseDate": "2024-05-31"
+      },
+      {
+        "productName": "신한 정기예금",
+        "purchaseDate": "2024-01-19"
+      },
+      {
+        "productName": "KODEX 200 ETF",
+        "purchaseDate": "2024-02-01"
+      },
+      {
+        "productName": "KODEX 200 ETF",
+        "purchaseDate": "2025-02-26"
+      }
+    ],
+    "createdAt": "2025-05-01T20:47:01.342Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "insuranceType": "기타only"
+  },
+  {
+    "id": "user-0032",
+    "customerSource": "증권",
+    "ageGroup": "20대",
+    "gender": "남",
+    "ownedProducts": [
+      {
+        "productName": "KB 적금",
+        "purchaseDate": "2023-11-24"
+      },
+      {
+        "productName": "삼성 종신보험",
+        "purchaseDate": "2024-10-15"
+      }
+    ],
+    "createdAt": "2024-12-04T19:55:21.260Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "investmentTendency": "적극투자형",
+    "investmentAmount": 7000
+  },
+  {
+    "id": "user-0033",
+    "customerSource": "증권",
+    "ageGroup": "40대",
+    "gender": "여",
+    "ownedProducts": [
+      {
+        "productName": "우리 CMA",
+        "purchaseDate": "2025-09-03"
+      },
+      {
+        "productName": "KB 변액보험",
+        "purchaseDate": "2025-08-14"
+      },
+      {
+        "productName": "삼성 종신보험",
+        "purchaseDate": "2024-12-18"
+      }
+    ],
+    "createdAt": "2025-04-04T15:20:30.437Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "investmentTendency": "적극투자형",
+    "investmentAmount": 4000
+  },
+  {
+    "id": "user-0034",
+    "customerSource": "보험",
+    "ageGroup": "30대",
+    "gender": "남",
+    "ownedProducts": [
+      {
+        "productName": "삼성 S&P500 ETF",
+        "purchaseDate": "2024-08-16"
+      },
+      {
+        "productName": "우리 CMA",
+        "purchaseDate": "2025-06-15"
+      }
+    ],
+    "createdAt": "2024-12-31T17:07:57.223Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "insuranceType": "변액+기타"
+  },
+  {
+    "id": "user-0035",
+    "customerSource": "보험",
+    "ageGroup": "60대",
+    "gender": "여",
+    "ownedProducts": [
+      {
+        "productName": "미래에셋 글로벌 펀드",
+        "purchaseDate": "2024-02-01"
+      },
+      {
+        "productName": "삼성 종신보험",
+        "purchaseDate": "2024-10-11"
+      },
+      {
+        "productName": "신한 정기예금",
+        "purchaseDate": "2025-02-21"
+      },
+      {
+        "productName": "KB 변액보험",
+        "purchaseDate": "2025-05-05"
+      }
+    ],
+    "createdAt": "2024-11-28T08:33:36.192Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "insuranceType": "보장+변액+기타"
+  },
+  {
+    "id": "user-0036",
+    "customerSource": "증권",
+    "ageGroup": "60대",
+    "gender": "남",
+    "ownedProducts": [
+      {
+        "productName": "미래에셋 글로벌 펀드",
+        "purchaseDate": "2024-09-12"
+      },
+      {
+        "productName": "신한 정기예금",
+        "purchaseDate": "2024-02-25"
+      },
+      {
+        "productName": "KB 변액보험",
+        "purchaseDate": "2025-04-20"
+      },
+      {
+        "productName": "삼성 S&P500 ETF",
+        "purchaseDate": "2024-11-01"
+      }
+    ],
+    "createdAt": "2025-08-13T22:57:17.102Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "investmentTendency": "안정추구형",
+    "investmentAmount": 3000
+  },
+  {
+    "id": "user-0037",
+    "customerSource": "증권",
+    "ageGroup": "80대 이상",
+    "gender": "남",
+    "ownedProducts": [
+      {
+        "productName": "미래에셋 글로벌 펀드",
+        "purchaseDate": "2023-12-05"
+      },
+      {
+        "productName": "KB 적금",
+        "purchaseDate": "2024-03-11"
+      },
+      {
+        "productName": "KB 적금",
+        "purchaseDate": "2025-05-04"
+      },
+      {
+        "productName": "현대해상 실손보험",
+        "purchaseDate": "2025-04-09"
+      }
+    ],
+    "createdAt": "2025-05-21T17:08:33.823Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "investmentTendency": "위험중립형",
+    "investmentAmount": 7000
+  },
+  {
+    "id": "user-0038",
+    "customerSource": "보험",
+    "ageGroup": "30대",
+    "gender": "남",
+    "ownedProducts": [
+      {
+        "productName": "KB 변액보험",
+        "purchaseDate": "2024-03-01"
+      }
+    ],
+    "createdAt": "2024-11-29T21:40:36.277Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "insuranceType": "변액only"
+  },
+  {
+    "id": "user-0039",
+    "customerSource": "보험",
+    "ageGroup": "80대 이상",
+    "gender": "여",
+    "ownedProducts": [
+      {
+        "productName": "우리 CMA",
+        "purchaseDate": "2024-08-02"
+      },
+      {
+        "productName": "KB 변액보험",
+        "purchaseDate": "2025-08-22"
+      },
+      {
+        "productName": "KB 적금",
+        "purchaseDate": "2024-03-09"
+      },
+      {
+        "productName": "우리 CMA",
+        "purchaseDate": "2025-01-24"
+      }
+    ],
+    "createdAt": "2025-01-11T10:54:50.292Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "insuranceType": "변액only"
+  },
+  {
+    "id": "user-0040",
+    "customerSource": "보험",
+    "ageGroup": "70대",
+    "gender": "남",
+    "ownedProducts": [
+      {
+        "productName": "삼성 종신보험",
+        "purchaseDate": "2025-09-09"
+      },
+      {
+        "productName": "KB 변액보험",
+        "purchaseDate": "2024-01-22"
+      }
+    ],
+    "createdAt": "2025-03-21T23:56:33.263Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "insuranceType": "변액only"
+  },
+  {
+    "id": "user-0041",
+    "customerSource": "보험",
+    "ageGroup": "60대",
+    "gender": "여",
+    "ownedProducts": [
+      {
+        "productName": "삼성 종신보험",
+        "purchaseDate": "2025-06-25"
+      },
+      {
+        "productName": "신한 정기예금",
+        "purchaseDate": "2025-01-07"
+      },
+      {
+        "productName": "KB 적금",
+        "purchaseDate": "2024-10-04"
+      }
+    ],
+    "createdAt": "2025-08-28T20:21:44.580Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "insuranceType": "보장+변액+기타"
+  },
+  {
+    "id": "user-0042",
+    "customerSource": "보험",
+    "ageGroup": "80대 이상",
+    "gender": "여",
+    "ownedProducts": [
+      {
+        "productName": "신한 정기예금",
+        "purchaseDate": "2024-09-01"
+      },
+      {
+        "productName": "KODEX 200 ETF",
+        "purchaseDate": "2024-05-21"
+      },
+      {
+        "productName": "우리 CMA",
+        "purchaseDate": "2025-03-08"
+      }
+    ],
+    "createdAt": "2024-11-01T11:02:26.464Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "insuranceType": "기타only"
+  },
+  {
+    "id": "user-0043",
+    "customerSource": "보험",
+    "ageGroup": "20대",
+    "gender": "여",
+    "ownedProducts": [
+      {
+        "productName": "삼성 S&P500 ETF",
+        "purchaseDate": "2025-05-30"
+      },
+      {
+        "productName": "삼성 종신보험",
+        "purchaseDate": "2024-05-06"
+      },
+      {
+        "productName": "삼성 S&P500 ETF",
+        "purchaseDate": "2024-07-31"
+      }
+    ],
+    "createdAt": "2025-02-06T06:20:28.953Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "insuranceType": "보장only"
+  },
+  {
+    "id": "user-0044",
+    "customerSource": "증권",
+    "ageGroup": "20대",
+    "gender": "남",
+    "ownedProducts": [
+      {
+        "productName": "삼성 S&P500 ETF",
+        "purchaseDate": "2024-07-25"
+      },
+      {
+        "productName": "현대해상 실손보험",
+        "purchaseDate": "2025-09-10"
+      }
+    ],
+    "createdAt": "2025-08-11T07:40:29.271Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "investmentTendency": "위험중립형",
+    "investmentAmount": 7000
+  },
+  {
+    "id": "user-0045",
+    "customerSource": "증권",
+    "ageGroup": "20대",
+    "gender": "남",
+    "ownedProducts": [
+      {
+        "productName": "신한 정기예금",
+        "purchaseDate": "2025-04-19"
+      },
+      {
+        "productName": "삼성 S&P500 ETF",
+        "purchaseDate": "2025-05-10"
+      },
+      {
+        "productName": "우리 CMA",
+        "purchaseDate": "2025-01-16"
+      },
+      {
+        "productName": "KB 적금",
+        "purchaseDate": "2025-04-18"
+      }
+    ],
+    "createdAt": "2025-07-06T11:02:30.204Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "investmentTendency": "적극투자형",
+    "investmentAmount": 4000
+  },
+  {
+    "id": "user-0046",
+    "customerSource": "보험",
+    "ageGroup": "30대",
+    "gender": "여",
+    "ownedProducts": [
+      {
+        "productName": "미래에셋 글로벌 펀드",
+        "purchaseDate": "2023-12-24"
+      },
+      {
+        "productName": "신한 정기예금",
+        "purchaseDate": "2024-06-17"
+      },
+      {
+        "productName": "KODEX 200 ETF",
+        "purchaseDate": "2025-04-15"
+      }
+    ],
+    "createdAt": "2025-07-20T20:29:02.739Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "insuranceType": "미정의"
+  },
+  {
+    "id": "user-0047",
+    "customerSource": "보험",
+    "ageGroup": "10대",
+    "gender": "여",
+    "ownedProducts": [
+      {
+        "productName": "우리 CMA",
+        "purchaseDate": "2024-06-16"
+      },
+      {
+        "productName": "삼성 종신보험",
+        "purchaseDate": "2025-02-15"
+      },
+      {
+        "productName": "신한 정기예금",
+        "purchaseDate": "2024-09-24"
+      }
+    ],
+    "createdAt": "2025-02-15T03:45:24.543Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "insuranceType": "변액+기타"
+  },
+  {
+    "id": "user-0048",
+    "customerSource": "증권",
+    "ageGroup": "70대",
+    "gender": "남",
+    "ownedProducts": [
+      {
+        "productName": "현대해상 실손보험",
+        "purchaseDate": "2024-01-24"
+      },
+      {
+        "productName": "미래에셋 글로벌 펀드",
+        "purchaseDate": "2023-11-07"
+      },
+      {
+        "productName": "삼성 S&P500 ETF",
+        "purchaseDate": "2025-09-19"
+      },
+      {
+        "productName": "KB 적금",
+        "purchaseDate": "2024-05-19"
+      }
+    ],
+    "createdAt": "2024-12-22T21:34:59.333Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "investmentTendency": "전문투자가형",
+    "investmentAmount": 8000
+  },
+  {
+    "id": "user-0049",
+    "customerSource": "증권",
+    "ageGroup": "70대",
+    "gender": "여",
+    "ownedProducts": [
+      {
+        "productName": "우리 CMA",
+        "purchaseDate": "2023-09-26"
+      },
+      {
+        "productName": "삼성 종신보험",
+        "purchaseDate": "2025-05-12"
+      }
+    ],
+    "createdAt": "2024-12-17T05:33:04.746Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "investmentTendency": "위험중립형",
+    "investmentAmount": 9000
+  },
+  {
+    "id": "user-0050",
+    "customerSource": "보험",
+    "ageGroup": "70대",
+    "gender": "남",
+    "ownedProducts": [
+      {
+        "productName": "우리 CMA",
+        "purchaseDate": "2025-03-17"
+      },
+      {
+        "productName": "삼성 S&P500 ETF",
+        "purchaseDate": "2024-03-05"
+      },
+      {
+        "productName": "삼성 종신보험",
+        "purchaseDate": "2024-03-26"
+      }
+    ],
+    "createdAt": "2025-03-09T14:27:17.987Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "insuranceType": "기타only"
+  },
+  {
+    "id": "user-0051",
+    "customerSource": "증권",
+    "ageGroup": "60대",
+    "gender": "남",
+    "ownedProducts": [
+      {
+        "productName": "미래에셋 글로벌 펀드",
+        "purchaseDate": "2025-07-20"
+      },
+      {
+        "productName": "신한 정기예금",
+        "purchaseDate": "2024-06-01"
+      },
+      {
+        "productName": "삼성 S&P500 ETF",
+        "purchaseDate": "2023-11-07"
+      },
+      {
+        "productName": "KB 적금",
+        "purchaseDate": "2025-07-18"
+      }
+    ],
+    "createdAt": "2024-10-29T09:41:09.184Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "investmentTendency": "안정추구형",
+    "investmentAmount": 3000
+  },
+  {
+    "id": "user-0052",
+    "customerSource": "보험",
+    "ageGroup": "30대",
+    "gender": "남",
+    "ownedProducts": [
+      {
+        "productName": "신한 정기예금",
+        "purchaseDate": "2025-03-29"
+      }
+    ],
+    "createdAt": "2025-05-31T19:11:08.417Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "insuranceType": "보장only"
+  },
+  {
+    "id": "user-0053",
+    "customerSource": "보험",
+    "ageGroup": "20대",
+    "gender": "여",
+    "ownedProducts": [
+      {
+        "productName": "신한 정기예금",
+        "purchaseDate": "2023-10-23"
+      },
+      {
+        "productName": "신한 정기예금",
+        "purchaseDate": "2025-08-20"
+      },
+      {
+        "productName": "KB 적금",
+        "purchaseDate": "2025-05-27"
+      },
+      {
+        "productName": "우리 CMA",
+        "purchaseDate": "2025-07-27"
+      },
+      {
+        "productName": "삼성 종신보험",
+        "purchaseDate": "2024-11-28"
+      }
+    ],
+    "createdAt": "2025-09-01T22:49:57.649Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "insuranceType": "보장+변액+기타"
+  },
+  {
+    "id": "user-0054",
+    "customerSource": "보험",
+    "ageGroup": "30대",
+    "gender": "여",
+    "ownedProducts": [
+      {
+        "productName": "KB 변액보험",
+        "purchaseDate": "2023-10-23"
+      }
+    ],
+    "createdAt": "2025-06-26T17:50:12.656Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "insuranceType": "보장+변액"
+  },
+  {
+    "id": "user-0055",
+    "customerSource": "보험",
+    "ageGroup": "70대",
+    "gender": "여",
+    "ownedProducts": [
+      {
+        "productName": "KB 적금",
+        "purchaseDate": "2024-11-04"
+      }
+    ],
+    "createdAt": "2025-09-17T04:39:27.778Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "insuranceType": "미정의"
+  },
+  {
+    "id": "user-0056",
+    "customerSource": "보험",
+    "ageGroup": "50대",
+    "gender": "남",
+    "ownedProducts": [
+      {
+        "productName": "우리 CMA",
+        "purchaseDate": "2024-01-16"
+      }
+    ],
+    "createdAt": "2024-11-29T15:03:05.250Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "insuranceType": "미정의"
+  },
+  {
+    "id": "user-0057",
+    "customerSource": "보험",
+    "ageGroup": "70대",
+    "gender": "남",
+    "ownedProducts": [
+      {
+        "productName": "KODEX 200 ETF",
+        "purchaseDate": "2024-10-21"
+      }
+    ],
+    "createdAt": "2024-11-17T17:55:09.430Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "insuranceType": "미정의"
+  },
+  {
+    "id": "user-0058",
+    "customerSource": "증권",
+    "ageGroup": "40대",
+    "gender": "여",
+    "ownedProducts": [
+      {
+        "productName": "삼성 S&P500 ETF",
+        "purchaseDate": "2024-11-17"
+      },
+      {
+        "productName": "삼성 종신보험",
+        "purchaseDate": "2025-05-06"
+      }
+    ],
+    "createdAt": "2024-10-24T13:37:18.534Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "investmentTendency": "안정추구형",
+    "investmentAmount": 10000
+  },
+  {
+    "id": "user-0059",
+    "customerSource": "증권",
+    "ageGroup": "50대",
+    "gender": "남",
+    "ownedProducts": [
+      {
+        "productName": "KODEX 200 ETF",
+        "purchaseDate": "2025-07-03"
+      },
+      {
+        "productName": "미래에셋 글로벌 펀드",
+        "purchaseDate": "2024-10-04"
+      }
+    ],
+    "createdAt": "2025-09-11T12:09:06.437Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "investmentTendency": "전문투자가형",
+    "investmentAmount": 10000
+  },
+  {
+    "id": "user-0060",
+    "customerSource": "보험",
+    "ageGroup": "20대",
+    "gender": "남",
+    "ownedProducts": [
+      {
+        "productName": "삼성 S&P500 ETF",
+        "purchaseDate": "2024-07-18"
+      },
+      {
+        "productName": "신한 정기예금",
+        "purchaseDate": "2024-09-13"
+      },
+      {
+        "productName": "KB 적금",
+        "purchaseDate": "2024-07-30"
+      },
+      {
+        "productName": "미래에셋 글로벌 펀드",
+        "purchaseDate": "2024-03-11"
+      }
+    ],
+    "createdAt": "2025-08-15T06:23:06.269Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "insuranceType": "기타only"
+  },
+  {
+    "id": "user-0061",
+    "customerSource": "증권",
+    "ageGroup": "70대",
+    "gender": "남",
+    "ownedProducts": [
+      {
+        "productName": "KB 변액보험",
+        "purchaseDate": "2025-04-25"
+      },
+      {
+        "productName": "KB 적금",
+        "purchaseDate": "2024-05-01"
+      },
+      {
+        "productName": "삼성 S&P500 ETF",
+        "purchaseDate": "2023-11-09"
+      },
+      {
+        "productName": "우리 CMA",
+        "purchaseDate": "2025-02-26"
+      }
+    ],
+    "createdAt": "2025-08-25T18:55:14.037Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "investmentTendency": "위험중립형",
+    "investmentAmount": 2000
+  },
+  {
+    "id": "user-0062",
+    "customerSource": "증권",
+    "ageGroup": "70대",
+    "gender": "여",
+    "ownedProducts": [
+      {
+        "productName": "미래에셋 글로벌 펀드",
+        "purchaseDate": "2025-08-04"
+      },
+      {
+        "productName": "현대해상 실손보험",
+        "purchaseDate": "2024-10-06"
+      },
+      {
+        "productName": "우리 CMA",
+        "purchaseDate": "2025-07-28"
+      },
+      {
+        "productName": "우리 CMA",
+        "purchaseDate": "2024-07-17"
+      }
+    ],
+    "createdAt": "2025-06-07T04:43:47.827Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "investmentTendency": "적극투자형",
+    "investmentAmount": 1000
+  },
+  {
+    "id": "user-0063",
+    "customerSource": "증권",
+    "ageGroup": "10대",
+    "gender": "여",
+    "ownedProducts": [
+      {
+        "productName": "미래에셋 글로벌 펀드",
+        "purchaseDate": "2024-08-10"
+      },
+      {
+        "productName": "KB 적금",
+        "purchaseDate": "2024-08-31"
+      },
+      {
+        "productName": "우리 CMA",
+        "purchaseDate": "2024-10-24"
+      },
+      {
+        "productName": "KB 변액보험",
+        "purchaseDate": "2025-03-29"
+      },
+      {
+        "productName": "삼성 종신보험",
+        "purchaseDate": "2025-02-01"
+      }
+    ],
+    "createdAt": "2025-07-22T22:39:10.401Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "investmentTendency": "전문투자가형",
+    "investmentAmount": 9000
+  },
+  {
+    "id": "user-0064",
+    "customerSource": "보험",
+    "ageGroup": "60대",
+    "gender": "남",
+    "ownedProducts": [
+      {
+        "productName": "KB 적금",
+        "purchaseDate": "2024-02-29"
+      },
+      {
+        "productName": "삼성 S&P500 ETF",
+        "purchaseDate": "2025-01-29"
+      },
+      {
+        "productName": "현대해상 실손보험",
+        "purchaseDate": "2023-11-05"
+      }
+    ],
+    "createdAt": "2025-05-30T17:13:43.604Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "insuranceType": "변액only"
+  },
+  {
+    "id": "user-0065",
+    "customerSource": "보험",
+    "ageGroup": "40대",
+    "gender": "여",
+    "ownedProducts": [
+      {
+        "productName": "삼성 S&P500 ETF",
+        "purchaseDate": "2023-09-25"
+      },
+      {
+        "productName": "KB 변액보험",
+        "purchaseDate": "2024-07-26"
+      },
+      {
+        "productName": "현대해상 실손보험",
+        "purchaseDate": "2025-07-06"
+      }
+    ],
+    "createdAt": "2025-08-30T13:57:57.673Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "insuranceType": "미정의"
+  },
+  {
+    "id": "user-0066",
+    "customerSource": "보험",
+    "ageGroup": "70대",
+    "gender": "남",
+    "ownedProducts": [
+      {
+        "productName": "현대해상 실손보험",
+        "purchaseDate": "2024-02-07"
+      },
+      {
+        "productName": "우리 CMA",
+        "purchaseDate": "2023-12-14"
+      },
+      {
+        "productName": "KB 변액보험",
+        "purchaseDate": "2024-11-05"
+      }
+    ],
+    "createdAt": "2025-07-15T05:03:11.103Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "insuranceType": "보장only"
+  },
+  {
+    "id": "user-0067",
+    "customerSource": "증권",
+    "ageGroup": "10대",
+    "gender": "남",
+    "ownedProducts": [
+      {
+        "productName": "신한 정기예금",
+        "purchaseDate": "2024-12-22"
+      }
+    ],
+    "createdAt": "2024-09-27T22:12:21.865Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "investmentTendency": "위험중립형",
+    "investmentAmount": 6000
+  },
+  {
+    "id": "user-0068",
+    "customerSource": "증권",
+    "ageGroup": "50대",
+    "gender": "남",
+    "ownedProducts": [
+      {
+        "productName": "삼성 S&P500 ETF",
+        "purchaseDate": "2023-10-25"
+      },
+      {
+        "productName": "신한 정기예금",
+        "purchaseDate": "2025-03-02"
+      },
+      {
+        "productName": "신한 정기예금",
+        "purchaseDate": "2025-07-20"
+      },
+      {
+        "productName": "KB 변액보험",
+        "purchaseDate": "2025-06-10"
+      }
+    ],
+    "createdAt": "2025-02-13T23:14:00.308Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "investmentTendency": "전문투자가형",
+    "investmentAmount": 5000
+  },
+  {
+    "id": "user-0069",
+    "customerSource": "증권",
+    "ageGroup": "50대",
+    "gender": "여",
+    "ownedProducts": [
+      {
+        "productName": "KODEX 200 ETF",
+        "purchaseDate": "2025-05-10"
+      },
+      {
+        "productName": "신한 정기예금",
+        "purchaseDate": "2024-03-03"
+      },
+      {
+        "productName": "우리 CMA",
+        "purchaseDate": "2024-01-11"
+      }
+    ],
+    "createdAt": "2025-01-28T11:34:45.637Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "investmentTendency": "위험중립형",
+    "investmentAmount": 7000
+  },
+  {
+    "id": "user-0070",
+    "customerSource": "증권",
+    "ageGroup": "40대",
+    "gender": "남",
+    "ownedProducts": [
+      {
+        "productName": "우리 CMA",
+        "purchaseDate": "2025-02-15"
+      },
+      {
+        "productName": "우리 CMA",
+        "purchaseDate": "2025-03-27"
+      }
+    ],
+    "createdAt": "2024-11-10T16:55:22.529Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "investmentTendency": "위험중립형",
+    "investmentAmount": 4000
+  },
+  {
+    "id": "user-0071",
+    "customerSource": "증권",
+    "ageGroup": "40대",
+    "gender": "남",
+    "ownedProducts": [
+      {
+        "productName": "KODEX 200 ETF",
+        "purchaseDate": "2025-01-07"
+      },
+      {
+        "productName": "현대해상 실손보험",
+        "purchaseDate": "2025-05-22"
+      }
+    ],
+    "createdAt": "2025-08-07T01:34:03.714Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "investmentTendency": "적극투자형",
+    "investmentAmount": 9000
+  },
+  {
+    "id": "user-0072",
+    "customerSource": "보험",
+    "ageGroup": "50대",
+    "gender": "남",
+    "ownedProducts": [
+      {
+        "productName": "삼성 종신보험",
+        "purchaseDate": "2024-09-09"
+      },
+      {
+        "productName": "현대해상 실손보험",
+        "purchaseDate": "2024-10-27"
+      },
+      {
+        "productName": "KODEX 200 ETF",
+        "purchaseDate": "2024-06-07"
+      }
+    ],
+    "createdAt": "2024-11-12T00:51:08.679Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "insuranceType": "변액+기타"
+  },
+  {
+    "id": "user-0073",
+    "customerSource": "보험",
+    "ageGroup": "30대",
+    "gender": "여",
+    "ownedProducts": [
+      {
+        "productName": "신한 정기예금",
+        "purchaseDate": "2024-03-21"
+      },
+      {
+        "productName": "현대해상 실손보험",
+        "purchaseDate": "2024-03-25"
+      }
+    ],
+    "createdAt": "2025-04-11T07:00:40.686Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "insuranceType": "변액only"
+  },
+  {
+    "id": "user-0074",
+    "customerSource": "보험",
+    "ageGroup": "70대",
+    "gender": "남",
+    "ownedProducts": [
+      {
+        "productName": "우리 CMA",
+        "purchaseDate": "2024-12-24"
+      },
+      {
+        "productName": "KODEX 200 ETF",
+        "purchaseDate": "2024-12-12"
+      },
+      {
+        "productName": "KODEX 200 ETF",
+        "purchaseDate": "2025-01-15"
+      },
+      {
+        "productName": "KB 변액보험",
+        "purchaseDate": "2025-03-15"
+      },
+      {
+        "productName": "삼성 S&P500 ETF",
+        "purchaseDate": "2024-07-21"
+      }
+    ],
+    "createdAt": "2024-10-19T05:29:59.863Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "insuranceType": "미정의"
+  },
+  {
+    "id": "user-0075",
+    "customerSource": "증권",
+    "ageGroup": "10대",
+    "gender": "여",
+    "ownedProducts": [
+      {
+        "productName": "현대해상 실손보험",
+        "purchaseDate": "2024-09-22"
+      },
+      {
+        "productName": "삼성 종신보험",
+        "purchaseDate": "2025-01-27"
+      }
+    ],
+    "createdAt": "2025-08-28T10:27:39.660Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "investmentTendency": "전문투자가형",
+    "investmentAmount": 2000
+  },
+  {
+    "id": "user-0076",
+    "customerSource": "증권",
+    "ageGroup": "10대",
+    "gender": "남",
+    "ownedProducts": [
+      {
+        "productName": "우리 CMA",
+        "purchaseDate": "2025-01-10"
+      },
+      {
+        "productName": "KODEX 200 ETF",
+        "purchaseDate": "2025-05-22"
+      },
+      {
+        "productName": "삼성 종신보험",
+        "purchaseDate": "2023-10-02"
+      },
+      {
+        "productName": "우리 CMA",
+        "purchaseDate": "2024-12-29"
+      },
+      {
+        "productName": "KB 변액보험",
+        "purchaseDate": "2024-03-20"
+      }
+    ],
+    "createdAt": "2025-09-14T05:38:05.744Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "investmentTendency": "미정의",
+    "investmentAmount": 3000
+  },
+  {
+    "id": "user-0077",
+    "customerSource": "증권",
+    "ageGroup": "80대 이상",
+    "gender": "여",
+    "ownedProducts": [
+      {
+        "productName": "삼성 S&P500 ETF",
+        "purchaseDate": "2024-06-27"
+      },
+      {
+        "productName": "KB 변액보험",
+        "purchaseDate": "2024-05-24"
+      },
+      {
+        "productName": "미래에셋 글로벌 펀드",
+        "purchaseDate": "2024-12-20"
+      }
+    ],
+    "createdAt": "2024-11-15T08:02:14.386Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "investmentTendency": "미정의",
+    "investmentAmount": 10000
+  },
+  {
+    "id": "user-0078",
+    "customerSource": "증권",
+    "ageGroup": "10대",
+    "gender": "여",
+    "ownedProducts": [
+      {
+        "productName": "KB 변액보험",
+        "purchaseDate": "2024-01-26"
+      },
+      {
+        "productName": "KODEX 200 ETF",
+        "purchaseDate": "2024-12-05"
+      },
+      {
+        "productName": "미래에셋 글로벌 펀드",
+        "purchaseDate": "2023-12-24"
+      },
+      {
+        "productName": "KB 적금",
+        "purchaseDate": "2024-03-24"
+      },
+      {
+        "productName": "KODEX 200 ETF",
+        "purchaseDate": "2025-05-16"
+      }
+    ],
+    "createdAt": "2025-07-30T18:57:04.090Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "investmentTendency": "위험중립형",
+    "investmentAmount": 1000
+  },
+  {
+    "id": "user-0079",
+    "customerSource": "보험",
+    "ageGroup": "80대 이상",
+    "gender": "남",
+    "ownedProducts": [
+      {
+        "productName": "KB 적금",
+        "purchaseDate": "2024-12-22"
+      },
+      {
+        "productName": "KODEX 200 ETF",
+        "purchaseDate": "2024-08-17"
+      },
+      {
+        "productName": "KB 적금",
+        "purchaseDate": "2023-12-13"
+      }
+    ],
+    "createdAt": "2025-04-21T05:54:12.487Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "insuranceType": "변액only"
+  },
+  {
+    "id": "user-0080",
+    "customerSource": "보험",
+    "ageGroup": "10대",
+    "gender": "남",
+    "ownedProducts": [
+      {
+        "productName": "미래에셋 글로벌 펀드",
+        "purchaseDate": "2025-09-17"
+      },
+      {
+        "productName": "삼성 S&P500 ETF",
+        "purchaseDate": "2023-10-07"
+      },
+      {
+        "productName": "미래에셋 글로벌 펀드",
+        "purchaseDate": "2025-08-28"
+      }
+    ],
+    "createdAt": "2025-04-26T00:18:43.930Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "insuranceType": "변액only"
+  },
+  {
+    "id": "user-0081",
+    "customerSource": "보험",
+    "ageGroup": "30대",
+    "gender": "여",
+    "ownedProducts": [
+      {
+        "productName": "신한 정기예금",
+        "purchaseDate": "2025-07-23"
+      }
+    ],
+    "createdAt": "2025-04-28T18:49:58.073Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "insuranceType": "보장+기타"
+  },
+  {
+    "id": "user-0082",
+    "customerSource": "보험",
+    "ageGroup": "80대 이상",
+    "gender": "남",
+    "ownedProducts": [
+      {
+        "productName": "삼성 종신보험",
+        "purchaseDate": "2024-05-18"
+      },
+      {
+        "productName": "삼성 종신보험",
+        "purchaseDate": "2025-07-05"
+      }
+    ],
+    "createdAt": "2025-07-18T11:01:32.508Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "insuranceType": "보장+변액+기타"
+  },
+  {
+    "id": "user-0083",
+    "customerSource": "증권",
+    "ageGroup": "40대",
+    "gender": "남",
+    "ownedProducts": [
+      {
+        "productName": "KB 변액보험",
+        "purchaseDate": "2024-11-30"
+      },
+      {
+        "productName": "KB 변액보험",
+        "purchaseDate": "2024-12-07"
+      },
+      {
+        "productName": "KB 변액보험",
+        "purchaseDate": "2023-12-25"
+      },
+      {
+        "productName": "KODEX 200 ETF",
+        "purchaseDate": "2024-06-17"
+      }
+    ],
+    "createdAt": "2025-06-17T19:49:54.007Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "investmentTendency": "공격투자형",
+    "investmentAmount": 5000
+  },
+  {
+    "id": "user-0084",
+    "customerSource": "증권",
+    "ageGroup": "30대",
+    "gender": "여",
+    "ownedProducts": [
+      {
+        "productName": "현대해상 실손보험",
+        "purchaseDate": "2024-07-31"
+      },
+      {
+        "productName": "삼성 S&P500 ETF",
+        "purchaseDate": "2025-02-05"
+      },
+      {
+        "productName": "우리 CMA",
+        "purchaseDate": "2023-12-04"
+      },
+      {
+        "productName": "신한 정기예금",
+        "purchaseDate": "2025-04-26"
+      }
+    ],
+    "createdAt": "2024-10-16T20:42:18.406Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "investmentTendency": "미정의",
+    "investmentAmount": 2000
+  },
+  {
+    "id": "user-0085",
+    "customerSource": "증권",
+    "ageGroup": "80대 이상",
+    "gender": "여",
+    "ownedProducts": [
+      {
+        "productName": "현대해상 실손보험",
+        "purchaseDate": "2024-03-22"
+      },
+      {
+        "productName": "미래에셋 글로벌 펀드",
+        "purchaseDate": "2024-03-17"
+      }
+    ],
+    "createdAt": "2025-06-24T04:02:53.634Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "investmentTendency": "미정의",
+    "investmentAmount": 9000
+  },
+  {
+    "id": "user-0086",
+    "customerSource": "증권",
+    "ageGroup": "30대",
+    "gender": "여",
+    "ownedProducts": [
+      {
+        "productName": "현대해상 실손보험",
+        "purchaseDate": "2025-08-03"
+      },
+      {
+        "productName": "우리 CMA",
+        "purchaseDate": "2025-08-22"
+      },
+      {
+        "productName": "우리 CMA",
+        "purchaseDate": "2025-07-07"
+      },
+      {
+        "productName": "KODEX 200 ETF",
+        "purchaseDate": "2024-01-29"
+      }
+    ],
+    "createdAt": "2025-01-30T10:15:46.326Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "investmentTendency": "안정추구형",
+    "investmentAmount": 4000
+  },
+  {
+    "id": "user-0087",
+    "customerSource": "증권",
+    "ageGroup": "80대 이상",
+    "gender": "남",
+    "ownedProducts": [
+      {
+        "productName": "삼성 종신보험",
+        "purchaseDate": "2025-09-04"
+      },
+      {
+        "productName": "삼성 S&P500 ETF",
+        "purchaseDate": "2025-08-23"
+      },
+      {
+        "productName": "미래에셋 글로벌 펀드",
+        "purchaseDate": "2025-08-30"
+      }
+    ],
+    "createdAt": "2025-06-14T00:06:39.091Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "investmentTendency": "위험중립형",
+    "investmentAmount": 7000
+  },
+  {
+    "id": "user-0088",
+    "customerSource": "보험",
+    "ageGroup": "20대",
+    "gender": "남",
+    "ownedProducts": [
+      {
+        "productName": "미래에셋 글로벌 펀드",
+        "purchaseDate": "2023-11-22"
+      },
+      {
+        "productName": "삼성 S&P500 ETF",
+        "purchaseDate": "2024-07-04"
+      },
+      {
+        "productName": "KB 적금",
+        "purchaseDate": "2025-01-05"
+      },
+      {
+        "productName": "KODEX 200 ETF",
+        "purchaseDate": "2025-06-18"
+      },
+      {
+        "productName": "KODEX 200 ETF",
+        "purchaseDate": "2024-10-29"
+      }
+    ],
+    "createdAt": "2025-07-18T20:08:46.836Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "insuranceType": "기타only"
+  },
+  {
+    "id": "user-0089",
+    "customerSource": "보험",
+    "ageGroup": "10대",
+    "gender": "남",
+    "ownedProducts": [
+      {
+        "productName": "KODEX 200 ETF",
+        "purchaseDate": "2023-12-28"
+      },
+      {
+        "productName": "현대해상 실손보험",
+        "purchaseDate": "2024-03-19"
+      },
+      {
+        "productName": "KB 적금",
+        "purchaseDate": "2023-09-24"
+      }
+    ],
+    "createdAt": "2025-07-12T15:24:38.972Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "insuranceType": "변액only"
+  },
+  {
+    "id": "user-0090",
+    "customerSource": "증권",
+    "ageGroup": "50대",
+    "gender": "남",
+    "ownedProducts": [
+      {
+        "productName": "KB 적금",
+        "purchaseDate": "2024-04-07"
+      },
+      {
+        "productName": "KB 변액보험",
+        "purchaseDate": "2025-06-04"
+      }
+    ],
+    "createdAt": "2025-07-22T11:49:54.563Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "investmentTendency": "공격투자형",
+    "investmentAmount": 6000
+  },
+  {
+    "id": "user-0091",
+    "customerSource": "보험",
+    "ageGroup": "60대",
+    "gender": "남",
+    "ownedProducts": [
+      {
+        "productName": "KB 변액보험",
+        "purchaseDate": "2025-06-04"
+      },
+      {
+        "productName": "KODEX 200 ETF",
+        "purchaseDate": "2024-04-22"
+      },
+      {
+        "productName": "신한 정기예금",
+        "purchaseDate": "2024-05-27"
+      }
+    ],
+    "createdAt": "2024-12-25T05:29:18.755Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "insuranceType": "보장+변액"
+  },
+  {
+    "id": "user-0092",
+    "customerSource": "보험",
+    "ageGroup": "50대",
+    "gender": "여",
+    "ownedProducts": [
+      {
+        "productName": "삼성 종신보험",
+        "purchaseDate": "2023-11-08"
+      }
+    ],
+    "createdAt": "2025-06-25T17:41:35.770Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "insuranceType": "변액+기타"
+  },
+  {
+    "id": "user-0093",
+    "customerSource": "증권",
+    "ageGroup": "50대",
+    "gender": "여",
+    "ownedProducts": [
+      {
+        "productName": "우리 CMA",
+        "purchaseDate": "2025-08-25"
+      },
+      {
+        "productName": "현대해상 실손보험",
+        "purchaseDate": "2024-04-01"
+      }
+    ],
+    "createdAt": "2025-02-02T06:22:34.809Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "investmentTendency": "위험중립형",
+    "investmentAmount": 6000
+  },
+  {
+    "id": "user-0094",
+    "customerSource": "보험",
+    "ageGroup": "10대",
+    "gender": "여",
+    "ownedProducts": [
+      {
+        "productName": "우리 CMA",
+        "purchaseDate": "2025-02-12"
+      },
+      {
+        "productName": "삼성 종신보험",
+        "purchaseDate": "2024-06-26"
+      },
+      {
+        "productName": "KODEX 200 ETF",
+        "purchaseDate": "2024-07-07"
+      },
+      {
+        "productName": "미래에셋 글로벌 펀드",
+        "purchaseDate": "2025-09-06"
+      }
+    ],
+    "createdAt": "2024-11-25T02:19:34.442Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "insuranceType": "변액only"
+  },
+  {
+    "id": "user-0095",
+    "customerSource": "증권",
+    "ageGroup": "70대",
+    "gender": "남",
+    "ownedProducts": [
+      {
+        "productName": "우리 CMA",
+        "purchaseDate": "2024-02-07"
+      }
+    ],
+    "createdAt": "2024-10-14T18:32:12.285Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "investmentTendency": "안정추구형",
+    "investmentAmount": 5000
+  },
+  {
+    "id": "user-0096",
+    "customerSource": "증권",
+    "ageGroup": "70대",
+    "gender": "남",
+    "ownedProducts": [
+      {
+        "productName": "우리 CMA",
+        "purchaseDate": "2025-03-09"
+      },
+      {
+        "productName": "미래에셋 글로벌 펀드",
+        "purchaseDate": "2025-08-10"
+      },
+      {
+        "productName": "KB 변액보험",
+        "purchaseDate": "2025-08-31"
+      },
+      {
+        "productName": "KB 적금",
+        "purchaseDate": "2025-05-13"
+      }
+    ],
+    "createdAt": "2025-03-21T11:59:26.276Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "investmentTendency": "안정추구형",
+    "investmentAmount": 2000
+  },
+  {
+    "id": "user-0097",
+    "customerSource": "증권",
+    "ageGroup": "70대",
+    "gender": "남",
+    "ownedProducts": [
+      {
+        "productName": "미래에셋 글로벌 펀드",
+        "purchaseDate": "2024-10-19"
+      },
+      {
+        "productName": "KODEX 200 ETF",
+        "purchaseDate": "2025-09-15"
+      },
+      {
+        "productName": "삼성 종신보험",
+        "purchaseDate": "2024-12-20"
+      },
+      {
+        "productName": "KB 적금",
+        "purchaseDate": "2025-07-07"
+      }
+    ],
+    "createdAt": "2025-03-15T01:40:38.610Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "investmentTendency": "전문투자가형",
+    "investmentAmount": 5000
+  },
+  {
+    "id": "user-0098",
+    "customerSource": "보험",
+    "ageGroup": "40대",
+    "gender": "남",
+    "ownedProducts": [
+      {
+        "productName": "우리 CMA",
+        "purchaseDate": "2025-09-12"
+      },
+      {
+        "productName": "KB 변액보험",
+        "purchaseDate": "2024-12-27"
+      },
+      {
+        "productName": "삼성 종신보험",
+        "purchaseDate": "2024-02-07"
+      },
+      {
+        "productName": "현대해상 실손보험",
+        "purchaseDate": "2024-06-09"
+      },
+      {
+        "productName": "KB 적금",
+        "purchaseDate": "2025-04-16"
+      }
+    ],
+    "createdAt": "2025-04-29T15:44:03.119Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "insuranceType": "보장only"
+  },
+  {
+    "id": "user-0099",
+    "customerSource": "증권",
+    "ageGroup": "50대",
+    "gender": "남",
+    "ownedProducts": [
+      {
+        "productName": "미래에셋 글로벌 펀드",
+        "purchaseDate": "2024-09-27"
+      },
+      {
+        "productName": "KB 적금",
+        "purchaseDate": "2025-06-30"
+      },
+      {
+        "productName": "삼성 S&P500 ETF",
+        "purchaseDate": "2024-09-28"
+      },
+      {
+        "productName": "우리 CMA",
+        "purchaseDate": "2023-10-23"
+      }
+    ],
+    "createdAt": "2025-02-17T16:00:30.205Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "investmentTendency": "공격투자형",
+    "investmentAmount": 6000
+  },
+  {
+    "id": "user-0100",
+    "customerSource": "보험",
+    "ageGroup": "20대",
+    "gender": "여",
+    "ownedProducts": [
+      {
+        "productName": "KB 적금",
+        "purchaseDate": "2024-11-24"
+      },
+      {
+        "productName": "KODEX 200 ETF",
+        "purchaseDate": "2024-07-21"
+      },
+      {
+        "productName": "신한 정기예금",
+        "purchaseDate": "2025-08-24"
+      },
+      {
+        "productName": "우리 CMA",
+        "purchaseDate": "2025-05-04"
+      },
+      {
+        "productName": "우리 CMA",
+        "purchaseDate": "2023-12-15"
+      }
+    ],
+    "createdAt": "2024-11-15T18:12:22.254Z",
+    "updatedAt": "2025-09-20T22:49:15.359Z",
+    "insuranceType": "보장+변액"
+  }
+]

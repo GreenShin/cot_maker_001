@@ -1,0 +1,272 @@
+/* 전역 CSS 변수 */
+:root {
+  --app-font-size: 14px;
+}
+
+/* 기본 폰트 크기 적용 */
+html {
+  font-size: var(--app-font-size);
+}
+
+/* 테마별 스타일 */
+[data-theme="light"] {
+  --text-primary: #000000;
+  --text-secondary: #666666;
+  --background-default: #ffffff;
+  --background-paper: #ffffff;
+  --divider: #e0e0e0;
+}
+
+[data-theme="dark"] {
+  --text-primary: #f0f6fc;
+  --text-secondary: #8b949e;
+  --background-default: #0d1117;
+  --background-paper: #161b22;
+  --divider: #30363d;
+}
+
+/* 글꼴 크기 반응형 적용 */
+.app-font-size-10 { font-size: 10px !important; }
+.app-font-size-11 { font-size: 11px !important; }
+.app-font-size-12 { font-size: 12px !important; }
+.app-font-size-13 { font-size: 13px !important; }
+.app-font-size-14 { font-size: 14px !important; }
+.app-font-size-15 { font-size: 15px !important; }
+.app-font-size-16 { font-size: 16px !important; }
+.app-font-size-17 { font-size: 17px !important; }
+.app-font-size-18 { font-size: 18px !important; }
+.app-font-size-19 { font-size: 19px !important; }
+.app-font-size-20 { font-size: 20px !important; }
+.app-font-size-21 { font-size: 21px !important; }
+.app-font-size-22 { font-size: 22px !important; }
+.app-font-size-23 { font-size: 23px !important; }
+.app-font-size-24 { font-size: 24px !important; }
+
+/* 테마 클래스 */
+.theme-light {
+  color-scheme: light;
+}
+
+.theme-dark {
+  color-scheme: dark;
+}
+
+/* 부드러운 전환 효과 */
+* {
+  transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+}
+
+/* 커스텀 스크롤바 (다크 모드 대응) */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background-default);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--divider);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+}
+
+/* 다크 모드에서 스크롤바 스타일 */
+[data-theme="dark"] ::-webkit-scrollbar-track {
+  background: #1e1e1e;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: #333333;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+  background: #555555;
+}
+
+/* DataGrid 폰트 크기 적용 */
+.MuiDataGrid-root {
+  font-size: var(--app-font-size) !important;
+}
+
+.MuiDataGrid-columnHeaderTitle,
+.MuiDataGrid-cell {
+  font-size: calc(var(--app-font-size) * 0.875) !important;
+}
+
+/* 폰트 크기별 DataGrid 스타일 */
+.app-font-size-10 .MuiDataGrid-root { font-size: 10px !important; }
+.app-font-size-11 .MuiDataGrid-root { font-size: 11px !important; }
+.app-font-size-12 .MuiDataGrid-root { font-size: 12px !important; }
+.app-font-size-13 .MuiDataGrid-root { font-size: 13px !important; }
+.app-font-size-14 .MuiDataGrid-root { font-size: 14px !important; }
+.app-font-size-15 .MuiDataGrid-root { font-size: 15px !important; }
+.app-font-size-16 .MuiDataGrid-root { font-size: 16px !important; }
+.app-font-size-17 .MuiDataGrid-root { font-size: 17px !important; }
+.app-font-size-18 .MuiDataGrid-root { font-size: 18px !important; }
+.app-font-size-19 .MuiDataGrid-root { font-size: 19px !important; }
+.app-font-size-20 .MuiDataGrid-root { font-size: 20px !important; }
+.app-font-size-21 .MuiDataGrid-root { font-size: 21px !important; }
+.app-font-size-22 .MuiDataGrid-root { font-size: 22px !important; }
+.app-font-size-23 .MuiDataGrid-root { font-size: 23px !important; }
+.app-font-size-24 .MuiDataGrid-root { font-size: 24px !important; }
+
+/* MUI TextField 이중 테두리 방지 */
+.MuiTextField-root {
+  /* 기본 outline 제거 */
+}
+
+.MuiOutlinedInput-root {
+  /* 이중 테두리 방지 */
+  outline: none !important;
+}
+
+.MuiOutlinedInput-root:focus-within {
+  /* 포커스 시에도 추가 outline 제거 */
+  outline: none !important;
+}
+
+.MuiInputBase-input {
+  /* 내부 input 요소의 outline 제거 */
+  outline: none !important;
+  border: none !important;
+}
+
+.MuiInputBase-input:focus {
+  /* 포커스 시 추가 스타일 제거 */
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* 접근성을 위한 대체 포커스 표시 */
+.MuiOutlinedInput-root.Mui-focused {
+  /* MUI 기본 포커스 스타일 유지 */
+}
+
+/* 다크모드 강제 적용 - GitHub 색상 */
+[data-theme="dark"] {
+  background-color: #0d1117 !important;
+  color: #f0f6fc !important;
+}
+
+[data-theme="dark"] html {
+  background-color: #0d1117 !important;
+}
+
+[data-theme="dark"] body {
+  background-color: #0d1117 !important;
+  color: #f0f6fc !important;
+}
+
+[data-theme="dark"] #root {
+  background-color: #0d1117 !important;
+  color: #f0f6fc !important;
+  min-height: 100vh;
+}
+
+[data-theme="dark"] .MuiPaper-root {
+  background-color: #161b22 !important;
+  color: #f0f6fc !important;
+  border: 1px solid #30363d !important;
+}
+
+[data-theme="dark"] .MuiTextField-root .MuiInputBase-root {
+  background-color: #0d1117 !important;
+  color: #f0f6fc !important;
+  border: 1px solid #30363d !important;
+  border-radius: 6px !important;
+}
+
+[data-theme="dark"] .MuiTextField-root .MuiInputLabel-root {
+  color: #8b949e !important;
+}
+
+[data-theme="dark"] .MuiTextField-root .MuiInputLabel-root.Mui-focused {
+  color: #58a6ff !important;
+}
+
+[data-theme="dark"] .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline {
+  border-color: #30363d !important;
+}
+
+[data-theme="dark"] .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
+  border-color: #8b949e !important;
+}
+
+[data-theme="dark"] .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+  border-color: #58a6ff !important;
+}
+
+[data-theme="dark"] .MuiTypography-root {
+  color: #f0f6fc !important;
+}
+
+[data-theme="dark"] .MuiButton-outlined {
+  border-color: #30363d !important;
+  color: #f0f6fc !important;
+  background-color: #21262d !important;
+}
+
+[data-theme="dark"] .MuiButton-outlined:hover {
+  border-color: #8b949e !important;
+  background-color: #30363d !important;
+}
+
+[data-theme="dark"] .MuiSlider-root {
+  color: #58a6ff !important;
+}
+
+[data-theme="dark"] .MuiSlider-track {
+  background-color: #58a6ff !important;
+}
+
+[data-theme="dark"] .MuiSlider-rail {
+  background-color: #30363d !important;
+}
+
+[data-theme="dark"] .MuiSlider-thumb {
+  background-color: #58a6ff !important;
+  border: 2px solid #0d1117 !important;
+}
+
+[data-theme="dark"] .MuiSwitch-root .MuiSwitch-track {
+  background-color: #30363d !important;
+}
+
+[data-theme="dark"] .MuiSwitch-root .Mui-checked .MuiSwitch-thumb {
+  background-color: #58a6ff !important;
+}
+
+[data-theme="dark"] .MuiSwitch-root .Mui-checked + .MuiSwitch-track {
+  background-color: rgba(88, 166, 255, 0.5) !important;
+}
+
+[data-theme="dark"] .MuiFormHelperText-root {
+  color: #8b949e !important;
+}
+
+[data-theme="dark"] .MuiFormLabel-root {
+  color: #8b949e !important;
+}
+
+[data-theme="dark"] .MuiFormControlLabel-label {
+  color: #f0f6fc !important;
+}
+
+[data-theme="dark"] .MuiInputBase-input::placeholder {
+  color: #8b949e !important;
+}
+
+[data-theme="dark"] .MuiSlider-markLabel {
+  color: #8b949e !important;
+}
+
+[data-theme="dark"] .MuiSlider-valueLabel {
+  background-color: #21262d !important;
+  color: #f0f6fc !important;
+  border: 1px solid #30363d !important;
+}
