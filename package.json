@@ -11,9 +11,12 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
-    "test": "vitest",
+    "test": "NODE_OPTIONS='--max-old-space-size=4096' vitest",
+    "test:run": "NODE_OPTIONS='--max-old-space-size=4096' vitest run",
     "test:ui": "vitest --ui",
     "test:e2e": "playwright test",
+    "test:contract": "NODE_OPTIONS='--max-old-space-size=4096' vitest run tests/contract",
+    "test:integration": "NODE_OPTIONS='--max-old-space-size=4096' vitest run tests/integration",
     "lint": "eslint \"src/**/*.{ts,tsx}\"",
     "format": "prettier --write .",
     "seed": "node scripts/seed/generateSampleData.cjs"

@@ -27,6 +27,7 @@ const cotFormSchema = z.object({
   answer: z.string().transform(val => val?.trim() || '').default(''), // 기본값 빈 문자열
   datasetStatus: z.string(), // 필수 (기본값 '초안')
   author: z.string().transform(val => val?.trim() || '').default(''), // 기본값 빈 문자열
+  reviewComment: z.string().transform(val => val?.trim() || '').default(''), // 리뷰 의견 (선택)
 });
 
 export type CotFormData = z.infer<typeof cotFormSchema>;
@@ -66,11 +67,13 @@ export function useCotForm({ isEditMode }: UseCotFormProps) {
       answer: '',
       datasetStatus: '초안',
       author: '',
+      reviewComment: '',
     },
   });
 
   const { control, handleSubmit, watch, setValue, reset, formState: { errors, isSubmitting } } = form;
   const watchedProductSource = watch('productSource');
+  const watchedQuestionType = watch('questionType');
 
   // 폼 에러를 콘솔에 로깅
   React.useEffect(() => {
@@ -123,6 +126,7 @@ export function useCotForm({ isEditMode }: UseCotFormProps) {
         answer: currentCoT.answer || '',
         datasetStatus: currentCoT.status,
         author: currentCoT.author || '',
+        reviewComment: (currentCoT as any).reviewComment || '',
       });
 
       // 기존 선택된 질문자/상품 정보 설정
@@ -240,6 +244,7 @@ export function useCotForm({ isEditMode }: UseCotFormProps) {
         answer: data.answer || undefined,
         status: data.datasetStatus,
         author: data.author || undefined,
+        reviewComment: data.reviewComment || undefined,
         // 동적 CoT 필드 추가 (빈 값은 제외)
         ...Object.entries(cotNFields).reduce((acc, [key, value]) => {
           const trimmedValue = value?.trim();
@@ -320,6 +325,7 @@ export function useCotForm({ isEditMode }: UseCotFormProps) {
     errors,
     isSubmitting: isSubmitting || loading,
     watchedProductSource,
+    watchedQuestionType,
     onSubmit: handleSubmit(onSubmit),
     
     // 상태 관리

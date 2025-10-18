@@ -35,6 +35,16 @@ export function AppLayout() {
     });
   };
 
+  // 메뉴 아이템이 활성화되었는지 확인하는 함수
+  const isMenuActive = (menuPath: string) => {
+    // 홈 경로("/")는 정확히 일치하거나 "/cots"로 시작할 때 활성화
+    if (menuPath === '/') {
+      return location.pathname === '/' || location.pathname.startsWith('/cots');
+    }
+    // 다른 경로는 시작 부분이 일치하면 활성화
+    return location.pathname.startsWith(menuPath);
+  };
+
   return (
     <Box sx={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
       {/* Left Drawer Navigation */}
@@ -68,7 +78,7 @@ export function AppLayout() {
               key={item.path}
               component={Link}
               to={item.path}
-              selected={location.pathname === item.path}
+              selected={isMenuActive(item.path)}
             >
               <ListItemIcon>{item.icon}</ListItemIcon>
               {open && <ListItemText primary={item.name} />}
