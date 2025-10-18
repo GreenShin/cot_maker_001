@@ -35,6 +35,7 @@ const baseCotQASchema = z.object({
   answer: trimmedOptionalString(), // 선택사항으로 변경
   status: cotStatus, // 필수
   author: trimmedOptionalString(),
+  reviewComment: trimmedOptionalString(),
   // 메타데이터
   createdAt: z.string().optional(),
   updatedAt: z.string().optional()

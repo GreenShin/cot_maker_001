@@ -1,96 +1,146 @@
 <!--
-Sync Impact Report:
-Version change: 0.0.0 → 1.0.0
-Modified principles: N/A (initial adoption)
-Added sections: Core Principles, Quality Standards, Development Workflow & Quality Gates, Governance
-Removed sections: None
-Templates requiring updates:
-  ✅ .specify/templates/plan-template.md (footer version/path)
-  ✅ .specify/templates/spec-template.md (no change required, aligned)
-  ✅ .specify/templates/tasks-template.md (no change required, aligned)
-  ✅ README.md (no change required, aligned)
-Follow-up TODOs: None
+  Sync Impact Report:
+  - Version change: [NEW CONSTITUTION] → 1.0.0
+  - Modified principles: N/A (initial version)
+  - Added sections: All (initial creation)
+  - Removed sections: N/A
+  - Templates requiring updates:
+    ✅ plan-template.md - verified compatibility
+    ✅ spec-template.md - verified compatibility
+    ✅ tasks-template.md - verified compatibility
+  - Follow-up TODOs: None
 -->
 
-# CoT Maker Constitution
+# CoT 데이터셋 관리 웹앱 Constitution
 
 ## Core Principles
 
-### I. Code Quality First (NON-NEGOTIABLE)
-코드는 최고 품질 기준을 충족해야 한다. 린터/포매터 경고는 허용되지 않으며,
-함수·클래스는 단일 책임 원칙을 따른다. 명확한 네이밍과 필요 충분한 문서화를
-반드시 제공하고, 불필요한 복잡성은 금지한다(YAGNI, KISS).
+### I. 데이터 프라이버시 우선 (Data Privacy First)
 
-### II. Test Discipline & TDD (NON-NEGOTIABLE)
-테스트 우선 원칙을 적용한다. 최소 커버리지 80%를 유지하며(Unit/Integration/E2E
-균형), 플래키(비결정적) 테스트는 금지한다. Red-Green-Refactor 사이클을 따른다.
+**규칙**:
+- 모든 데이터는 로컬 브라우저 내에서만 저장되어야 한다 (IndexedDB)
+- 외부 네트워크로의 데이터 전송은 금지된다
+- 익명화된 데이터만 취급하며, 개인 식별 정보(PII)는 저장하지 않는다
+- Import/Export는 사용자가 명시적으로 선택한 파일에만 적용된다
 
-### III. UX Consistency for Local Admin Web App
-관리자용 로컬 웹 앱은 일관된 디자인 시스템과 용어를 사용해야 한다. WCAG 2.1 AA
-접근성을 준수하고, 반응형 레이아웃과 일관된 로딩/에러/성공 피드백을 제공한다.
-핵심 사용자 흐름은 3클릭 이내로 완수 가능해야 한다(합리적 예외 문서화).
+**근거**: LLM 학습용 데이터셋은 민감한 금융 정보를 포함하므로, 데이터 유출 위험을 원천 차단하기 위해 로컬 우선 접근 방식이 필수적이다.
 
-### IV. Local-first Developer Experience
-로컬 실행은 단일 명령으로 가능해야 한다(예: `make dev` 또는 `npm run dev`).
-개발 환경은 재현 가능해야 하며(Docker/Devcontainer 등 권장), 핫 리로드와
-진단 로그가 기본 제공되어야 한다.
+### II. 사용자 경험 우선 (User Experience First)
 
-### V. Performance & Security Budgets
-초기 로드(LCP) < 2.5s(개발/로컬 기준 합리적 범위), 상호작용 지연은 최소화한다.
-의존성은 주기적으로 업데이트하고, 보안 스캔을 통과해야 한다. 민감정보는 로컬
-환경에서도 안전하게 취급(.env, 비밀관리)한다.
+**규칙**:
+- 모든 UI 컴포넌트는 WCAG 2.1 AA 접근성 기준을 준수해야 한다
+- 키보드만으로 모든 기능에 접근 가능해야 한다
+- 다크/라이트 모드를 완전히 지원해야 한다
+- 사용자 설정(글꼴 크기, 패널 크기, 테마 등)은 자동으로 저장/복원되어야 한다
+- 대용량 데이터(30만 질문자, 1만 상품, 1만 CoT) 처리 시에도 반응성을 유지해야 한다 (목표: p95 < 300ms)
 
-## Quality Standards
+**근거**: 관리자가 장시간 데이터를 입력/편집하는 도구이므로, 편의성과 접근성이 생산성에 직접적인 영향을 미친다.
 
-### Code Quality Metrics
-- 린팅/포매팅: ESLint/Prettier(웹) 또는 동급 도구 설정, 경고 0
-- 복잡도: 함수 순환복잡도 10 이하 권장, 과다 분기 시 분리
-- 중복: 의미 없는 코드 중복 5% 이하 유지
-- 문서화: 공개 API/컴포넌트에 최소 사용 예시/설명 제공
+### III. 성능 최적화 (Performance Optimization)
 
-### Testing Requirements
-- 단위 테스트: 핵심 로직 전부 커버, 순수 함수 우선
-- 통합 테스트: 계약/데이터 경계 검증, 주요 플로우 커버
-- E2E: 관리자 핵심 시나리오 100% 커버(로그인, 설정 저장, 데이터 조회 등)
-- 커버리지: 전체 80%+, 변경 파일 90%+ 권장
-- CI: 테스트는 병렬 실행 가능, 실패 시 머지 차단
+**규칙**:
+- 대용량 리스트는 가상 스크롤(virtualization)을 사용해야 한다
+- 검색/필터링은 디바운싱을 적용해야 한다
+- IndexedDB 트랜잭션은 배치 처리(1000건 단위)로 최적화해야 한다
+- Import/Export는 스트리밍 방식으로 처리하여 메모리 사용량을 제한해야 한다 (목표: < 500MB)
+- 불필요한 리렌더링을 방지하기 위해 React.memo, useMemo, useCallback을 적절히 활용해야 한다
 
-### UX Standards
-- 디자인 시스템: 일관된 컴포넌트/토큰 사용(타이포·색상·간격)
-- 접근성: WCAG 2.1 AA 목표, 자동 점검(axE 등) 통과, 키보드 내비게이션 가능
-- 반응형: 모바일 ≥320px, 태블릿 ≥768px, 데스크톱 ≥1024px 기준
-- 피드백: 로딩 스켈레톤/스피너, 에러 메시지 가이드, 성공 토스트 일관화
+**근거**: 30만 행 이상의 데이터를 원활히 처리하려면 메모리와 성능 최적화가 필수적이다.
 
-## Development Workflow & Quality Gates
+### IV. 계약 기반 개발 (Contract-Based Development)
 
-### Code Review
-- 최소 1인 이상의 승인 필요(자기 승인 금지)
-- 리뷰 체크: 품질(린트/복잡도), 테스트(존재·의미), UX(일관성/접근성)
+**규칙**:
+- 모든 데이터 모델은 Zod 스키마로 정의되어야 한다
+- Import/Export 형식은 명확한 계약(contract)을 가져야 한다
+- 필수 필드 누락, 타입 불일치, 사전정의 값 외 입력은 명확한 오류 메시지와 함께 거부되어야 한다
+- 계약 변경 시 버전을 명시하고 이전 버전과의 호환성을 문서화해야 한다
 
-### Quality Gates (머지 전)
-- 린트/타입 검사 0 경고
-- 테스트 통과 및 커버리지 기준 충족
-- 접근성 자동 점검 통과
-- 성능 예산 위반 없음(주요 페이지 기준)
-- 보안/의존성 스캔 통과
+**근거**: 다양한 형식의 데이터 Import/Export를 안정적으로 처리하려면 명확한 데이터 계약이 필수적이다.
 
-### Release & Environments
-- 로컬=스테이징 설정과 가급적 동일한 구성(환경변수로 구분)
-- 변경사항은 체인지로그에 기록(Conventional Commits 권장)
+### V. 테스트 가능성 (Testability)
+
+**규칙**:
+- 계약 테스트(Contract Tests)로 데이터 스키마 유효성을 검증해야 한다
+- 통합 테스트(Integration Tests)로 사용자 시나리오를 검증해야 한다
+- 복잡한 비즈니스 로직은 독립적인 서비스로 분리하여 테스트 가능하게 만들어야 한다
+- 테스트는 실제 사용자 시나리오를 반영해야 한다
+
+**근거**: 데이터 무결성이 중요한 프로젝트이므로, 자동화된 테스트로 품질을 보장해야 한다.
+
+### VI. 단순성 유지 (Simplicity)
+
+**규칙**:
+- YAGNI(You Aren't Gonna Need It) 원칙을 따른다
+- 명확한 폴더 구조를 유지한다: models, services, components, pages, store
+- 한 파일은 하나의 책임만 가진다 (Single Responsibility Principle)
+- 복잡도가 증가하는 변경은 명확한 정당화가 필요하다
+
+**근거**: 로컬 실행 웹앱이므로 불필요한 추상화를 피하고 명확한 구조를 유지해야 유지보수가 용이하다.
+
+### VII. 오프라인 우선 (Offline First)
+
+**규칙**:
+- 모든 기능은 네트워크 연결 없이 동작해야 한다
+- 외부 CDN 의존성을 최소화해야 한다
+- 에셋은 로컬에 번들링되어야 한다
+- 브라우저 스토리지(IndexedDB, localStorage)만 사용해야 한다
+
+**근거**: 로컬 PC에서 독립적으로 실행되는 것이 핵심 요구사항이므로, 네트워크 의존성을 제거해야 한다.
+
+## 데이터 무결성 규칙
+
+### 유효성 검사
+- 모든 사용자 입력은 저장 전에 Zod 스키마로 검증되어야 한다
+- 필수 필드 누락 시 저장을 차단하고 명확한 오류 메시지를 표시해야 한다
+- 사전정의된 값(예: 상품분류, 질문유형)은 엄격히 검증되어야 한다
+
+### Import/Export 정책
+- Import 전 데이터 미리보기와 유효성 검사 결과를 제공해야 한다
+- 유효하지 않은 행은 건너뛰고 상세 오류 리포트를 제공해야 한다
+- Export는 UTF-8 인코딩을 사용하며, CSV는 EUC-KR 변환 옵션을 제공해야 한다
+
+### 트랜잭션 무결성
+- IndexedDB 트랜잭션은 원자성(atomicity)을 보장해야 한다
+- 배치 처리 중 오류 발생 시 롤백 또는 부분 적용 정책을 명확히 해야 한다
+
+## 개발 워크플로우
+
+### 계획 및 명세
+- 모든 기능은 `/specs/###-feature-name/` 디렉토리에 명세를 작성해야 한다
+- 명세는 기술 구현이 아닌 사용자 가치에 집중해야 한다
+- 불명확한 요구사항은 `[NEEDS CLARIFICATION]`로 표시하고 해결 후 진행해야 한다
+
+### 코드 품질
+- TypeScript strict 모드를 사용해야 한다
+- ESLint 규칙을 준수해야 한다
+- 코드 리뷰 시 Constitution 준수 여부를 확인해야 한다
+- 복잡한 로직은 주석으로 의도를 명확히 해야 한다
+
+### 버전 관리
+- 데이터 스키마 변경은 MAJOR 버전 업데이트로 간주한다
+- 새 기능 추가는 MINOR 버전 업데이트로 간주한다
+- 버그 수정 및 개선은 PATCH 버전 업데이트로 간주한다
 
 ## Governance
 
-이 헌법은 개발 전 과정에 우선한다. 위반 시 문서화된 예외와 만회 계획을 포함한
-승인을 받아야 한다. 개정은 PR로 제안하고, 영향 분석·마이그레이션 계획을 포함
-해야 한다.
+### 헌법 우선 원칙
+- 이 Constitution은 모든 개발 관행보다 우선한다
+- Constitution 위반 시 명확한 정당화가 필요하며, 복잡도 추적 테이블에 기록해야 한다
 
-Versioning Policy:
-- MAJOR: 원칙 제거·재정의 등 하위호환 불가 변경
-- MINOR: 원칙/섹션 추가 또는 실질적 가이드 확장
-- PATCH: 표현 명확화, 오타 수정 등 비본질 변경
+### 개정 절차
+- Constitution 개정은 문서화되어야 하며, 버전을 업데이트해야 한다
+- 원칙 추가/제거는 MINOR 버전 업데이트로 간주한다
+- 원칙의 근본적인 변경은 MAJOR 버전 업데이트로 간주한다
+- 개정 시 영향받는 모든 템플릿과 가이드를 함께 업데이트해야 한다
 
-Compliance:
-- 모든 PR은 본 헌법 준수 여부를 검증한다(Plan 템플릿의 Constitution Check 반영).
-- 주기적(분기) 자체 감사로 지표·테스트·UX 기준 충족 여부를 점검한다.
+### 컴플라이언스 검증
+- 모든 PR/커밋은 Constitution 준수를 검증해야 한다
+- `/speckit.checklist` 명령으로 준수 여부를 확인해야 한다
+- Constitution 위반 시 구현을 중단하고 명세 단계로 돌아가야 한다
 
-**Version**: 1.0.0 | **Ratified**: 2025-09-20 | **Last Amended**: 2025-09-20
+### 런타임 가이드
+- `.specify/memory/constitution.md` (이 파일)은 프로젝트의 불변 원칙을 정의한다
+- 구체적인 개발 가이드는 `/specs/###-feature-name/` 내 문서를 참조한다
+- 명령어별 워크플로우는 `.cursor/commands/speckit.*.md`를 참조한다
+
+**Version**: 1.0.0 | **Ratified**: 2025-10-17 | **Last Amended**: 2025-10-17

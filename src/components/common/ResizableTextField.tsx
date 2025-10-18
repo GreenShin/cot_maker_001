@@ -4,14 +4,14 @@ import { TextareaResizer } from './TextareaResizer';
 
 interface ResizableTextFieldProps extends Omit<TextFieldProps, 'rows'> {
   fieldName: string;
-  rows: number;
+  rows: number; // 호환성을 위해 남겨두지만 사용하지 않음
   heightPx: number;
   onHeightChange: (fieldName: string, deltaPx: number) => void;
 }
 
 export function ResizableTextField({
   fieldName,
-  rows,
+  rows, // eslint-disable-line @typescript-eslint/no-unused-vars
   heightPx,
   onHeightChange,
   ...textFieldProps
@@ -25,14 +25,15 @@ export function ResizableTextField({
       <TextField
         {...textFieldProps}
         multiline
-        rows={rows}
         sx={{
           width: '100%',
           '& .MuiInputBase-root': {
-            minHeight: `${heightPx}px`,
+            height: `${heightPx}px`, // rows 대신 직접 픽셀 높이 설정
+            alignItems: 'flex-start',
           },
           '& .MuiInputBase-inputMultiline': {
-            minHeight: `${heightPx - 16}px`, // padding 고려
+            height: '100% !important', // 부모 높이에 맞춤
+            overflow: 'auto !important', // 스크롤 활성화
             resize: 'none', // 기본 resize 핸들 비활성화
           },
           ...textFieldProps.sx,
